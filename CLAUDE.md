@@ -27,17 +27,22 @@ put the big rocks in first, let the smaller tasks fill in around them.
 
 - **Habit 1 — Be Proactive:** tasks/worries can be tagged *influence* (actionable) vs *concern*
   (not in your control), nudging focus toward what you can move. AI can help classify.
-- **Habit 2 — Begin with the End in Mind:** a goals layer plus a personal mission statement.
-  Tasks and big rocks can link to a goal so you see whether your week serves your larger aims.
+- **Habit 2 — Begin with the End in Mind:** a personal mission statement plus **Goals as first-class
+  entities**. A Goal is a durable outcome (not a kind of task) with its own title, description, and
+  optional target date. Tasks **belong to** a Goal via an optional one-to-many link (a task has at most
+  one goal; the link is nullable, since not every task serves a goal). This forms a three-tier hierarchy:
+  mission statement → goals → tasks. Goals can show their own progress (e.g. share of their tasks done).
+  AI can flag tasks that connect to no goal.
 - **Habit 3 — Put First Things First:** the quadrant matrix (importance × urgency) and a weekly
   "big rocks first" planning view. This is the core mechanic.
 - **Habits 4/5/6 — Public Victory (recurring relationship commitments):** a list of the people who
   matter, each with recurring commitments on a cadence (e.g. monthly activity with each kid, regular
   date night with spouse, weekly call to parents). The app tracks cadence adherence and surfaces
   what's overdue.
-- **Habit 7 — Sharpen the Saw:** a renewal dashboard across four dimensions — physical, mental,
-  social/emotional, spiritual. The social/emotional dimension relates to the relationship commitments;
-  the spiritual dimension relates to the mission statement; mental relates to learning goals.
+- **Habit 7 — Sharpen the Saw:** a renewal dashboard across four dimensions (physical, mental,
+  social/emotional, spiritual), each a RenewalDimension entity that activities point to. The
+  social/emotional dimension relates to the relationship commitments; the spiritual dimension relates to
+  the mission statement; mental relates to learning goals.
 
 ---
 
@@ -59,6 +64,45 @@ OPEN DECISIONS to confirm with the owner before finalizing the model:
 Default assumption if unspecified: per-person tracking with a streak/history view.
 
 ---
+
+## Data model (core entities)
+
+Keep all DB access behind a repository/service layer (see conventions). Core entities:
+
+- **MissionStatement** — a single personal mission document (the top of the hierarchy).
+- **Goal** — a first-class, durable outcome. Fields: title, description, optional target date, status.
+  A flat list (no nesting/sub-goals for now).
+- **Task** — a discrete action. Has importance + urgency (quadrant is DERIVED from these, not stored —
+  see guideline), optional due date, completion. Holds an **optional `goalId`** (nullable) — a task
+  belongs to at most one Goal. Links to **Tags** many-to-many.
+- **Tag** — a first-class entity (not a loose string). Has identity so it can be renamed in one place and
+  queried ("show everything tagged X"). Many-to-many with Task. This is the one intentional
+  many-to-many relationship — a task genuinely has several tags.
+- **Person** — someone who matters. Relationship type (kid, spouse, parent, etc.) is a simple FIELD on
+  Person, NOT its own entity (see guideline — deliberate non-case).
+- **RecurringCommitment** — links to a Person (or people), with a target cadence and a log of
+  occurrences; derives an on-track/due-soon/overdue status.
+- **RenewalDimension** — the four fixed Sharpen-the-Saw dimensions (physical, mental, social/emotional,
+  spiritual) as a small reference entity, each able to carry its own target/description/balance for the
+  dashboard.
+- **RenewalActivity** — a Sharpen-the-Saw entry that points to a RenewalDimension.
+
+Hierarchy: **MissionStatement → Goal → Task** (each link downward optional). Decisions locked in:
+one goal per task (optional), flat goal list. Leave room to add many-to-many or sub-goals later, but
+do NOT build those now.
+
+### Modeling guideline (entity vs attribute)
+
+Promote something to its own entity when it has **identity** (you'd want to rename it in one place),
+**its own attributes** (it carries data beyond a name), or **its own relationships** (other things
+attach to it). Keep it as a plain attribute when it's just a value or a derived computation.
+
+- Applied: Goal, Tag, and RenewalDimension are entities by this test.
+- Deliberate non-cases (do NOT over-model these): a task's **quadrant** stays a derived value computed
+  from importance × urgency (never stored, so it can't drift); a person's **relationship type** stays a
+  field on Person.
+- Cadence/recurrence logic is shared by RecurringCommitment and any recurring tasks — model it once and
+  reuse it rather than duplicating the schedule logic in two places.
 
 ## Tech stack
 
