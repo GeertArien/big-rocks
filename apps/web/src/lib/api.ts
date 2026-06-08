@@ -38,14 +38,15 @@ export class ApiError extends Error {
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const token = getToken();
-  const res = await fetch(`/api${path}`, {
-    ...init,
-    headers: {
-      "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      ...init?.headers,
-    },
-  });
+  const headers: Record<string, string> = { ...(init?.headers as Record<string, string>) };
+  // Only declare a JSON content-type when we actually send a body — otherwise
+  // Fastify rejects the empty body (FST_ERR_CTP_EMPTY_JSON_BODY) on bodyless
+  // POST/DELETE calls like complete/reopen/delete.
+  if (init?.body !== undefined && init?.body !== null) {
+    headers["Content-Type"] = "application/json";
+  }
+  if (token) headers["Authorization"] = `Bearer ${token}`;
+  const res = await fetch(`/api${path}`, { ...init, headers });
   if (!res.ok) {
     throw new ApiError(res.status, (await res.text()) || res.statusText);
   }

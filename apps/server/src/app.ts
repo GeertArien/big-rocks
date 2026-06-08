@@ -26,6 +26,25 @@ export async function buildApp(
   const config = options.config ?? loadConfig();
   const app = Fastify({ logger: !config.isProduction });
 
+  // Tolerate an empty body on application/json requests. Bodyless POSTs (e.g.
+  // /tasks/:id/complete) otherwise fail with FST_ERR_CTP_EMPTY_JSON_BODY.
+  app.addContentTypeParser(
+    "application/json",
+    { parseAs: "string" },
+    (_req, body, done) => {
+      if (body === "" || body == null) {
+        done(null, undefined);
+        return;
+      }
+      try {
+        done(null, JSON.parse(body as string));
+      } catch (err) {
+        (err as Error & { statusCode?: number }).statusCode = 400;
+        done(err as Error, undefined);
+      }
+    },
+  );
+
   // OpenAPI/Swagger so other agents/services can discover the API.
   await app.register(fastifySwagger, {
     openapi: {

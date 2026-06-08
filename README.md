@@ -71,19 +71,24 @@ Fastify backend — one container. The SQLite file is persisted on a named volum
 
 ```bash
 # Build and run the stack
-API_AUTH_TOKEN=$(openssl rand -hex 32) docker compose up --build
+docker compose up --build
 
 # App + API on http://localhost:3000  (docs at /docs)
 ```
 
+By default the instance is **open** (no auth) — fine for a single-user box on
+your own network. To require a bearer token on the API, set `API_AUTH_TOKEN`
+(e.g. `API_AUTH_TOKEN=$(openssl rand -hex 32) docker compose up`) and enter the
+same token in the web UI's settings (gear icon).
+
 Configuration is entirely via environment variables:
 
-| Variable            | Purpose                                       |
-| ------------------- | --------------------------------------------- |
-| `DATABASE_URL`      | Prisma connection string (SQLite by default)  |
-| `API_AUTH_TOKEN`    | Bearer token for the REST API                 |
-| `ANTHROPIC_API_KEY` | Server-side AI features (optional)            |
-| `PORT` / `HOST`     | Where the server listens                      |
+| Variable            | Purpose                                                  |
+| ------------------- | -------------------------------------------------------- |
+| `DATABASE_URL`      | Prisma connection string (SQLite by default)             |
+| `API_AUTH_TOKEN`    | Bearer token for the REST API (unset = open, the default)|
+| `ANTHROPIC_API_KEY` | Server-side AI features (optional)                       |
+| `PORT` / `HOST`     | Where the server listens                                 |
 
 The database lives on the `bigrocks-data` volume (mounted at `/data`), so it
 survives container restarts. Migrations are applied automatically on boot.
@@ -97,11 +102,8 @@ CI publishes the image to GitHub Container Registry on every push to `main` and
 on version tags. To run it without building:
 
 ```bash
-docker run -p 3000:3000 \
-  -e API_AUTH_TOKEN="$(openssl rand -hex 32)" \
-  -e DATABASE_URL="file:/data/dev.db" \
-  -v bigrocks-data:/data \
-  ghcr.io/geertarien/big-rocks:latest
+docker run -p 3000:3000 -v bigrocks-data:/data ghcr.io/geertarien/big-rocks:latest
+# → http://localhost:3000  (open by default; add -e API_AUTH_TOKEN=… to require a token)
 ```
 
 If the package is private, first authenticate:
