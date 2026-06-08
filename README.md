@@ -91,6 +91,23 @@ survives container restarts. Migrations are applied automatically on boot.
 Swapping to Postgres later is a provider + `DATABASE_URL` change (an optional
 `db` service is stubbed in `docker-compose.yml`) — no application code changes.
 
+### Run the prebuilt image (no local build)
+
+CI publishes the image to GitHub Container Registry on every push to `main` and
+on version tags. To run it without building:
+
+```bash
+docker run -p 3000:3000 \
+  -e API_AUTH_TOKEN="$(openssl rand -hex 32)" \
+  -e DATABASE_URL="file:/data/dev.db" \
+  -v bigrocks-data:/data \
+  ghcr.io/geertarien/big-rocks:latest
+```
+
+If the package is private, first authenticate:
+`echo <github-pat> | docker login ghcr.io -u <username> --password-stdin`
+(or make the package public in the repo's *Packages* settings for anonymous pulls).
+
 ## Secrets
 
 Never commit secrets. Only `.env.example` is tracked; the real `.env` is
