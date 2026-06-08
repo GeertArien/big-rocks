@@ -1,0 +1,33 @@
+{
+  "name": "@big-rocks/core",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Shared domain layer: Prisma client, repositories, services, and the AI provider interface. The single source of business logic, imported by the server and the (future) MCP adapter.",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "scripts": {
+    "build": "prisma generate && tsup",
+    "typecheck": "prisma generate && tsc --noEmit",
+    "test": "prisma generate && vitest run",
+    "lint": "eslint .",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:deploy": "prisma migrate deploy",
+    "db:seed": "tsx prisma/seed.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.19.20",
+    "prisma": "^6.1.0",
+    "tsup": "^8.3.5",
+    "tsx": "^4.19.2",
+    "vitest": "^2.1.8"
+  }
+}

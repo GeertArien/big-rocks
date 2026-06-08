@@ -1,0 +1,15 @@
+**/node_modules
+**/dist
+**/.turbo
+.git
+.github
+*.log
+**/*.db
+**/*.db-journal
+**/*.sqlite
+.env
+.env.*
+!.env.example
+coverage
+.vscode
+.idea
