@@ -15,7 +15,7 @@ source of truth); the HTTP layer and the future MCP adapter are thin consumers.
 
 ```
 apps/
-  web/      React + Vite + TypeScript + Tailwind + shadcn/ui (mobile-first, PWA-ready)
+  web/      Svelte 5 + Vite + TypeScript + Tailwind + shadcn-svelte (mobile-first, PWA-ready SPA)
   server/   Fastify HTTP layer — thin routes that call core; serves the built web app
 packages/
   core/     Prisma schema + client, repositories, services, AI provider interface
