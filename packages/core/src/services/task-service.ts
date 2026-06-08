@@ -1,4 +1,4 @@
-import type { Prisma, Task, TaskStatus } from "@prisma/client";
+import type { Prisma, ProactivityTag, Task, TaskStatus } from "@prisma/client";
 import { startOfIsoWeek } from "../domain/week.js";
 import { deriveQuadrant, type Quadrant } from "../domain/quadrant.js";
 import type { TaskRepository } from "../repositories/task-repository.js";
@@ -10,6 +10,7 @@ export interface CreateTaskInput {
   urgent?: boolean;
   dueDate?: Date | null;
   goalId?: string | null;
+  proactivity?: ProactivityTag | null;
 }
 
 export interface UpdateTaskInput {
@@ -21,6 +22,15 @@ export interface UpdateTaskInput {
   goalId?: string | null;
   isBigRock?: boolean;
   plannedWeek?: Date | null;
+  proactivity?: ProactivityTag | null;
+}
+
+/** Filters for listing tasks. */
+export interface TaskFilter {
+  status?: TaskStatus;
+  /** A specific goal's tasks, or `null` for tasks not linked to any goal. */
+  goalId?: string | null;
+  proactivity?: ProactivityTag;
 }
 
 /** A task plus its derived quadrant — the shape the API/UI consume. */
@@ -58,6 +68,7 @@ export class TaskService {
       important: input.important ?? false,
       urgent: input.urgent ?? false,
       dueDate: input.dueDate ?? null,
+      proactivity: input.proactivity ?? null,
       ...(input.goalId ? { goal: { connect: { id: input.goalId } } } : {}),
     };
     return withQuadrant(await this.tasks.create(data));
@@ -68,9 +79,12 @@ export class TaskService {
     return task ? withQuadrant(task) : null;
   }
 
-  /** List tasks, optionally filtered by status. Active = not archived. */
-  async list(status?: TaskStatus): Promise<TaskWithQuadrant[]> {
-    const where = status ? { status } : undefined;
+  /** List tasks with optional filters (status, goal, influence/concern). */
+  async list(filter: TaskFilter = {}): Promise<TaskWithQuadrant[]> {
+    const where: Prisma.TaskWhereInput = {};
+    if (filter.status) where.status = filter.status;
+    if (filter.goalId !== undefined) where.goalId = filter.goalId;
+    if (filter.proactivity) where.proactivity = filter.proactivity;
     return (await this.tasks.findMany(where)).map(withQuadrant);
   }
 
@@ -87,6 +101,7 @@ export class TaskService {
     if (input.dueDate !== undefined) data.dueDate = input.dueDate;
     if (input.isBigRock !== undefined) data.isBigRock = input.isBigRock;
     if (input.plannedWeek !== undefined) data.plannedWeek = input.plannedWeek;
+    if (input.proactivity !== undefined) data.proactivity = input.proactivity;
     if (input.goalId !== undefined) {
       data.goal = input.goalId
         ? { connect: { id: input.goalId } }

@@ -18,6 +18,7 @@ export async function taskRoutes(fastify: FastifyInstance): Promise<void> {
       urgent: { type: "boolean" },
       quadrant: { type: "string", enum: ["Q1", "Q2", "Q3", "Q4"] },
       status: { type: "string", enum: ["TODO", "DONE", "ARCHIVED"] },
+      proactivity: { type: ["string", "null"], enum: ["INFLUENCE", "CONCERN", null] },
       isBigRock: { type: "boolean" },
       plannedWeek: { type: ["string", "null"], format: "date-time" },
       dueDate: { type: ["string", "null"], format: "date-time" },
@@ -42,21 +43,34 @@ export async function taskRoutes(fastify: FastifyInstance): Promise<void> {
     {
       ...auth,
       schema: {
-        description: "List tasks (optionally filtered by status), each with its derived quadrant.",
+        description:
+          "List tasks (filter by status, goal, influence/concern, or unlinked), each with its derived quadrant.",
         tags: ["tasks"],
         security: secured,
         querystring: {
           type: "object",
           properties: {
             status: { type: "string", enum: ["TODO", "DONE", "ARCHIVED"] },
+            goalId: { type: "string" },
+            proactivity: { type: "string", enum: ["INFLUENCE", "CONCERN"] },
+            unlinked: { type: "boolean", description: "Only tasks not linked to any goal." },
           },
         },
         response: { 200: { type: "array", items: taskSchema } },
       },
     },
     async (req) => {
-      const { status } = req.query as { status?: "TODO" | "DONE" | "ARCHIVED" };
-      return service.list(status);
+      const q = req.query as {
+        status?: "TODO" | "DONE" | "ARCHIVED";
+        goalId?: string;
+        proactivity?: "INFLUENCE" | "CONCERN";
+        unlinked?: boolean;
+      };
+      return service.list({
+        status: q.status,
+        proactivity: q.proactivity,
+        goalId: q.unlinked ? null : q.goalId,
+      });
     },
   );
 
@@ -116,6 +130,7 @@ export async function taskRoutes(fastify: FastifyInstance): Promise<void> {
             urgent: { type: "boolean" },
             dueDate: { type: "string", format: "date-time" },
             goalId: { type: "string" },
+            proactivity: { type: "string", enum: ["INFLUENCE", "CONCERN"] },
           },
         },
         response: { 201: taskSchema },
@@ -129,6 +144,7 @@ export async function taskRoutes(fastify: FastifyInstance): Promise<void> {
         urgent?: boolean;
         dueDate?: string;
         goalId?: string;
+        proactivity?: "INFLUENCE" | "CONCERN";
       };
       const task = await service.create({
         ...body,
@@ -161,6 +177,7 @@ export async function taskRoutes(fastify: FastifyInstance): Promise<void> {
             goalId: { type: ["string", "null"] },
             isBigRock: { type: "boolean" },
             plannedWeek: { type: ["string", "null"], format: "date-time" },
+            proactivity: { type: ["string", "null"], enum: ["INFLUENCE", "CONCERN", null] },
           },
         },
         response: { 200: taskSchema, 404: errorSchema },

@@ -9,6 +9,8 @@ import { loadConfig, type ServerConfig } from "./config.js";
 import { authPlugin } from "./plugins/auth.js";
 import { healthRoutes } from "./routes/health.js";
 import { taskRoutes } from "./routes/tasks.js";
+import { goalRoutes } from "./routes/goals.js";
+import { missionRoutes } from "./routes/mission.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -65,6 +67,8 @@ export async function buildApp(
     async (api) => {
       await healthRoutes(api);
       await taskRoutes(api);
+      await goalRoutes(api);
+      await missionRoutes(api);
     },
     { prefix: "/api" },
   );

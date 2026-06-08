@@ -143,8 +143,8 @@ describe("TaskService", () => {
     await service.create({ title: "B" });
     await service.complete(a.id);
     expect(await service.list()).toHaveLength(2);
-    expect(await service.list("DONE")).toHaveLength(1);
-    expect(await service.list("TODO")).toHaveLength(1);
+    expect(await service.list({ status: "DONE" })).toHaveLength(1);
+    expect(await service.list({ status: "TODO" })).toHaveLength(1);
   });
 
   it("removes a task", async () => {
