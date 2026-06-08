@@ -10,8 +10,10 @@ services:
       HOST: "0.0.0.0"
       # SQLite DB lives on the named volume so it survives restarts.
       DATABASE_URL: "file:/data/dev.db"
-      # Provide these via a .env file or your shell. Do NOT commit real values.
-      API_AUTH_TOKEN: "${API_AUTH_TOKEN:-change-me-to-a-long-random-token}"
+      # Leave API_AUTH_TOKEN empty for an open single-user instance (the default).
+      # Set it (via your shell or a .env file) to require a bearer token on the
+      # API; then enter the same token in the web UI's settings (gear icon).
+      API_AUTH_TOKEN: "${API_AUTH_TOKEN:-}"
       ANTHROPIC_API_KEY: "${ANTHROPIC_API_KEY:-}"
     volumes:
       - bigrocks-data:/data

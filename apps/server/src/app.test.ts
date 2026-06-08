@@ -46,4 +46,16 @@ describe("server app", () => {
     });
     expect(res.statusCode).toBe(401);
   });
+
+  it("accepts an empty body on application/json POSTs (no FST_ERR_CTP_EMPTY_JSON_BODY)", async () => {
+    // A bodyless POST with a JSON content-type used to 400 before reaching auth.
+    // Now the empty body is parsed as undefined, so the request reaches the auth
+    // gate and returns 401 (not 400) when unauthenticated.
+    const res = await app.inject({
+      method: "POST",
+      url: "/api/tasks/abc/complete",
+      headers: { "content-type": "application/json" },
+    });
+    expect(res.statusCode).toBe(401);
+  });
 });
