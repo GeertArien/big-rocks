@@ -1,16 +1,28 @@
 # BigRocks — single-container image: build the frontend, then serve it as static
 # files from the Fastify backend. SQLite DB lives on a mounted volume.
+#
+# Three stages:
+#   build    — install everything and compile core/server/web (needs devDeps).
+#   proddeps — a clean PRODUCTION-only install (no devDeps) + Prisma client.
+#   runtime  — proddeps tree + the compiled artifacts. No build tooling shipped.
 
 FROM node:22-alpine AS base
 RUN corepack enable
 WORKDIR /app
 
-# ---- Build stage: install everything and build all workspaces ----------------
+# ---- Build stage: compile everything -----------------------------------------
 FROM base AS build
 COPY . .
 RUN pnpm install --frozen-lockfile
-# `pnpm build` runs: prisma generate + core (tsup) + server (tsup) + web (vite).
+# prisma generate + core (tsup) + server (tsup, bundles core) + web (vite).
 RUN pnpm build
+
+# ---- Prod-deps stage: production node_modules only ---------------------------
+FROM base AS proddeps
+COPY . .
+RUN pnpm install --prod --frozen-lockfile
+# Generate the Prisma client into the production node_modules.
+RUN pnpm --filter @big-rocks/core exec prisma generate
 
 # ---- Runtime stage -----------------------------------------------------------
 FROM base AS runtime
@@ -19,9 +31,11 @@ ENV NODE_ENV=production \
     HOST=0.0.0.0 \
     DATABASE_URL=file:/data/dev.db
 
-# Bring over the built workspace (includes node_modules with the Prisma CLI +
-# generated client, the server bundle, and the web dist).
-COPY --from=build /app /app
+# Production dependencies + Prisma client + schema/migrations + sources.
+COPY --from=proddeps /app /app
+# Overlay the compiled output (the proddeps stage never built these).
+COPY --from=build /app/apps/server/dist ./apps/server/dist
+COPY --from=build /app/apps/web/dist ./apps/web/dist
 
 # SQLite database directory (mount a volume here to persist across restarts).
 RUN mkdir -p /data

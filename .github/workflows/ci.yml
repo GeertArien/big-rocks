@@ -51,3 +51,31 @@ jobs:
 
       - name: Test
         run: pnpm test
+
+  # Build the production Docker image and smoke-test it (migrations apply on
+  # boot, the server serves /api/health). Catches Dockerfile/runtime regressions
+  # on PRs, before the release workflow publishes from main.
+  docker-image:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      # Plain docker CLI (no JS actions) keeps this Node-20-free.
+      - name: Build image
+        run: docker build -t bigrocks:ci .
+
+      - name: Smoke test the running container
+        run: |
+          docker run -d --name bigrocks -p 3000:3000 -e API_AUTH_TOKEN=ci-token bigrocks:ci
+          for i in $(seq 1 30); do
+            if wget -qO- http://localhost:3000/api/health | grep -q '"status":"ok"'; then
+              echo "health OK"; ok=1; break
+            fi
+            sleep 2
+          done
+          if [ "${ok:-0}" != "1" ]; then
+            echo "health check failed; container logs:"; docker logs bigrocks; exit 1
+          fi
+
+      - name: Report image size
+        run: docker images bigrocks:ci --format '{{.Size}}'
