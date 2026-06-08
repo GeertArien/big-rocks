@@ -116,7 +116,10 @@ environment.
 
 ## Status
 
-Built incrementally following the build order in `CLAUDE.md`. This is the
-scaffold (step 1): the monorepo, the data model, a thin task slice, Docker, and
-CI. Feature work (quadrant matrix, goals, people, renewal, AI, import) follows in
-subsequent steps.
+Built incrementally following the build order in `CLAUDE.md`.
+
+- **Step 1** — scaffold: monorepo, data model, Docker, CI.
+- **Step 2** — the interactive quadrant matrix (create tasks, move between
+  quadrants by toggling importance/urgency, complete/reopen, delete) and the
+  weekly "big rocks first" view. Next: goals + mission, people, renewal, AI,
+  import.

@@ -19,15 +19,18 @@ export interface AuthOptions {
  * stay open.
  */
 export const authPlugin = fp<AuthOptions>(async (fastify, opts) => {
+  if (!opts.token) {
+    fastify.log.warn(
+      "API_AUTH_TOKEN is not set — API routes are OPEN (dev mode). Set it to require a bearer token.",
+    );
+  }
+
   fastify.decorate(
     "requireAuth",
     async (req: FastifyRequest, reply: FastifyReply) => {
-      if (!opts.token) {
-        reply.code(503).send({
-          error: "Auth not configured: set API_AUTH_TOKEN on the server.",
-        });
-        return;
-      }
+      // Dev convenience: with no token configured, the API is open. Token-based
+      // auth is hardened in build-order step 6.
+      if (!opts.token) return;
       const header = req.headers.authorization;
       const provided = header?.startsWith("Bearer ")
         ? header.slice("Bearer ".length)

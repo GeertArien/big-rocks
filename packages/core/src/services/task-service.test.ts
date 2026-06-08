@@ -1,7 +1,8 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import type { Prisma, Task } from "@prisma/client";
 import type { TaskRepository } from "../repositories/task-repository.js";
-import { TaskService } from "./task-service.js";
+import { TaskService, groupByQuadrant } from "./task-service.js";
+import { startOfIsoWeek } from "../domain/week.js";
 
 /** An in-memory fake repository — lets us test the service with no database. */
 class FakeTaskRepository implements TaskRepository {
@@ -38,14 +39,44 @@ class FakeTaskRepository implements TaskRepository {
     return this.store.get(id) ?? null;
   }
 
-  async findMany(): Promise<Task[]> {
-    return [...this.store.values()];
+  async findMany(where?: Prisma.TaskWhereInput): Promise<Task[]> {
+    let tasks = [...this.store.values()];
+    if (where?.status) tasks = tasks.filter((t) => t.status === where.status);
+    if (where?.important !== undefined)
+      tasks = tasks.filter((t) => t.important === where.important);
+    if (where?.urgent !== undefined)
+      tasks = tasks.filter((t) => t.urgent === where.urgent);
+    if (where?.plannedWeek !== undefined) {
+      const wk = where.plannedWeek as Date;
+      tasks = tasks.filter(
+        (t) => t.plannedWeek?.getTime() === wk.getTime(),
+      );
+    }
+    return tasks;
   }
 
   async update(id: string, data: Prisma.TaskUpdateInput): Promise<Task> {
     const existing = this.store.get(id);
     if (!existing) throw new Error("not found");
-    const updated = { ...existing, ...data } as Task;
+    // Flatten the subset of Prisma update shapes the service produces.
+    const patch: Partial<Task> = {};
+    for (const key of [
+      "title",
+      "notes",
+      "important",
+      "urgent",
+      "dueDate",
+      "isBigRock",
+      "plannedWeek",
+      "status",
+      "completedAt",
+    ] as const) {
+      if (data[key] !== undefined) {
+        // @ts-expect-error narrow assignment from Prisma update fields
+        patch[key] = data[key];
+      }
+    }
+    const updated = { ...existing, ...patch } as Task;
     this.store.set(id, updated);
     return updated;
   }
@@ -71,16 +102,68 @@ describe("TaskService", () => {
     expect(task.quadrant).toBe("Q2");
   });
 
-  it("marks a task done with a completion timestamp", async () => {
+  it("re-derives the quadrant when importance/urgency change", async () => {
+    const task = await service.create({ title: "Triage", important: false, urgent: true });
+    expect(task.quadrant).toBe("Q3");
+    const moved = await service.update(task.id, { important: true });
+    expect(moved.quadrant).toBe("Q1");
+  });
+
+  it("marks done and reopens a task", async () => {
     const created = await service.create({ title: "Pay bill", urgent: true });
     const done = await service.complete(created.id);
     expect(done.status).toBe("DONE");
     expect(done.completedAt).toBeInstanceOf(Date);
+    const reopened = await service.reopen(created.id);
+    expect(reopened.status).toBe("TODO");
+    expect(reopened.completedAt).toBeNull();
   });
 
-  it("lists created tasks", async () => {
-    await service.create({ title: "A" });
+  it("pins and clears a big rock for the current week", async () => {
+    const created = await service.create({
+      title: "Plan the week",
+      important: true,
+      urgent: false,
+    });
+    const pinned = await service.setBigRock(created.id, true);
+    expect(pinned.isBigRock).toBe(true);
+    expect(pinned.plannedWeek?.getTime()).toBe(startOfIsoWeek().getTime());
+
+    const bigRocks = await service.bigRocksForWeek();
+    expect(bigRocks.map((t) => t.id)).toContain(created.id);
+
+    const cleared = await service.setBigRock(created.id, false);
+    expect(cleared.isBigRock).toBe(false);
+    expect(cleared.plannedWeek).toBeNull();
+    expect(await service.bigRocksForWeek()).toHaveLength(0);
+  });
+
+  it("lists created tasks and filters by status", async () => {
+    const a = await service.create({ title: "A" });
     await service.create({ title: "B" });
+    await service.complete(a.id);
     expect(await service.list()).toHaveLength(2);
+    expect(await service.list("DONE")).toHaveLength(1);
+    expect(await service.list("TODO")).toHaveLength(1);
+  });
+
+  it("removes a task", async () => {
+    const created = await service.create({ title: "Temp" });
+    await service.remove(created.id);
+    expect(await service.get(created.id)).toBeNull();
+  });
+});
+
+describe("groupByQuadrant", () => {
+  it("buckets tasks into Q1-Q4", async () => {
+    const service = new TaskService(new FakeTaskRepository());
+    await service.create({ title: "q1", important: true, urgent: true });
+    await service.create({ title: "q2", important: true, urgent: false });
+    await service.create({ title: "q4", important: false, urgent: false });
+    const groups = groupByQuadrant(await service.list());
+    expect(groups.Q1).toHaveLength(1);
+    expect(groups.Q2).toHaveLength(1);
+    expect(groups.Q3).toHaveLength(0);
+    expect(groups.Q4).toHaveLength(1);
   });
 });
