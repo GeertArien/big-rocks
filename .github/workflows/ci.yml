@@ -17,11 +17,14 @@ jobs:
       # Migrations/generation need a value; CI uses a throwaway local SQLite file.
       DATABASE_URL: "file:./ci.db"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: pnpm/action-setup@v4
+      # pnpm via Corepack (respects the pinned packageManager in package.json).
+      # Avoids pnpm/action-setup, which still runs on the deprecated Node 20.
+      - name: Enable Corepack
+        run: corepack enable
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: 22
           cache: pnpm
