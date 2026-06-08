@@ -27,6 +27,13 @@ enum TaskStatus {
   ARCHIVED
 }
 
+enum GoalStatus {
+  ACTIVE
+  ON_HOLD
+  ACHIEVED
+  DROPPED
+}
+
 // Habit 1: is this within your influence (actionable) or just a concern?
 enum ProactivityTag {
   INFLUENCE
@@ -92,10 +99,11 @@ model Task {
 }
 
 model Goal {
-  id          String    @id @default(cuid())
+  id          String     @id @default(cuid())
   title       String
   description String?
   targetDate  DateTime?
+  status      GoalStatus @default(ACTIVE)
 
   // Optional link into the Sharpen-the-Saw dimensions (e.g. learning -> MENTAL).
   dimension RenewalDimension?

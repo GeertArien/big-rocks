@@ -24,6 +24,15 @@ export {
   PrismaTaskRepository,
   type TaskRepository,
 } from "./repositories/task-repository.js";
+export {
+  PrismaGoalRepository,
+  type GoalRepository,
+  type GoalWithTasks,
+} from "./repositories/goal-repository.js";
+export {
+  PrismaMissionRepository,
+  type MissionRepository,
+} from "./repositories/mission-repository.js";
 
 // Services
 export {
@@ -31,8 +40,17 @@ export {
   groupByQuadrant,
   type CreateTaskInput,
   type UpdateTaskInput,
+  type TaskFilter,
   type TaskWithQuadrant,
 } from "./services/task-service.js";
+export {
+  GoalService,
+  type CreateGoalInput,
+  type UpdateGoalInput,
+  type GoalProgress,
+  type GoalWithProgress,
+} from "./services/goal-service.js";
+export { MissionService } from "./services/mission-service.js";
 
 // AI
 export {
@@ -45,11 +63,13 @@ export {
 export type {
   Task,
   Goal,
+  GoalStatus,
   MissionStatement,
   Person,
   Commitment,
   CommitmentLog,
   RenewalActivity,
+  ProactivityTag,
   ApiKey,
   Prisma,
 } from "@prisma/client";

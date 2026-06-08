@@ -123,5 +123,8 @@ Built incrementally following the build order in `CLAUDE.md`.
 - **Step 1** — scaffold: monorepo, data model, Docker, CI.
 - **Step 2** — the interactive quadrant matrix (create tasks, move between
   quadrants by toggling importance/urgency, complete/reopen, delete) and the
-  weekly "big rocks first" view. Next: goals + mission, people, renewal, AI,
+  weekly "big rocks first" view.
+- **Step 3** — Goals (first-class, with derived progress) + a versioned mission
+  statement (Habit 2), and influence/concern tagging on tasks (Habit 1); tasks
+  can be linked to a goal. Next: people + recurring commitments, renewal, AI,
   import.

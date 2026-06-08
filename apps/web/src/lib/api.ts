@@ -4,6 +4,8 @@ import { getToken } from "./token";
 
 export type Quadrant = "Q1" | "Q2" | "Q3" | "Q4";
 export type TaskStatus = "TODO" | "DONE" | "ARCHIVED";
+export type Proactivity = "INFLUENCE" | "CONCERN";
+export type GoalStatus = "ACTIVE" | "ON_HOLD" | "ACHIEVED" | "DROPPED";
 
 export interface Task {
   id: string;
@@ -13,11 +15,38 @@ export interface Task {
   urgent: boolean;
   quadrant: Quadrant;
   status: TaskStatus;
+  proactivity: Proactivity | null;
   isBigRock: boolean;
   plannedWeek: string | null;
   dueDate: string | null;
   completedAt: string | null;
   goalId: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface GoalProgress {
+  total: number;
+  done: number;
+  ratio: number;
+}
+
+export interface Goal {
+  id: string;
+  title: string;
+  description: string | null;
+  targetDate: string | null;
+  status: GoalStatus;
+  dimension: string | null;
+  progress: GoalProgress;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Mission {
+  id: string;
+  content: string;
+  isActive: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -68,6 +97,8 @@ export interface CreateTaskBody {
   important?: boolean;
   urgent?: boolean;
   dueDate?: string;
+  goalId?: string;
+  proactivity?: Proactivity;
 }
 
 export function createTask(body: CreateTaskBody): Promise<Task> {
@@ -82,6 +113,8 @@ export interface UpdateTaskBody {
   dueDate?: string | null;
   isBigRock?: boolean;
   plannedWeek?: string | null;
+  goalId?: string | null;
+  proactivity?: Proactivity | null;
 }
 
 export function updateTask(id: string, body: UpdateTaskBody): Promise<Task> {
@@ -101,4 +134,52 @@ export function reopenTask(id: string): Promise<Task> {
 
 export function deleteTask(id: string): Promise<void> {
   return request<void>(`/tasks/${id}`, { method: "DELETE" });
+}
+
+// --- Goals (Habit 2) --------------------------------------------------------
+
+export function listGoals(status?: GoalStatus): Promise<Goal[]> {
+  return request<Goal[]>(`/goals${status ? `?status=${status}` : ""}`);
+}
+
+export interface CreateGoalBody {
+  title: string;
+  description?: string;
+  targetDate?: string;
+  status?: GoalStatus;
+}
+
+export function createGoal(body: CreateGoalBody): Promise<Goal> {
+  return request<Goal>("/goals", { method: "POST", body: JSON.stringify(body) });
+}
+
+export interface UpdateGoalBody {
+  title?: string;
+  description?: string | null;
+  targetDate?: string | null;
+  status?: GoalStatus;
+}
+
+export function updateGoal(id: string, body: UpdateGoalBody): Promise<Goal> {
+  return request<Goal>(`/goals/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify(body),
+  });
+}
+
+export function deleteGoal(id: string): Promise<void> {
+  return request<void>(`/goals/${id}`, { method: "DELETE" });
+}
+
+// --- Mission statement (Habit 2) -------------------------------------------
+
+export function getMission(): Promise<Mission | null> {
+  return request<Mission | null>("/mission");
+}
+
+export function setMission(content: string): Promise<Mission> {
+  return request<Mission>("/mission", {
+    method: "PUT",
+    body: JSON.stringify({ content }),
+  });
 }

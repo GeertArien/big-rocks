@@ -1,7 +1,8 @@
 <script lang="ts">
   import { Check, RotateCcw, Star, Trash2 } from "lucide-svelte";
   import { tasksStore } from "@/lib/stores/tasks.svelte";
-  import type { Task } from "@/lib/api";
+  import { goalsStore } from "@/lib/stores/goals.svelte";
+  import type { Proactivity, Task } from "@/lib/api";
 
   let { task }: { task: Task } = $props();
 
@@ -11,6 +12,11 @@
     return active
       ? "bg-[var(--color-primary)] text-[var(--color-primary-foreground)] border-transparent"
       : "bg-transparent text-[var(--color-muted-foreground)] border-[var(--color-border)]";
+  }
+
+  // Clicking the active proactivity tag clears it; otherwise sets it.
+  function setProactivity(value: Proactivity) {
+    tasksStore.setProactivity(task, task.proactivity === value ? null : value);
   }
 </script>
 
@@ -52,7 +58,45 @@
       >
         Urgent
       </button>
+      <span class="mx-0.5 text-[10px] text-[var(--color-border)]">|</span>
+      <!-- Habit 1: influence vs concern -->
+      <button
+        onclick={() => setProactivity("INFLUENCE")}
+        aria-pressed={task.proactivity === "INFLUENCE"}
+        title="In your influence (actionable)"
+        class="rounded-full border px-2 py-0.5 text-[10px] font-medium transition-colors {toggleChip(
+          task.proactivity === 'INFLUENCE',
+        )}"
+      >
+        Influence
+      </button>
+      <button
+        onclick={() => setProactivity("CONCERN")}
+        aria-pressed={task.proactivity === "CONCERN"}
+        title="A concern (not in your control)"
+        class="rounded-full border px-2 py-0.5 text-[10px] font-medium transition-colors {toggleChip(
+          task.proactivity === 'CONCERN',
+        )}"
+      >
+        Concern
+      </button>
     </div>
+
+    <!-- Habit 2: link to a goal -->
+    {#if goalsStore.goals.length > 0}
+      <select
+        value={task.goalId ?? ""}
+        onchange={(e) =>
+          tasksStore.setGoal(task, (e.currentTarget as HTMLSelectElement).value || null)}
+        aria-label="Link to goal"
+        class="mt-1.5 max-w-[12rem] truncate rounded-md border border-[var(--color-border)] bg-transparent px-1.5 py-0.5 text-[11px] text-[var(--color-muted-foreground)]"
+      >
+        <option value="">No goal</option>
+        {#each goalsStore.goals as goal (goal.id)}
+          <option value={goal.id}>{goal.title}</option>
+        {/each}
+      </select>
+    {/if}
   </div>
 
   <div class="flex shrink-0 items-center gap-1">

@@ -5,26 +5,44 @@
   import NewTaskForm from "@/lib/components/NewTaskForm.svelte";
   import QuadrantBoard from "@/lib/components/QuadrantBoard.svelte";
   import BigRocksPanel from "@/lib/components/BigRocksPanel.svelte";
+  import GoalsPanel from "@/lib/components/GoalsPanel.svelte";
+  import MissionPanel from "@/lib/components/MissionPanel.svelte";
   import { tasksStore } from "@/lib/stores/tasks.svelte";
+  import { goalsStore } from "@/lib/stores/goals.svelte";
+  import { missionStore } from "@/lib/stores/mission.svelte";
   import { getHealth } from "@/lib/api";
   import { getToken, setToken } from "@/lib/token";
 
-  let tab = $state<"matrix" | "week">("matrix");
+  type Tab = "matrix" | "week" | "goals" | "mission";
+  const tabs: { id: Tab; label: string }[] = [
+    { id: "matrix", label: "Matrix" },
+    { id: "week", label: "This Week" },
+    { id: "goals", label: "Goals" },
+    { id: "mission", label: "Mission" },
+  ];
+
+  let tab = $state<Tab>("matrix");
   let health = $state<"checking" | "ok" | "down">("checking");
   let showSettings = $state(false);
   let tokenInput = $state(getToken());
+
+  function loadAll() {
+    tasksStore.load();
+    goalsStore.load();
+    missionStore.load();
+  }
 
   onMount(() => {
     getHealth()
       .then(() => (health = "ok"))
       .catch(() => (health = "down"));
-    tasksStore.load();
+    loadAll();
   });
 
   function saveToken() {
     setToken(tokenInput.trim());
     showSettings = false;
-    tasksStore.load();
+    loadAll();
   }
 
   function tabClass(active: boolean) {
@@ -64,7 +82,9 @@
     </div>
   {/if}
 
-  <NewTaskForm />
+  {#if tab === "matrix" || tab === "week"}
+    <NewTaskForm />
+  {/if}
 
   {#if tasksStore.error}
     <div class="rounded-md border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700">
@@ -75,27 +95,27 @@
     </div>
   {/if}
 
-  <nav class="flex gap-4 border-b border-[var(--color-border)]">
-    <button
-      class="border-b-2 px-1 pb-2 text-sm font-medium transition-colors {tabClass(tab === 'matrix')}"
-      onclick={() => (tab = "matrix")}
-    >
-      Matrix
-    </button>
-    <button
-      class="border-b-2 px-1 pb-2 text-sm font-medium transition-colors {tabClass(tab === 'week')}"
-      onclick={() => (tab = "week")}
-    >
-      This Week
-    </button>
+  <nav class="flex gap-4 overflow-x-auto border-b border-[var(--color-border)]">
+    {#each tabs as t (t.id)}
+      <button
+        class="whitespace-nowrap border-b-2 px-1 pb-2 text-sm font-medium transition-colors {tabClass(
+          tab === t.id,
+        )}"
+        onclick={() => (tab = t.id)}
+      >
+        {t.label}
+      </button>
+    {/each}
   </nav>
 
-  {#if tasksStore.loading && tasksStore.tasks.length === 0}
-    <p class="py-8 text-center text-sm text-[var(--color-muted-foreground)]">Loading…</p>
-  {:else if tab === "matrix"}
+  {#if tab === "matrix"}
     <QuadrantBoard />
-  {:else}
+  {:else if tab === "week"}
     <BigRocksPanel />
+  {:else if tab === "goals"}
+    <GoalsPanel />
+  {:else}
+    <MissionPanel />
   {/if}
 
   <footer class="mt-auto pt-4 text-xs text-[var(--color-muted-foreground)]">

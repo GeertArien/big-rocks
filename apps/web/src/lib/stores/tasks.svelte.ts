@@ -67,6 +67,16 @@ class TasksStore {
     );
   }
 
+  /** Habit 1: tag a task influence (actionable) vs concern, or clear it. */
+  setProactivity(task: Task, value: Task["proactivity"]): Promise<void> {
+    return this.run(() => updateTask(task.id, { proactivity: value }));
+  }
+
+  /** Link a task to a goal (Habit 2), or unlink with null. */
+  setGoal(task: Task, goalId: string | null): Promise<void> {
+    return this.run(() => updateTask(task.id, { goalId }));
+  }
+
   remove(task: Task): Promise<void> {
     return this.run(() => deleteTask(task.id));
   }
