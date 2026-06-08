@@ -60,18 +60,9 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
+      # Plain docker CLI (no JS actions) keeps this Node-20-free.
       - name: Build image
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          push: false
-          load: true
-          tags: bigrocks:ci
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+        run: docker build -t bigrocks:ci .
 
       - name: Smoke test the running container
         run: |
