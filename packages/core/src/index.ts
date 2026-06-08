@@ -28,7 +28,9 @@ export {
 // Services
 export {
   TaskService,
+  groupByQuadrant,
   type CreateTaskInput,
+  type UpdateTaskInput,
   type TaskWithQuadrant,
 } from "./services/task-service.js";
 

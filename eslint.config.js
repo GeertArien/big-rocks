@@ -24,8 +24,9 @@ export default tseslint.config(
     },
   },
   {
-    // Svelte single-file components: parse <script lang="ts"> with the TS parser.
-    files: ["**/*.svelte"],
+    // Svelte components + rune modules (*.svelte.ts/.js): parse with the Svelte
+    // parser, delegating <script lang="ts"> / TS modules to the TS parser.
+    files: ["**/*.svelte", "**/*.svelte.ts", "**/*.svelte.js"],
     languageOptions: {
       parser: svelteParser,
       parserOptions: { parser: tseslint.parser },
