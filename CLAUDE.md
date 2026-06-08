@@ -209,6 +209,8 @@ attach to it). Keep it as a plain attribute when it's just a value or a derived 
 - Tackle one build-order step at a time. Work each step on its own branch and open a PR; don't bundle
   unrelated steps into one change.
 - After pushing a branch, open a pull request automatically — no need to ask first.
+- After opening a PR, automatically watch it (subscribe to its CI/review activity) and
+  address failures/comments — no need to ask each time.
 - For any change that touches the database schema or a core data model, propose it and wait for approval
   before writing code.
 - Don't merge with failing tests or a broken build.
