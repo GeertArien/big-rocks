@@ -106,10 +106,12 @@ attach to it). Keep it as a plain attribute when it's just a value or a derived 
 
 ## Tech stack
 
-- **Frontend:** React + Vite + TypeScript, Tailwind CSS, and **shadcn/ui** for components. Mobile-first,
+- **Frontend:** Svelte 5 + Vite + TypeScript, Tailwind CSS, and **shadcn-svelte** for components.
+  Built as a static SPA (no SvelteKit server — the Fastify backend serves the built files). Mobile-first,
   responsive, installable as a PWA (add-to-homescreen, works offline). Mobile-friendliness is a hard
-  requirement. shadcn/ui components are copied into the repo (owned in-source), giving a consistent,
-  accessible, polished component set to build the quadrant matrix, planning views, dashboards, and forms.
+  requirement; Svelte's compiled, runtime-light output keeps bundles small on phones. shadcn-svelte
+  components are copied into the repo (owned in-source), giving a consistent, accessible, polished
+  component set to build the quadrant matrix, planning views, dashboards, and forms.
 - **Backend:** Node + Fastify (TypeScript). Chosen for schema-based validation and auto-generated
   OpenAPI docs, which serve the agent-facing API directly.
 - **Database:** SQLite to start, accessed via Prisma. MUST stay modular so Postgres can be swapped in

@@ -1,0 +1,33 @@
+services:
+  app:
+    build: .
+    image: bigrocks:latest
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      HOST: "0.0.0.0"
+      # SQLite DB lives on the named volume so it survives restarts.
+      DATABASE_URL: "file:/data/dev.db"
+      # Provide these via a .env file or your shell. Do NOT commit real values.
+      API_AUTH_TOKEN: "${API_AUTH_TOKEN:-change-me-to-a-long-random-token}"
+      ANTHROPIC_API_KEY: "${ANTHROPIC_API_KEY:-}"
+    volumes:
+      - bigrocks-data:/data
+    restart: unless-stopped
+
+  # Optional Postgres for later. To use it: switch the Prisma provider to
+  # "postgresql", point DATABASE_URL here, and re-run migrations.
+  # db:
+  #   image: postgres:16-alpine
+  #   environment:
+  #     POSTGRES_USER: bigrocks
+  #     POSTGRES_PASSWORD: bigrocks
+  #     POSTGRES_DB: bigrocks
+  #   volumes:
+  #     - bigrocks-pg:/var/lib/postgresql/data
+
+volumes:
+  bigrocks-data:
+  # bigrocks-pg:

@@ -1,0 +1,38 @@
+{
+  "name": "big-rocks",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "A personal todo and productivity app organized around the 7 Habits.",
+  "engines": {
+    "node": ">=20"
+  },
+  "packageManager": "pnpm@10.33.0",
+  "scripts": {
+    "build": "pnpm --filter @big-rocks/core build && pnpm --filter @big-rocks/server build && pnpm --filter @big-rocks/web build",
+    "typecheck": "pnpm -r typecheck",
+    "lint": "eslint .",
+    "test": "pnpm -r test",
+    "dev": "pnpm --filter @big-rocks/server dev",
+    "db:generate": "pnpm --filter @big-rocks/core db:generate",
+    "db:migrate": "pnpm --filter @big-rocks/core db:migrate",
+    "db:seed": "pnpm --filter @big-rocks/core db:seed"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.4",
+    "eslint": "^9.39.4",
+    "eslint-plugin-svelte": "^3.19.0",
+    "globals": "^15.15.0",
+    "svelte-eslint-parser": "^1.8.0",
+    "typescript": "^5.6.3",
+    "typescript-eslint": "^8.60.1"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@prisma/client",
+      "@prisma/engines",
+      "esbuild",
+      "prisma"
+    ]
+  }
+}

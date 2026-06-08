@@ -1,0 +1,206 @@
+// BigRocks data model.
+//
+// Provider is SQLite to start; keep all access behind the repository/service
+// layer so swapping to Postgres is just a provider + DATABASE_URL change.
+//
+// Modeling decisions locked in with the owner:
+//   - quadrant is DERIVED from `important` x `urgent` (never stored).
+//   - recurring commitments are tracked PER-PERSON (CommitmentLog.personId set).
+//   - adherence is a streak/history view derived from logs (no per-period rows).
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// ---------------------------------------------------------------------------
+// Enums
+// ---------------------------------------------------------------------------
+
+enum TaskStatus {
+  TODO
+  DONE
+  ARCHIVED
+}
+
+// Habit 1: is this within your influence (actionable) or just a concern?
+enum ProactivityTag {
+  INFLUENCE
+  CONCERN
+}
+
+enum TaskSource {
+  MANUAL
+  TODOIST
+  AI_INTAKE
+}
+
+enum CadenceUnit {
+  DAY
+  WEEK
+  MONTH
+}
+
+enum RenewalDimension {
+  PHYSICAL
+  MENTAL
+  SOCIAL_EMOTIONAL
+  SPIRITUAL
+}
+
+// ---------------------------------------------------------------------------
+// Private Victory: tasks, goals, mission (Habits 1-3)
+// ---------------------------------------------------------------------------
+
+model Task {
+  id        String  @id @default(cuid())
+  title     String
+  notes     String?
+
+  // Quadrant is derived from these in the service layer; never stored.
+  important Boolean @default(false)
+  urgent    Boolean @default(false)
+
+  status      TaskStatus      @default(TODO)
+  proactivity ProactivityTag? // Habit 1
+
+  // Habit 3: weekly "big rocks first" planning.
+  isBigRock   Boolean   @default(false)
+  plannedWeek DateTime? // Monday of the planned week
+
+  dueDate     DateTime?
+  completedAt DateTime?
+
+  // Habit 2: a task belongs to at most one Goal (optional, nullable).
+  goal   Goal?   @relation(fields: [goalId], references: [id], onDelete: SetNull)
+  goalId String?
+
+  // Import provenance (Todoist CSV / AI intake).
+  source           TaskSource @default(MANUAL)
+  externalId       String?
+  externalPriority Int?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([goalId])
+  @@index([status])
+}
+
+model Goal {
+  id          String    @id @default(cuid())
+  title       String
+  description String?
+  targetDate  DateTime?
+
+  // Optional link into the Sharpen-the-Saw dimensions (e.g. learning -> MENTAL).
+  dimension RenewalDimension?
+
+  tasks Task[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Single-user: expect one row with isActive = true.
+model MissionStatement {
+  id        String   @id @default(cuid())
+  content   String
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ---------------------------------------------------------------------------
+// Public Victory: people + recurring commitments (Habits 4-6)
+// ---------------------------------------------------------------------------
+
+model Person {
+  id           String  @id @default(cuid())
+  name         String
+  // Relationship type is a plain field, not its own entity (deliberate non-case).
+  relationship String?
+  notes        String?
+
+  commitments CommitmentParticipant[]
+  logs        CommitmentLog[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Commitment {
+  id          String  @id @default(cuid())
+  title       String
+  description String?
+
+  // Shared cadence model (every `cadenceValue` `cadenceUnit`s).
+  cadenceUnit  CadenceUnit
+  cadenceValue Int         @default(1)
+
+  active Boolean @default(true)
+
+  participants CommitmentParticipant[]
+  logs         CommitmentLog[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Many-to-many Commitment <-> Person.
+model CommitmentParticipant {
+  commitment   Commitment @relation(fields: [commitmentId], references: [id], onDelete: Cascade)
+  commitmentId String
+  person       Person     @relation(fields: [personId], references: [id], onDelete: Cascade)
+  personId     String
+
+  @@id([commitmentId, personId])
+  @@index([personId])
+}
+
+// A logged occurrence. personId set => per-person tracking (the chosen default).
+model CommitmentLog {
+  id           String     @id @default(cuid())
+  commitment   Commitment @relation(fields: [commitmentId], references: [id], onDelete: Cascade)
+  commitmentId String
+  person       Person?    @relation(fields: [personId], references: [id], onDelete: SetNull)
+  personId     String?
+  occurredAt   DateTime   @default(now())
+  note         String?
+  createdAt    DateTime   @default(now())
+
+  @@index([commitmentId, occurredAt])
+  @@index([personId])
+}
+
+// ---------------------------------------------------------------------------
+// Sharpen the Saw: renewal (Habit 7)
+// ---------------------------------------------------------------------------
+
+model RenewalActivity {
+  id         String           @id @default(cuid())
+  dimension  RenewalDimension
+  title      String
+  note       String?
+  occurredAt DateTime         @default(now())
+  createdAt  DateTime         @default(now())
+
+  @@index([dimension, occurredAt])
+}
+
+// ---------------------------------------------------------------------------
+// Auth: API keys (token-based, single-user). Store a hash, never plaintext.
+// ---------------------------------------------------------------------------
+
+model ApiKey {
+  id         String    @id @default(cuid())
+  name       String
+  hashedKey  String    @unique
+  lastUsedAt DateTime?
+  revokedAt  DateTime?
+  createdAt  DateTime  @default(now())
+}
