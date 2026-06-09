@@ -1,4 +1,5 @@
 import { getMission, setMission, type Mission } from "@/lib/api";
+import { toast } from "@/lib/components/ui/toast";
 
 /** Reactive mission statement store (Habit 2). */
 class MissionStore {
@@ -24,8 +25,11 @@ class MissionStore {
     this.error = null;
     try {
       this.mission = await setMission(content);
+      toast.success("Mission saved");
     } catch (err) {
-      this.error = err instanceof Error ? err.message : "Failed to save mission";
+      const msg = err instanceof Error ? err.message : "Failed to save mission";
+      this.error = msg;
+      toast.error(msg);
     } finally {
       this.saving = false;
     }

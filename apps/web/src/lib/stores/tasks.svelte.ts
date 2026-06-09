@@ -8,12 +8,26 @@ import {
   type CreateTaskBody,
   type Quadrant,
   type Task,
+  type UpdateTaskBody,
 } from "@/lib/api";
 import { startOfIsoWeekIso } from "@/lib/week";
+import { toast } from "@/lib/components/ui/toast";
+import { goalsStore } from "./goals.svelte";
+
+function deriveQuadrant(important: boolean, urgent: boolean): Quadrant {
+  if (important && urgent) return "Q1";
+  if (important) return "Q2";
+  if (urgent) return "Q3";
+  return "Q4";
+}
+
+function message(err: unknown, fallback = "Something went wrong"): string {
+  return err instanceof Error ? err.message : fallback;
+}
 
 /**
- * Reactive task store. Mutations call the API and then refresh from the server
- * (simple and correct for a single-user app; optimistic updates can come later).
+ * Reactive task store with optimistic updates: local state changes immediately,
+ * the API call follows, and a failure rolls back and surfaces a toast.
  */
 class TasksStore {
   tasks = $state<Task[]>([]);
@@ -26,59 +40,137 @@ class TasksStore {
     try {
       this.tasks = await listTasks();
     } catch (err) {
-      this.error = err instanceof Error ? err.message : "Failed to load tasks";
+      this.error = message(err, "Failed to load tasks");
     } finally {
       this.loading = false;
     }
   }
 
-  private async run(action: () => Promise<unknown>): Promise<void> {
-    this.error = null;
+  private patchLocal(id: string, partial: Partial<Task>): void {
+    this.tasks = this.tasks.map((t) => (t.id === id ? { ...t, ...partial } : t));
+  }
+
+  /** Optimistically patch one task, run the request, reconcile or roll back. */
+  private async edit(
+    id: string,
+    optimistic: Partial<Task>,
+    request: () => Promise<Task>,
+    opts: { affectsGoals?: boolean } = {},
+  ): Promise<void> {
+    const prev = this.tasks;
+    this.patchLocal(id, optimistic);
     try {
-      await action();
-      this.tasks = await listTasks();
+      const updated = await request();
+      this.tasks = this.tasks.map((t) => (t.id === updated.id ? updated : t));
+      if (opts.affectsGoals) goalsStore.refresh();
     } catch (err) {
-      this.error = err instanceof Error ? err.message : "Request failed";
+      this.tasks = prev;
+      toast.error(message(err));
     }
   }
 
-  add(body: CreateTaskBody): Promise<void> {
-    return this.run(() => createTask(body));
+  async add(body: CreateTaskBody): Promise<void> {
+    const now = new Date().toISOString();
+    const important = body.important ?? false;
+    const urgent = body.urgent ?? false;
+    const temp: Task = {
+      id: `temp_${now}`,
+      title: body.title,
+      notes: body.notes ?? null,
+      important,
+      urgent,
+      quadrant: deriveQuadrant(important, urgent),
+      status: "TODO",
+      proactivity: body.proactivity ?? null,
+      isBigRock: false,
+      plannedWeek: null,
+      dueDate: body.dueDate ?? null,
+      completedAt: null,
+      goalId: body.goalId ?? null,
+      createdAt: now,
+      updatedAt: now,
+    };
+    const prev = this.tasks;
+    this.tasks = [...prev, temp];
+    try {
+      const created = await createTask(body);
+      this.tasks = this.tasks.map((t) => (t.id === temp.id ? created : t));
+      toast.success("Task added");
+      if (body.goalId) goalsStore.refresh();
+    } catch (err) {
+      this.tasks = prev;
+      toast.error(message(err));
+    }
   }
 
   /** Move a task between quadrants by toggling importance/urgency. */
   setFlags(task: Task, flags: { important?: boolean; urgent?: boolean }): Promise<void> {
-    return this.run(() => updateTask(task.id, flags));
+    const important = flags.important ?? task.important;
+    const urgent = flags.urgent ?? task.urgent;
+    return this.edit(
+      task.id,
+      { ...flags, quadrant: deriveQuadrant(important, urgent) },
+      () => updateTask(task.id, flags),
+    );
   }
 
   toggleComplete(task: Task): Promise<void> {
-    return this.run(() =>
-      task.status === "DONE" ? reopenTask(task.id) : completeTask(task.id),
+    const toDone = task.status !== "DONE";
+    return this.edit(
+      task.id,
+      { status: toDone ? "DONE" : "TODO", completedAt: toDone ? new Date().toISOString() : null },
+      () => (toDone ? completeTask(task.id) : reopenTask(task.id)),
+      { affectsGoals: true },
     );
   }
 
   toggleBigRock(task: Task): Promise<void> {
     const next = !task.isBigRock;
-    return this.run(() =>
-      updateTask(task.id, {
-        isBigRock: next,
-        plannedWeek: next ? startOfIsoWeekIso() : null,
-      }),
+    const plannedWeek = next ? startOfIsoWeekIso() : null;
+    return this.edit(
+      task.id,
+      { isBigRock: next, plannedWeek },
+      () => updateTask(task.id, { isBigRock: next, plannedWeek }),
     );
   }
 
   /** Habit 1: tag a task influence (actionable) vs concern, or clear it. */
   setProactivity(task: Task, value: Task["proactivity"]): Promise<void> {
-    return this.run(() => updateTask(task.id, { proactivity: value }));
+    return this.edit(task.id, { proactivity: value }, () =>
+      updateTask(task.id, { proactivity: value }),
+    );
   }
 
   /** Link a task to a goal (Habit 2), or unlink with null. */
   setGoal(task: Task, goalId: string | null): Promise<void> {
-    return this.run(() => updateTask(task.id, { goalId }));
+    return this.edit(task.id, { goalId }, () => updateTask(task.id, { goalId }), {
+      affectsGoals: true,
+    });
   }
 
-  remove(task: Task): Promise<void> {
-    return this.run(() => deleteTask(task.id));
+  /** Full edit from the task form sheet. */
+  update(task: Task, body: UpdateTaskBody): Promise<void> {
+    const important = body.important ?? task.important;
+    const urgent = body.urgent ?? task.urgent;
+    return this.edit(
+      task.id,
+      { ...body, quadrant: deriveQuadrant(important, urgent) } as Partial<Task>,
+      () => updateTask(task.id, body),
+      { affectsGoals: true },
+    );
+  }
+
+  async remove(task: Task): Promise<void> {
+    const prev = this.tasks;
+    this.tasks = prev.filter((t) => t.id !== task.id);
+    try {
+      await deleteTask(task.id);
+      toast.success("Task deleted");
+      if (task.goalId) goalsStore.refresh();
+    } catch (err) {
+      this.tasks = prev;
+      toast.error(message(err));
+    }
   }
 }
 

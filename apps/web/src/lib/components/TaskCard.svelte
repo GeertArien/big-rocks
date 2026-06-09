@@ -1,7 +1,8 @@
 <script lang="ts">
-  import { Check, RotateCcw, Star, Trash2 } from "lucide-svelte";
+  import { Check, Pencil, RotateCcw, Star, Trash2 } from "lucide-svelte";
   import { tasksStore } from "@/lib/stores/tasks.svelte";
   import { goalsStore } from "@/lib/stores/goals.svelte";
+  import { taskActions } from "@/lib/stores/task-actions.svelte";
   import type { Proactivity, Task } from "@/lib/api";
 
   let { task }: { task: Task } = $props();
@@ -113,7 +114,15 @@
       </button>
     {/if}
     <button
-      onclick={() => tasksStore.remove(task)}
+      onclick={() => taskActions.edit(task)}
+      aria-label="Edit task"
+      title="Edit"
+      class="flex size-6 items-center justify-center rounded text-[var(--color-muted-foreground)] hover:bg-[var(--color-accent)]"
+    >
+      <Pencil class="size-3.5" />
+    </button>
+    <button
+      onclick={() => taskActions.askDelete(task)}
       aria-label="Delete task"
       title="Delete"
       class="flex size-6 items-center justify-center rounded text-[var(--color-muted-foreground)] hover:bg-[var(--color-accent)] hover:text-red-600"
