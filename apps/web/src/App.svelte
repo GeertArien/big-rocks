@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { Settings } from "lucide-svelte";
+  import { Plus, Settings } from "lucide-svelte";
   import QuadrantBoard from "@/lib/components/QuadrantBoard.svelte";
   import WeekPanel from "@/lib/components/WeekPanel.svelte";
   import ProjectsPanel from "@/lib/components/ProjectsPanel.svelte";
@@ -15,6 +15,7 @@
   import BottomNav from "@/lib/components/BottomNav.svelte";
   import SettingsSheet from "@/lib/components/SettingsSheet.svelte";
   import TaskFormSheet from "@/lib/components/TaskFormSheet.svelte";
+  import CaptureSheet from "@/lib/components/CaptureSheet.svelte";
   import { Toaster } from "@/lib/components/ui/toast";
   import { ConfirmDialog } from "@/lib/components/ui/confirm";
   import { tasksStore } from "@/lib/stores/tasks.svelte";
@@ -23,6 +24,7 @@
   import { projectsStore } from "@/lib/stores/projects.svelte";
   import { peopleStore } from "@/lib/stores/people.svelte";
   import { renewalStore } from "@/lib/stores/renewal.svelte";
+  import { aiStore } from "@/lib/stores/ai.svelte";
   import { missionStore } from "@/lib/stores/mission.svelte";
   import { taskActions } from "@/lib/stores/task-actions.svelte";
   import { navStore } from "@/lib/stores/nav.svelte";
@@ -30,6 +32,7 @@
 
   let health = $state<"checking" | "ok" | "down">("checking");
   let settingsOpen = $state(false);
+  let captureOpen = $state(false);
 
   function loadAll() {
     getHealth()
@@ -42,9 +45,17 @@
     peopleStore.load();
     renewalStore.load();
     missionStore.load();
+    aiStore.check();
   }
 
   onMount(loadAll);
+
+  function onKeydown(e: KeyboardEvent) {
+    if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
+      e.preventDefault();
+      captureOpen = true;
+    }
+  }
 </script>
 
 <!-- The active mode's accent flows through kickers, tabs, and highlights. -->
@@ -66,6 +77,14 @@
         <ModeSwitch />
       </div>
 
+      <button
+        onclick={() => (captureOpen = true)}
+        aria-label="Capture"
+        title="Capture (⌘K)"
+        class="flex size-9 items-center justify-center rounded-md text-[var(--color-muted-foreground)] hover:bg-[var(--color-accent)]"
+      >
+        <Plus class="size-5" />
+      </button>
       <button
         onclick={() => (settingsOpen = true)}
         aria-label="Settings"
@@ -122,10 +141,22 @@
     {/if}
   </main>
 
+  <!-- Mobile capture FAB, floating above the bottom nav. -->
+  <button
+    onclick={() => (captureOpen = true)}
+    aria-label="Capture"
+    class="fixed right-4 bottom-20 z-40 flex size-13 items-center justify-center rounded-2xl bg-[var(--color-primary)] text-[var(--color-primary-foreground)] shadow-lg active:scale-95 sm:hidden"
+  >
+    <Plus class="size-6" />
+  </button>
+
   <BottomNav />
 </div>
 
+<svelte:window onkeydown={onKeydown} />
+
 <Toaster />
+<CaptureSheet bind:open={captureOpen} />
 <SettingsSheet bind:open={settingsOpen} {health} onSaved={loadAll} />
 <TaskFormSheet bind:open={taskActions.editOpen} task={taskActions.editing} />
 <ConfirmDialog

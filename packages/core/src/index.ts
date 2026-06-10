@@ -117,9 +117,16 @@ export {
 // AI
 export {
   type AiProvider,
-  type QuadrantClassification,
+  type TaskClassification,
+  type WeeklyReviewContext,
   NoopAiProvider,
 } from "./ai/provider.js";
+export { AnthropicAiProvider } from "./ai/anthropic-provider.js";
+export {
+  AiService,
+  type AiIntakeResult,
+  type UnalignedReport,
+} from "./services/ai-service.js";
 
 // Re-export Prisma's generated types so consumers get them without a direct dep.
 export type {

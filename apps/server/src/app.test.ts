@@ -12,7 +12,13 @@ describe("server app", () => {
 
   beforeAll(async () => {
     app = await buildApp({
-      config: { ...loadConfig(), authToken: "test-token", isProduction: false },
+      config: {
+        ...loadConfig(),
+        authToken: "test-token",
+        // Force the Noop provider so AI tests don't depend on the local env.
+        anthropicApiKey: undefined,
+        isProduction: false,
+      },
     });
     await app.ready();
   });
@@ -46,10 +52,31 @@ describe("server app", () => {
       "/api/commitments/overdue",
       "/api/habits",
       "/api/renewal/summary",
+      "/api/ai/status",
     ]) {
       const res = await app.inject({ method: "GET", url });
       expect(res.statusCode).toBe(401);
     }
+  });
+
+  it("answers 503 on AI routes when no Anthropic key is configured", async () => {
+    const res = await app.inject({
+      method: "POST",
+      url: "/api/ai/classify",
+      headers: {
+        authorization: "Bearer test-token",
+        "content-type": "application/json",
+      },
+      payload: { text: "take noor climbing saturday" },
+    });
+    expect(res.statusCode).toBe(503);
+
+    const status = await app.inject({
+      method: "GET",
+      url: "/api/ai/status",
+      headers: { authorization: "Bearer test-token" },
+    });
+    expect(status.json()).toEqual({ available: false });
   });
 
   it("documents the entity routes in the OpenAPI spec", async () => {
@@ -64,6 +91,9 @@ describe("server app", () => {
       "/api/renewal/summary",
       "/api/renewal/trends",
       "/api/renewal/activities",
+      "/api/ai/intake",
+      "/api/ai/review",
+      "/api/ai/unaligned",
     ]) {
       expect(paths).toContain(path);
     }

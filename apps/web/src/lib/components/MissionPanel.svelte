@@ -1,9 +1,28 @@
 <script lang="ts">
+  import { Sparkles } from "lucide-svelte";
   import { Button } from "@/lib/components/ui/button";
+  import { toast } from "@/lib/components/ui/toast";
   import { missionStore } from "@/lib/stores/mission.svelte";
+  import { aiStore } from "@/lib/stores/ai.svelte";
+  import { aiRefineMission } from "@/lib/api";
 
   let draft = $state("");
   let initialized = $state(false);
+  let refining = $state(false);
+
+  // Habit 2: AI refinement edits the DRAFT only — saving stays the user's call.
+  async function refine() {
+    if (!draft.trim() || refining) return;
+    refining = true;
+    try {
+      draft = (await aiRefineMission(draft.trim())).content;
+      toast.success("Draft refined — save to keep it");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Refine failed");
+    } finally {
+      refining = false;
+    }
+  }
 
   // Seed the editor from the loaded mission once.
   $effect(() => {
@@ -51,6 +70,12 @@
     {/if}
 
     <div class="flex items-center justify-end gap-2">
+      {#if aiStore.available}
+        <Button variant="outline" size="sm" onclick={refine} disabled={!draft.trim() || refining}>
+          <Sparkles class="size-3.5" />
+          {refining ? "Refining…" : "Refine with AI"}
+        </Button>
+      {/if}
       <Button
         size="sm"
         onclick={save}

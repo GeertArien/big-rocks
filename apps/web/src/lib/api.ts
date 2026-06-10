@@ -483,6 +483,48 @@ export function revokeApiKey(id: string): Promise<ApiKeyView> {
   return request<ApiKeyView>(`/keys/${id}/revoke`, { method: "POST" });
 }
 
+// --- AI jobs ------------------------------------------------------------------
+
+export interface TaskClassification {
+  title: string;
+  important: boolean;
+  urgent: boolean;
+  proactivity: Proactivity | null;
+  dueDate: string | null;
+  rationale: string;
+}
+
+export function getAiStatus(): Promise<{ available: boolean }> {
+  return request<{ available: boolean }>("/ai/status");
+}
+
+export function aiClassify(text: string): Promise<TaskClassification> {
+  return request<TaskClassification>("/ai/classify", {
+    method: "POST",
+    body: JSON.stringify({ text }),
+  });
+}
+
+export function aiIntake(
+  text: string,
+): Promise<{ task: Task; classification: TaskClassification }> {
+  return request<{ task: Task; classification: TaskClassification }>("/ai/intake", {
+    method: "POST",
+    body: JSON.stringify({ text }),
+  });
+}
+
+export function aiRefineMission(draft: string): Promise<{ content: string }> {
+  return request<{ content: string }>("/ai/mission/refine", {
+    method: "POST",
+    body: JSON.stringify({ draft }),
+  });
+}
+
+export function aiReview(): Promise<{ summary: string; generatedAt: string }> {
+  return request<{ summary: string; generatedAt: string }>("/ai/review");
+}
+
 // --- Mission statement (Habit 2) -------------------------------------------
 
 export function getMission(): Promise<Mission | null> {

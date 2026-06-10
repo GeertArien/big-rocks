@@ -5,6 +5,7 @@
   import { Input } from "@/lib/components/ui/input";
   import { toast } from "@/lib/components/ui/toast";
   import { getToken, setToken } from "@/lib/token";
+  import { aiStore } from "@/lib/stores/ai.svelte";
   import {
     createApiKey,
     listApiKeys,
@@ -101,6 +102,19 @@
       <span class="flex items-center gap-2 text-sm {statusMeta.text}">
         <span class="size-2 rounded-full {statusMeta.dot}"></span>
         {statusMeta.label}
+      </span>
+    </div>
+
+    <div class="flex items-center justify-between rounded-lg border border-[var(--color-border)] p-3">
+      <div>
+        <span class="text-sm font-medium">AI assistant</span>
+        <p class="text-xs text-[var(--color-muted-foreground)]">
+          Capture preview, mission refine, weekly review.
+        </p>
+      </div>
+      <span class="flex items-center gap-2 text-sm {aiStore.available ? 'text-[var(--pine)]' : 'text-[var(--color-muted-foreground)]'}">
+        <span class="size-2 rounded-full {aiStore.available ? 'bg-[var(--pine)]' : 'bg-[var(--color-input)]'}"></span>
+        {aiStore.available ? "Configured" : "Set ANTHROPIC_API_KEY"}
       </span>
     </div>
 

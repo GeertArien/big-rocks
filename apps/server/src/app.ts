@@ -17,6 +17,7 @@ import { projectRoutes } from "./routes/projects.js";
 import { peopleRoutes } from "./routes/people.js";
 import { renewalRoutes } from "./routes/renewal.js";
 import { missionRoutes } from "./routes/mission.js";
+import { aiRoutes } from "./routes/ai.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -81,6 +82,10 @@ export async function buildApp(
       await renewalRoutes(api);
       await missionRoutes(api);
       await keyRoutes(api, apiKeys);
+      await aiRoutes(api, {
+        anthropicApiKey: config.anthropicApiKey,
+        anthropicModel: config.anthropicModel,
+      });
     },
     { prefix: "/api" },
   );

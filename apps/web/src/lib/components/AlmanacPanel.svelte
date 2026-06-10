@@ -1,16 +1,33 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { BookOpen } from "lucide-svelte";
+  import { BookOpen, Sparkles } from "lucide-svelte";
   import {
     DIMENSION_META,
     cadenceText,
     renewalStore,
   } from "@/lib/stores/renewal.svelte";
   import { navStore } from "@/lib/stores/nav.svelte";
+  import { aiStore } from "@/lib/stores/ai.svelte";
+  import { aiReview } from "@/lib/api";
   import { startOfIsoWeekIso } from "@/lib/week";
 
   // Read-only by design: this panel only loads and renders the record.
   onMount(() => renewalStore.loadRecord());
+
+  // The one ✦ surface in the Almanac: the weekly review, generated on demand.
+  let review = $state<string | null>(null);
+  let reviewing = $state(false);
+  async function generateReview() {
+    if (reviewing) return;
+    reviewing = true;
+    try {
+      review = (await aiReview()).summary;
+    } catch {
+      review = null;
+    } finally {
+      reviewing = false;
+    }
+  }
 
   const trends = $derived(renewalStore.trends);
   const empty = $derived(
@@ -188,6 +205,29 @@
           </div>
         </div>
       </div>
+
+      {#if aiStore.available}
+        <div class="rounded-xl border-l-[3px] border border-[var(--color-border)] border-l-[var(--plum)] bg-[var(--color-card)] p-4 shadow-sm">
+          <div class="flex items-center gap-2">
+            <Sparkles class="size-4 text-[var(--plum)]" />
+            <h3 class="font-display text-base font-semibold">Weekly review</h3>
+            <span class="rounded-full bg-[var(--color-muted)] px-2 py-0.5 text-[10px] font-semibold text-[var(--color-muted-foreground)]">AI</span>
+          </div>
+          {#if review}
+            <p class="mt-2 font-display text-sm italic leading-relaxed text-[var(--color-foreground)]/80">
+              “{review}”
+            </p>
+          {:else}
+            <button
+              onclick={generateReview}
+              disabled={reviewing}
+              class="mt-2 text-sm font-semibold text-[var(--plum)] hover:underline disabled:opacity-50"
+            >
+              {reviewing ? "Reading the week…" : "✦ Generate this week's review"}
+            </button>
+          {/if}
+        </div>
+      {/if}
 
       {#if renewalStore.activities.length > 0}
         <div class="rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] p-4 shadow-sm">
