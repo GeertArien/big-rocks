@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Clock &amp; Compass — A 7 Habits Life Planner</title>
+<style>
+  :root {
+    --ink: #1c1a17;
+    --paper: #f4f0e6;
+    --paper-2: #ebe5d6;
+    --card: #fbf9f2;
+    --line: #d9d0bc;
+    --line-strong: #b7ab8f;
+    --accent: #8a3324;       /* deep terracotta */
+    --accent-2: #2f5d50;     /* pine */
+    --gold: #b3892b;
+    --muted: #6f6857;
+    --q1: #b5482f;
+    --q2: #2f5d50;
+    --q3: #b3892b;
+    --q4: #7a7363;
+    --shadow: 0 1px 0 rgba(0,0,0,.04), 0 18px 40px -28px rgba(40,30,15,.5);
+    --serif: "Iowan Old Style", "Palatino Linotype", "Palatino", "Book Antiqua", Georgia, serif;
+    --sans: "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: var(--sans);
+    color: var(--ink);
+    background:
+      radial-gradient(circle at 20% 10%, #f8f4ea 0, transparent 55%),
+      radial-gradient(circle at 85% 90%, #efe9da 0, transparent 50%),
+      var(--paper);
+    background-attachment: fixed;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+  body::before {
+    content: "";
+    position: fixed; inset: 0;
+    pointer-events: none; z-index: 0;
+    opacity: .04;
+    background-image: repeating-linear-gradient(0deg, #000 0 1px, transparent 1px 3px);
+  }
+  .wrap { position: relative; z-index: 1; max-width: 1080px; margin: 0 auto; padding: 0 22px 80px; }
+
+  /* Masthead */
+  header.mast {
+    text-align: center;
+    padding: 46px 0 26px;
+    border-bottom: 2px solid var(--ink);
+    margin-bottom: 4px;
+    position: relative;
+  }
+  .mast .kicker {
+    font-family: var(--sans);
+    letter-spacing: .42em;
+    text-transform: uppercase;
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 14px;
+  }
+  .mast h1 {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: clamp(34px, 6vw, 58px);
+    line-height: .98;
+    margin: 0;
+    letter-spacing: -.01em;
+  }
+  .mast h1 .amp { color: var(--accent); font-style: italic; }
+  .mast .sub {
+    font-family: var(--serif);
+    font-style: italic;
+    color: var(--muted);
+    margin-top: 12px;
+    font-size: 17px;
+  }
+  .compass-mark {
+    width: 30px; height: 30px; margin: 0 auto 6px;
+    border: 1.5px solid var(--ink); border-radius: 50%;
+    position: relative;
+  }
+  .compass-mark::before {
+    content:""; position:absolute; inset:0; margin:auto;
+    width: 2px; height: 22px;
+    background: linear-gradient(var(--accent) 0 50%, var(--ink) 50% 100%);
+    transform: rotate(34deg);
+  }
+
+  /* Tabs */
+  nav.tabs {
+    display: flex; flex-wrap: wrap; gap: 2px;
+    justify-content: center;
+    margin: 22px 0 30px;
+    border-bottom: 1px solid var(--line-strong);
+  }
+  nav.tabs button {
+    font-family: var(--sans);
+    font-size: 13px; letter-spacing: .04em;
+    background: none; border: none; cursor: pointer;
+    padding: 12px 16px 13px;
+    color: var(--muted);
+    border-bottom: 3px solid transparent;
+    margin-bottom: -1px;
+    transition: color .15s, border-color .15s;
+    text-transform: uppercase;
+  }
+  nav.tabs button:hover { color: var(--ink); }
+  nav.tabs button.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 600; }
+
+  .panel { display: none; animation: fade .35s ease; }
+  .panel.active { display: block; }
+  @keyframes fade { from { opacity: 0; transform: translateY(6px);} to {opacity:1; transform:none;} }
+
+  .lead {
+    font-family: var(--serif);
+    font-size: 18px; line-height: 1.55;
+    max-width: 70ch;
+    color: #3b3730;
+    margin: 0 0 8px;
+  }
+  .lead .habit-tag {
+    display: inline-block;
+    font-family: var(--sans); font-size: 10.5px; letter-spacing: .14em;
+    text-transform: uppercase; color: var(--accent-2);
+    border: 1px solid var(--accent-2); border-radius: 2px;
+    padding: 2px 7px; margin-right: 8px; vertical-align: 2px;
+  }
+  .section-head {
+    display: flex; align-items: baseline; gap: 12px;
+    margin: 30px 0 14px;
+  }
+  .section-head h2 {
+    font-family: var(--serif); font-weight: 600; font-size: 26px; margin: 0;
+  }
+  .section-head .rule { flex: 1; height: 1px; background: var(--line-strong); }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    box-shadow: var(--shadow);
+    padding: 20px 22px;
+  }
+  .grid { display: grid; gap: 16px; }
+  @media (min-width: 720px){ .grid.two { grid-template-columns: 1fr 1fr; } }
+
+  label.field { display:block; font-size: 12px; letter-spacing:.06em; text-transform: uppercase; color: var(--muted); margin: 0 0 5px; }
+  input[type=text], input[type=date], textarea, select {
+    width: 100%; font-family: var(--sans); font-size: 15px;
+    padding: 9px 11px; border: 1px solid var(--line-strong);
+    border-radius: 5px; background: #fffdf7; color: var(--ink);
+  }
+  textarea { resize: vertical; min-height: 64px; line-height: 1.5; }
+  input:focus, textarea:focus, select:focus { outline: 2px solid var(--accent-2); outline-offset: 0; border-color: transparent; }
+
+  button.btn {
+    font-family: var(--sans); cursor: pointer;
+    background: var(--ink); color: var(--paper);
+    border: none; border-radius: 5px; padding: 10px 16px;
+    font-size: 14px; letter-spacing: .02em;
+    transition: transform .08s, background .15s;
+  }
+  button.btn:hover { background: #000; }
+  button.btn:active { transform: scale(.97); }
+  button.btn.ghost { background: none; color: var(--ink); border: 1px solid var(--line-strong); }
+  button.btn.ghost:hover { background: var(--paper-2); }
+  button.btn.sm { padding: 6px 11px; font-size: 12.5px; }
+  button.btn.accent { background: var(--accent); }
+
+  .pill-x { background:none; border:none; cursor:pointer; color: var(--muted); font-size: 17px; line-height:1; padding: 2px 4px; border-radius:4px;}
+  .pill-x:hover { color: var(--accent); background: var(--paper-2); }
+
+  .empty { color: var(--muted); font-style: italic; font-family: var(--serif); padding: 6px 0; }
+
+  /* Roles */
+  .role { border-left: 4px solid var(--accent-2); padding: 4px 0 4px 14px; margin-bottom: 18px; }
+  .role .rhead { display:flex; align-items:center; gap:10px; }
+  .role .rhead h3 { font-family: var(--serif); font-size: 19px; margin: 0; flex:1; }
+  .role .mission { font-style: italic; color: var(--muted); font-family: var(--serif); margin: 2px 0 8px; }
+  .goal { display:flex; align-items:flex-start; gap:9px; padding: 5px 0; border-bottom: 1px dotted var(--line); }
+  .goal:last-child { border-bottom: none; }
+  .goal input[type=checkbox]{ margin-top: 4px; width:16px; height:16px; accent-color: var(--accent-2); }
+  .goal .gtext { flex:1; line-height:1.45; }
+  .goal.done .gtext { text-decoration: line-through; color: var(--muted); }
+  .add-inline { display:flex; gap:8px; margin-top:8px; }
+  .add-inline input { flex:1; }
+
+  /* Quadrants */
+  .matrix { display:grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 680px){ .matrix { grid-template-columns: 1fr; } }
+  .quad { border:1px solid var(--line); border-radius:6px; background: var(--card); overflow:hidden; box-shadow: var(--shadow); }
+  .quad .qhead { padding: 11px 15px; color:#fff; }
+  .quad .qhead .qn { font-size:11px; letter-spacing:.16em; text-transform:uppercase; opacity:.85; }
+  .quad .qhead .qt { font-family: var(--serif); font-size: 18px; }
+  .quad .qbody { padding: 12px 15px; min-height: 80px; }
+  .q1 .qhead{ background: var(--q1);} .q2 .qhead{ background: var(--q2);}
+  .q3 .qhead{ background: var(--q3);} .q4 .qhead{ background: var(--q4);}
+  .q2 { outline: 2px solid var(--accent-2); }
+  .task { display:flex; align-items:flex-start; gap:8px; padding:5px 0; border-bottom:1px dotted var(--line); }
+  .task:last-child{ border-bottom:none; }
+  .task input[type=checkbox]{ margin-top:3px; width:15px; height:15px; }
+  .task .ttext{ flex:1; font-size:14.5px; line-height:1.4; }
+  .task.done .ttext{ text-decoration: line-through; color: var(--muted); }
+  .matrix-form { display:grid; gap:10px; grid-template-columns: 1fr auto auto auto; align-items:end; }
+  @media (max-width:680px){ .matrix-form{ grid-template-columns:1fr; } }
+
+  /* Projects */
+  .stat-row{ display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:12px; margin-bottom:22px; }
+  .stat{ background:var(--card); border:1px solid var(--line); border-radius:6px; padding:12px 14px; box-shadow:var(--shadow); }
+  .stat .lab{ font-size:12px; color:var(--muted); letter-spacing:.04em; }
+  .stat .val{ font-family:var(--serif); font-size:26px; font-weight:600; line-height:1.1; }
+  .stat.warn{ background:#f7efe0; border-color:#e0cfa0; }
+  .stat.warn .lab, .stat.warn .val{ color:#7a5a12; }
+  .stat.good .val{ color: var(--accent-2); }
+  .proj{ border:1px solid var(--line); border-radius:6px; background:var(--card); box-shadow:var(--shadow); padding:16px 18px; margin-bottom:14px; }
+  .proj.unaligned{ border-color:#e0cfa0; }
+  .proj .phead{ display:flex; align-items:center; gap:10px; margin-bottom:4px; }
+  .proj .phead h3{ font-family:var(--serif); font-size:19px; margin:0; flex:1; }
+  .lineage{ font-size:13px; color:var(--muted); margin-bottom:12px; display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+  .lineage .sep{ opacity:.5; }
+  .lineage.warn{ color:#7a5a12; }
+  .status-pill{ font-size:11.5px; padding:2px 10px; border-radius:20px; letter-spacing:.03em; }
+  .status-pill.active{ color:var(--accent-2); background:#e3ede9; }
+  .status-pill.someday{ color:var(--muted); background:var(--paper-2); }
+  .status-pill.done{ color:#5a4a8a; background:#ece9f6; }
+  .ptasks{ border-top:1px dotted var(--line); padding-top:10px; display:flex; flex-direction:column; gap:2px; }
+  .ptask{ display:flex; align-items:center; gap:10px; padding:5px 0; }
+  .ptask input[type=checkbox]{ width:15px; height:15px; accent-color:var(--accent-2); }
+  .ptask .txt{ flex:1; font-size:14.5px; line-height:1.4; }
+  .ptask.done .txt{ text-decoration:line-through; color:var(--muted); }
+  .qbadge{ font-size:10.5px; font-weight:700; padding:2px 8px; border-radius:4px; letter-spacing:.04em; }
+  .qbadge.b1{ color:#993C1D; background:#FAECE7; } .qbadge.b2{ color:#0F6E56; background:#E1F5EE; }
+  .qbadge.b3{ color:#854F0B; background:#FAEEDA; } .qbadge.b4{ color:#5F5E5A; background:#F1EFE8; }
+  .due{ font-size:12px; color:var(--muted); min-width:52px; text-align:right; }
+  .due.today{ color:var(--accent); font-weight:600; } .due.over{ color:#a32d2d; font-weight:600; }
+  .rock{ background:none; border:none; cursor:pointer; font-size:15px; line-height:1; padding:1px 3px; color:var(--line-strong); }
+  .rock.on{ color:var(--gold); }
+  .rock:hover{ color:var(--gold); }
+  .ptask-add{ display:flex; gap:8px; align-items:center; padding-top:8px; flex-wrap:wrap; }
+  .ptask-add input[type=text]{ flex:1; min-width:140px; }
+  .ptask-add select, .ptask-add input[type=date]{ width:auto; }
+  .proj-form{ display:grid; gap:10px; grid-template-columns:1fr 1fr auto; align-items:end; }
+  @media(max-width:680px){ .proj-form{ grid-template-columns:1fr; } }
+  .inbox{ background:var(--paper-2); border-radius:6px; padding:14px 18px; margin-top:10px; }
+  .inbox h3{ font-family:var(--serif); font-size:17px; margin:0 0 8px; display:flex; align-items:center; gap:8px; }
+  .move-sel{ font-size:12.5px; padding:4px 8px; }
+
+  /* Bank accounts */
+  .acct { border:1px solid var(--line); border-radius:6px; background:var(--card); padding:14px 16px; margin-bottom:14px; box-shadow:var(--shadow); }
+  .acct .ahead{ display:flex; align-items:center; gap:10px; margin-bottom:8px;}
+  .acct .ahead h3{ font-family:var(--serif); font-size:18px; margin:0; flex:1;}
+  .balance { font-family:var(--serif); font-size:22px; font-weight:600; padding:2px 12px; border-radius:20px; }
+  .balance.pos{ color: var(--accent-2); background:#e3ede9;}
+  .balance.neg{ color: var(--accent); background:#f2e2de;}
+  .balance.zero{ color: var(--muted); background: var(--paper-2);}
+  .ledger { font-size:13px; color:var(--muted); }
+  .ledger .row{ display:flex; gap:8px; padding:3px 0; border-bottom:1px dotted var(--line); }
+  .ledger .row:last-child{ border-bottom:none; }
+  .ledger .amt.dep{ color:var(--accent-2); font-weight:600;}
+  .ledger .amt.wd{ color:var(--accent); font-weight:600;}
+  .acct-actions{ display:flex; gap:7px; margin-top:10px; flex-wrap:wrap;}
+
+  /* Sharpen the saw */
+  .saw-grid{ display:grid; gap:14px; }
+  @media(min-width:720px){ .saw-grid{ grid-template-columns:1fr 1fr; } }
+  .dim { border:1px solid var(--line); border-radius:6px; background:var(--card); padding:16px 18px; box-shadow:var(--shadow); }
+  .dim h3{ font-family:var(--serif); font-size:19px; margin:0 0 2px; display:flex; align-items:center; gap:8px;}
+  .dim .dsub{ font-size:12.5px; color:var(--muted); margin-bottom:12px;}
+  .dim .icon{ width:26px; height:26px; border-radius:50%; display:inline-grid; place-items:center; color:#fff; font-size:13px; font-weight:700; }
+  .streak-row{ display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+  .dots{ display:flex; gap:5px; }
+  .dot{ width:22px; height:22px; border-radius:5px; border:1px solid var(--line-strong); background:#fffdf7; cursor:pointer; transition:transform .08s; font-size:10px; color:var(--muted); display:grid; place-items:center;}
+  .dot:hover{ transform:scale(1.12); }
+  .dot.on{ background: var(--accent-2); border-color: var(--accent-2); color:#fff; }
+  .dim textarea{ margin-top:4px; }
+
+  footer.foot { text-align:center; margin-top:46px; padding-top:20px; border-top:1px solid var(--line-strong); color:var(--muted); font-family:var(--serif); font-style:italic; font-size:14px;}
+  .savechip {
+    position: fixed; bottom: 18px; right: 18px; z-index: 50;
+    background: var(--ink); color: var(--paper);
+    font-size: 12.5px; letter-spacing:.04em;
+    padding: 8px 14px; border-radius: 20px;
+    opacity: 0; transform: translateY(8px); transition: opacity .25s, transform .25s;
+    box-shadow: var(--shadow);
+  }
+  .savechip.show { opacity: 1; transform: none; }
+  .loading { text-align:center; padding:80px 0; font-family:var(--serif); font-style:italic; color:var(--muted); font-size:18px;}
+  .toolbar{ display:flex; justify-content:flex-end; gap:8px; margin-bottom:18px; }
+
+  /* Mode switch */
+  .modeswitch{ display:inline-flex; gap:4px; margin-top:18px; border:1px solid var(--line-strong); border-radius:24px; padding:4px; background:var(--card); }
+  .modeswitch button{ font-family:var(--sans); cursor:pointer; border:none; background:none; color:var(--muted);
+    font-size:13px; letter-spacing:.03em; padding:7px 18px; border-radius:20px; display:flex; align-items:center; gap:7px; transition:all .15s; }
+  .modeswitch button:hover{ color:var(--ink); }
+  .modeswitch button.on{ background:var(--ink); color:var(--paper); }
+  .modeswitch button.on.compass{ background:var(--accent-2); }
+  .modeswitch button.on.clock{ background:var(--accent); }
+  .modeswitch button.on.almanac{ background:var(--gold); }
+  .modeswitch .glyph{ font-size:15px; line-height:1; }
+
+  /* Clock mode */
+  .clock-wrap{ display:grid; gap:18px; grid-template-columns: 1fr; }
+  @media(min-width:860px){ .clock-wrap{ grid-template-columns: 260px 1fr; align-items:start; } }
+  .unsched{ background:var(--card); border:1px solid var(--line); border-radius:6px; box-shadow:var(--shadow); padding:16px 16px; }
+  .unsched h3{ font-family:var(--serif); font-size:17px; margin:0 0 4px; display:flex; align-items:center; gap:7px; }
+  .unsched .hint{ font-size:12px; color:var(--muted); margin-bottom:12px; }
+  .unsched-item{ border:1px solid var(--line); border-radius:5px; padding:8px 10px; margin-bottom:9px; background:#fffdf7; }
+  .unsched-item .ut{ font-size:14px; line-height:1.35; margin-bottom:6px; }
+  .unsched-item .urow{ display:flex; align-items:center; gap:6px; }
+  .unsched-item select{ font-size:12px; padding:4px 6px; flex:1; }
+  .week{ display:grid; gap:10px; }
+  .day{ border:1px solid var(--line); border-radius:6px; background:var(--card); box-shadow:var(--shadow); overflow:hidden; }
+  .day.today{ outline:2px solid var(--accent); }
+  .day .dhead{ display:flex; align-items:baseline; gap:8px; padding:9px 14px; border-bottom:1px solid var(--line); background:var(--paper-2); }
+  .day .dhead .dname{ font-family:var(--serif); font-size:16px; font-weight:600; }
+  .day .dhead .ddate{ font-size:12px; color:var(--muted); }
+  .day .dhead .dtoday{ margin-left:auto; font-size:11px; color:var(--accent); font-weight:600; letter-spacing:.04em; }
+  .day .dbody{ padding:8px 14px; min-height:30px; }
+  .slot{ display:flex; align-items:center; gap:9px; padding:6px 0; border-bottom:1px dotted var(--line); }
+  .slot:last-child{ border-bottom:none; }
+  .slot input[type=checkbox]{ width:15px; height:15px; accent-color:var(--accent-2); }
+  .slot .stime{ font-size:12px; color:var(--accent); font-weight:600; min-width:46px; }
+  .slot .stime.none{ color:var(--muted); font-weight:400; }
+  .slot .stext{ flex:1; font-size:14.5px; line-height:1.35; }
+  .slot.done .stext{ text-decoration:line-through; color:var(--muted); }
+  .slot .scrumb{ font-size:11px; color:var(--muted); }
+  .slot .timeset{ width:auto; font-size:12px; padding:3px 5px; }
+  .day .dempty{ color:var(--muted); font-style:italic; font-family:var(--serif); font-size:13px; padding:4px 0; }
+  .clock-filter{ display:flex; align-items:center; gap:8px; margin-bottom:16px; flex-wrap:wrap; }
+
+  /* Almanac */
+  .renewal-grid{ display:grid; gap:12px; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); margin-bottom:8px; }
+  .ren-card{ border:1px solid var(--line); border-radius:6px; background:var(--card); padding:13px 15px; box-shadow:var(--shadow); border-top:4px solid var(--muted); }
+  .ren-card .rtop{ display:flex; align-items:center; gap:8px; margin-bottom:3px; }
+  .ren-card .ricon{ width:24px; height:24px; border-radius:50%; display:grid; place-items:center; color:#fff; font-size:12px; font-weight:700; }
+  .ren-card h4{ font-family:var(--serif); font-size:16px; margin:0; }
+  .ren-card .rcount{ font-size:12px; color:var(--muted); margin-bottom:8px; }
+  .ren-card .rbig{ font-family:var(--serif); font-size:24px; font-weight:600; }
+  .ren-card .rbig small{ font-size:13px; color:var(--muted); font-weight:400; }
+  .habit{ border:1px solid var(--line); border-radius:6px; background:var(--card); box-shadow:var(--shadow); padding:14px 16px; margin-bottom:12px; }
+  .habit .hhead{ display:flex; align-items:center; gap:10px; margin-bottom:8px; flex-wrap:wrap; }
+  .habit .htitle{ font-family:var(--serif); font-size:18px; flex:1; min-width:120px; }
+  .habit .check-today{ width:30px; height:30px; border-radius:50%; border:2px solid var(--line-strong); background:#fffdf7; cursor:pointer; display:grid; place-items:center; font-size:15px; color:var(--muted); transition:all .12s; }
+  .habit .check-today:hover{ border-color:var(--accent-2); }
+  .habit .check-today.on{ background:var(--accent-2); border-color:var(--accent-2); color:#fff; }
+  .dim-tag{ font-size:11px; padding:2px 9px; border-radius:20px; letter-spacing:.03em; font-weight:600; }
+  .goal-tag{ font-size:11px; padding:2px 9px; border-radius:20px; background:var(--paper-2); color:var(--muted); }
+  .habit .hmeta{ display:flex; align-items:center; gap:14px; margin-bottom:10px; flex-wrap:wrap; font-size:12.5px; color:var(--muted); }
+  .habit .hmeta b{ color:var(--ink); font-weight:600; }
+  .wkdots{ display:flex; gap:5px; }
+  .wd{ width:26px; height:26px; border-radius:5px; border:1px solid var(--line-strong); background:#fffdf7; cursor:pointer; font-size:10px; color:var(--muted); display:grid; place-items:center; transition:transform .08s; }
+  .wd:hover{ transform:scale(1.1); }
+  .wd.on{ background:var(--accent-2); border-color:var(--accent-2); color:#fff; }
+  .wd.future{ opacity:.4; cursor:default; }
+  .wd.future:hover{ transform:none; }
+  .progbar{ height:7px; border-radius:4px; background:var(--paper-2); overflow:hidden; min-width:90px; flex:1; max-width:160px; }
+  .progbar > span{ display:block; height:100%; background:var(--accent-2); border-radius:4px; }
+  .progbar.met > span{ background:var(--gold); }
+  .habit-add{ display:grid; gap:10px; grid-template-columns:1fr auto auto auto; align-items:end; }
+  @media(max-width:680px){ .habit-add{ grid-template-columns:1fr; } }
+  .heatmap{ display:flex; flex-direction:column; gap:3px; }
+  .heat-row{ display:flex; gap:3px; align-items:center; }
+  .heat-cell{ width:13px; height:13px; border-radius:3px; background:var(--paper-2); }
+  .heat-cell.l1{ background:#dfe9df; } .heat-cell.l2{ background:#a9cbb4; }
+  .heat-cell.l3{ background:#5fa07f; } .heat-cell.l4{ background:var(--accent-2); }
+  .heat-label{ font-size:11px; color:var(--muted); width:34px; }
+  .review-grid{ display:grid; gap:14px; grid-template-columns:1fr; }
+  @media(min-width:720px){ .review-grid{ grid-template-columns:1fr 1fr; } }
+  .review-card{ border:1px solid var(--line); border-radius:6px; background:var(--card); padding:15px 17px; box-shadow:var(--shadow); }
+  .review-card h4{ font-family:var(--serif); font-size:16px; margin:0 0 10px; }
+  .cmp-row{ display:flex; align-items:baseline; gap:8px; padding:5px 0; border-bottom:1px dotted var(--line); }
+  .cmp-row:last-child{ border-bottom:none; }
+  .cmp-row .cn{ flex:1; font-size:14px; }
+  .cmp-row .cv{ font-family:var(--serif); font-weight:600; }
+  .delta{ font-size:11.5px; padding:1px 7px; border-radius:12px; }
+  .delta.up{ color:var(--accent-2); background:#e3ede9; } .delta.down{ color:var(--accent); background:#f2e2de; } .delta.flat{ color:var(--muted); background:var(--paper-2); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="mast">
+    <div class="compass-mark"></div>
+    <div class="kicker">A Personal Constitution</div>
+    <h1>The Clock <span class="amp">&amp;</span> Compass</h1>
+    <div class="sub">Begin with the end in mind &mdash; then put first things first.</div>
+    <div class="modeswitch" id="modeswitch"></div>
+  </header>
+
+  <div id="app"><div class="loading">Unrolling the parchment&hellip;</div></div>
+
+  <footer class="foot">
+    &ldquo;The key is not to prioritize what's on your schedule, but to schedule your priorities.&rdquo;<br>
+    Built around the 7 Habits of Highly Effective People.
+  </footer>
+</div>
+
+<div class="savechip" id="savechip">Saved</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.2/sql-wasm.js"></script>
+<script>
+const DB_KEY = "compass_sqlite_db_v1";
+let SQL, db;
+
+const HABITS = {
+  roles:  { tag: "Habits 2 + 3", line: "Define the roles you live by and the few results that matter most in each. A clear destination makes daily choices simple." },
+  projects:{ tag: "Habits 2 + 3", line: "Projects are where goals become action. Hang each project off a goal so every task you do can be traced back to something you said was important." },
+  compass:{ tag: "Habit 3", line: "Sort this week's work into Stephen Covey's time-management matrix. The effective life is lived in Quadrant II &mdash; important, but not urgent." },
+  clock:  { tag: "Habit 3", line: "The compass decides what matters; the clock decides when. Schedule your Big Rocks into the week first &mdash; the small things fill the gaps around them, not the other way round." },
+  almanac:{ tag: "Habit 7", line: "The almanac is your record &mdash; what you actually did, gathered over time. Track the habits that renew you, watch the streaks build, and review how each season is trending." },
+  bank:   { tag: "Habits 4 + 5", line: "Every relationship has an Emotional Bank Account. Log the deposits (kindness, keeping promises, listening) and the withdrawals, and watch the balance." },
+  saw:    { tag: "Habit 7", line: "Sharpen the saw by renewing your four dimensions. Mark each day you invest, and keep the streak alive." }
+};
+
+const SAW_DIMS = [
+  { key:"physical",  name:"Physical",   sub:"Exercise, nutrition, rest", color:"#b5482f", letter:"P" },
+  { key:"mental",    name:"Mental",     sub:"Reading, learning, planning", color:"#2f5d50", letter:"M" },
+  { key:"social",    name:"Social / Emotional", sub:"Connection, service, empathy", color:"#b3892b", letter:"S" },
+  { key:"spiritual", name:"Spiritual",  sub:"Values, meditation, reflection", color:"#5a4a8a", letter:"Sp" }
+];
+
+const QUADS = [
+  { n:1, cls:"q1", num:"Quadrant I",  t:"Urgent & Important",      hint:"Crises, deadlines — manage" },
+  { n:2, cls:"q2", num:"Quadrant II", t:"Important, Not Urgent",   hint:"Growth, planning — focus here" },
+  { n:3, cls:"q3", num:"Quadrant III",t:"Urgent, Not Important",   hint:"Interruptions — minimize" },
+  { n:4, cls:"q4", num:"Quadrant IV", t:"Not Urgent, Not Important",hint:"Time-wasters — eliminate" }
+];
+
+let saveTimer = null;
+function flashSaved(){
+  const c = document.getElementById("savechip");
+  c.classList.add("show");
+  clearTimeout(c._t);
+  c._t = setTimeout(()=>c.classList.remove("show"), 1100);
+}
+async function persist(){
+  try {
+    const data = db.export();
+    let bin = "";
+    const chunk = 0x8000;
+    for (let i=0;i<data.length;i+=chunk){ bin += String.fromCharCode.apply(null, data.subarray(i,i+chunk)); }
+    const b64 = btoa(bin);
+    await window.storage.set(DB_KEY, b64, false);
+    flashSaved();
+  } catch(e){ console.error("persist failed", e); }
+}
+function scheduleSave(){ clearTimeout(saveTimer); saveTimer = setTimeout(persist, 350); }
+
+function run(sql, params=[]){ db.run(sql, params); }
+function all(sql, params=[]){
+  const res = db.exec(sql, params);
+  if(!res.length) return [];
+  const cols = res[0].columns;
+  return res[0].values.map(r => Object.fromEntries(r.map((v,i)=>[cols[i],v])));
+}
+
+function tableCols(table){
+  try { return all(`PRAGMA table_info(${table})`).map(r=>r.name); }
+  catch(e){ return []; }
+}
+function ensureCol(table, col, decl){
+  if(!tableCols(table).includes(col)) run(`ALTER TABLE ${table} ADD COLUMN ${col} ${decl}`);
+}
+function initSchema(){
+  run(`CREATE TABLE IF NOT EXISTS roles (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, mission TEXT, ord INTEGER)`);
+  run(`CREATE TABLE IF NOT EXISTS goals (id INTEGER PRIMARY KEY AUTOINCREMENT, role_id INTEGER, text TEXT, done INTEGER DEFAULT 0)`);
+  run(`CREATE TABLE IF NOT EXISTS tasks (id INTEGER PRIMARY KEY AUTOINCREMENT, quadrant INTEGER, text TEXT, done INTEGER DEFAULT 0)`);
+  run(`CREATE TABLE IF NOT EXISTS projects (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, goal_id INTEGER, status TEXT DEFAULT 'active', ord INTEGER)`);
+  run(`CREATE TABLE IF NOT EXISTS accounts (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT)`);
+  run(`CREATE TABLE IF NOT EXISTS entries (id INTEGER PRIMARY KEY AUTOINCREMENT, account_id INTEGER, kind TEXT, note TEXT, ts TEXT)`);
+  run(`CREATE TABLE IF NOT EXISTS saw_marks (id INTEGER PRIMARY KEY AUTOINCREMENT, dim TEXT, day TEXT)`);
+  run(`CREATE TABLE IF NOT EXISTS saw_intent (dim TEXT PRIMARY KEY, intention TEXT)`);
+  run(`CREATE TABLE IF NOT EXISTS habits (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, dimension TEXT, goal_id INTEGER, target_per_week INTEGER DEFAULT 7, ord INTEGER, archived INTEGER DEFAULT 0)`);
+  run(`CREATE TABLE IF NOT EXISTS habit_marks (id INTEGER PRIMARY KEY AUTOINCREMENT, habit_id INTEGER, day TEXT)`);
+  // Additive migration for existing databases:
+  ensureCol("tasks", "project_id", "INTEGER");
+  ensureCol("tasks", "due", "TEXT");
+  ensureCol("tasks", "saw_dim", "TEXT");
+  ensureCol("tasks", "is_big_rock", "INTEGER DEFAULT 0");
+  ensureCol("tasks", "sched_day", "TEXT");
+  ensureCol("tasks", "sched_start", "TEXT");
+  ensureCol("tasks", "sched_min", "INTEGER");
+}
+
+async function boot(){
+  SQL = await initSqlJs({ locateFile: f => "https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.2/"+f });
+  let loaded = null;
+  try {
+    const r = await window.storage.get(DB_KEY, false);
+    if (r && r.value) loaded = r.value;
+  } catch(e){ /* first run, no key */ }
+
+  if (loaded){
+    const bin = atob(loaded);
+    const bytes = new Uint8Array(bin.length);
+    for(let i=0;i<bin.length;i++) bytes[i]=bin.charCodeAt(i);
+    db = new SQL.Database(bytes);
+  } else {
+    db = new SQL.Database();
+  }
+  initSchema();
+  render();
+}
+
+let mode = "compass"; // "compass" | "clock" | "almanac"
+let activeTab = "roles";
+function renderModeSwitch(){
+  const m = document.getElementById("modeswitch");
+  m.innerHTML = `
+    <button class="compass ${mode==='compass'?'on':''}" data-mode="compass"><span class="glyph">&#10227;</span> Compass</button>
+    <button class="clock ${mode==='clock'?'on':''}" data-mode="clock"><span class="glyph">&#9719;</span> Clock</button>
+    <button class="almanac ${mode==='almanac'?'on':''}" data-mode="almanac"><span class="glyph">&#9783;</span> Almanac</button>`;
+  m.querySelectorAll("button").forEach(b=>{
+    b.onclick = ()=>{ mode = b.dataset.mode; render(); };
+  });
+}
+function render(){
+  renderModeSwitch();
+  const app = document.getElementById("app");
+  if(mode === "clock"){
+    app.innerHTML = `<section class="panel active" id="panel-clock"></section>`;
+    renderClock();
+    return;
+  }
+  if(mode === "almanac"){
+    app.innerHTML = `<section class="panel active" id="panel-almanac"></section>`;
+    renderAlmanac();
+    return;
+  }
+  app.innerHTML = `
+    <nav class="tabs">
+      <button data-tab="roles">Roles &amp; Goals</button>
+      <button data-tab="projects">Projects</button>
+      <button data-tab="compass">Weekly Compass</button>
+      <button data-tab="bank">Bank Accounts</button>
+      <button data-tab="saw">Sharpen the Saw</button>
+    </nav>
+    <section class="panel" id="panel-roles"></section>
+    <section class="panel" id="panel-projects"></section>
+    <section class="panel" id="panel-compass"></section>
+    <section class="panel" id="panel-bank"></section>
+    <section class="panel" id="panel-saw"></section>
+  `;
+  app.querySelectorAll("nav.tabs button").forEach(b=>{
+    b.onclick = ()=>{ activeTab = b.dataset.tab; syncTabs(); };
+  });
+  renderRoles(); renderProjects(); renderCompass(); renderBank(); renderSaw();
+  syncTabs();
+}
+function syncTabs(){
+  document.querySelectorAll("nav.tabs button").forEach(b=>b.classList.toggle("active", b.dataset.tab===activeTab));
+  document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));
+  document.getElementById("panel-"+activeTab).classList.add("active");
+}
+function leadHTML(key){
+  const h = HABITS[key];
+  return `<p class="lead"><span class="habit-tag">${h.tag}</span>${h.line}</p>`;
+}
+function esc(s){ return (s==null?"":String(s)).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+
+/* ---------- ROLES & GOALS ---------- */
+function renderRoles(){
+  const p = document.getElementById("panel-roles");
+  const roles = all(`SELECT * FROM roles ORDER BY ord, id`);
+  let body = "";
+  if(!roles.length){
+    body = `<p class="empty">No roles yet. Start with a few: "Parent", "Professional", "Friend", "Self"&hellip;</p>`;
+  }
+  roles.forEach(r=>{
+    const goals = all(`SELECT * FROM goals WHERE role_id=? ORDER BY id`, [r.id]);
+    body += `<div class="role" data-role="${r.id}">
+      <div class="rhead">
+        <h3>${esc(r.name)}</h3>
+        <button class="pill-x" title="Delete role" onclick="delRole(${r.id})">&times;</button>
+      </div>
+      <input class="mission-inp" data-role="${r.id}" placeholder="Mission statement for this role…" value="${esc(r.mission)}"
+             style="font-style:italic;font-family:var(--serif);margin-bottom:8px;" />
+      ${goals.length? goals.map(g=>`
+        <div class="goal ${g.done?'done':''}">
+          <input type="checkbox" ${g.done?'checked':''} onchange="toggleGoal(${g.id},this.checked)">
+          <div class="gtext">${esc(g.text)}</div>
+          <button class="pill-x" onclick="delGoal(${g.id})" title="Remove">&times;</button>
+        </div>`).join("") : `<div class="empty" style="font-size:14px;">No goals set for this role.</div>`}
+      <div class="add-inline">
+        <input type="text" placeholder="Add a goal…" onkeydown="if(event.key==='Enter')addGoal(${r.id},this)">
+        <button class="btn sm ghost" onclick="addGoal(${r.id}, this.previousElementSibling)">Add goal</button>
+      </div>
+    </div>`;
+  });
+
+  p.innerHTML = leadHTML("roles") + `
+    <div class="section-head"><h2>Your Roles</h2><div class="rule"></div></div>
+    <div class="card">${body}
+      <div class="add-inline" style="margin-top:18px;border-top:1px solid var(--line);padding-top:16px;">
+        <input type="text" id="newRole" placeholder="Name a new role you play in life…" onkeydown="if(event.key==='Enter')addRole()">
+        <button class="btn accent" onclick="addRole()">Add role</button>
+      </div>
+    </div>`;
+  p.querySelectorAll(".mission-inp").forEach(inp=>{
+    inp.onchange = ()=>{ run(`UPDATE roles SET mission=? WHERE id=?`, [inp.value, +inp.dataset.role]); scheduleSave(); };
+  });
+}
+function addRole(){
+  const inp = document.getElementById("newRole");
+  const name = inp.value.trim(); if(!name) return;
+  const max = all(`SELECT COALESCE(MAX(ord),0) m FROM roles`)[0].m;
+  run(`INSERT INTO roles(name,mission,ord) VALUES(?,?,?)`, [name,"",max+1]);
+  scheduleSave(); renderRoles();
+}
+function delRole(id){ run(`DELETE FROM goals WHERE role_id=?`,[id]); run(`DELETE FROM roles WHERE id=?`,[id]); scheduleSave(); renderRoles(); }
+function addGoal(roleId, inp){ const t=inp.value.trim(); if(!t) return; run(`INSERT INTO goals(role_id,text) VALUES(?,?)`,[roleId,t]); scheduleSave(); renderRoles(); }
+function toggleGoal(id,on){ run(`UPDATE goals SET done=? WHERE id=?`,[on?1:0,id]); scheduleSave(); renderRoles(); }
+function delGoal(id){ run(`DELETE FROM goals WHERE id=?`,[id]); scheduleSave(); renderRoles(); }
+
+/* ---------- SHARED TASK HELPERS ---------- */
+function quadFromImpUrg(imp, urg){
+  if(imp && urg) return 1; if(imp && !urg) return 2; if(!imp && urg) return 3; return 4;
+}
+function todayISO(){ return new Date().toISOString().slice(0,10); }
+function fmtDue(due){
+  if(!due) return {label:"&mdash;", cls:""};
+  const t = todayISO();
+  if(due === t) return {label:"Today", cls:"today"};
+  if(due < t) return {label:"Overdue", cls:"over"};
+  const d = new Date(due+"T00:00:00");
+  return {label: d.toLocaleDateString(undefined,{month:"short",day:"numeric"}), cls:""};
+}
+function goalOptionsHTML(selected){
+  const goals = all(`SELECT g.id, g.text, r.name rname FROM goals g JOIN roles r ON r.id=g.role_id ORDER BY r.ord, g.id`);
+  let html = `<option value="">— no goal yet —</option>`;
+  goals.forEach(g=>{
+    html += `<option value="${g.id}" ${selected==g.id?'selected':''}>${esc(g.rname)} › ${esc(g.text)}</option>`;
+  });
+  return html;
+}
+function lineageFor(goalId){
+  if(!goalId) return null;
+  const rows = all(`SELECT g.text gtext, r.name rname FROM goals g JOIN roles r ON r.id=g.role_id WHERE g.id=?`,[goalId]);
+  return rows.length? rows[0] : null;
+}
+
+/* ---------- PROJECTS ---------- */
+function renderProjects(){
+  const p = document.getElementById("panel-projects");
+  const projects = all(`SELECT * FROM projects ORDER BY (status='done'), ord, id`);
+  const activeCount = all(`SELECT COUNT(*) c FROM projects WHERE status='active'`)[0].c;
+  const openTasks = all(`SELECT COUNT(*) c FROM tasks WHERE done=0 AND project_id IS NOT NULL`)[0].c;
+  const q2Count = all(`SELECT COUNT(*) c FROM tasks WHERE done=0 AND quadrant=2`)[0].c;
+  const unaligned = all(`SELECT COUNT(*) c FROM projects WHERE goal_id IS NULL`)[0].c;
+
+  let projHTML = "";
+  if(!projects.length){
+    projHTML = `<p class="empty">No projects yet. A project is any outcome that takes more than one step &mdash; "Launch the newsletter", "Plan the trip".</p>`;
+  }
+  projects.forEach(pr=>{
+    const tasks = all(`SELECT * FROM tasks WHERE project_id=? ORDER BY done, quadrant, id`,[pr.id]);
+    const lin = lineageFor(pr.goal_id);
+    const lineageHTML = lin
+      ? `<div class="lineage"><i class="ti ti-target-arrow" style="font-size:15px"></i> Goal: ${esc(lin.gtext)} <span class="sep">›</span> Role: ${esc(lin.rname)}</div>`
+      : `<div class="lineage warn"><i class="ti ti-alert-triangle" style="font-size:15px"></i> Not linked to a goal &mdash; worth doing, or worth dropping?</div>`;
+    const tasksHTML = tasks.map(t=>{
+      const due = fmtDue(t.due);
+      return `<div class="ptask ${t.done?'done':''}">
+        <input type="checkbox" ${t.done?'checked':''} onchange="toggleTask(${t.id},this.checked)">
+        <span class="txt">${esc(t.text)}</span>
+        <button class="rock ${t.is_big_rock?'on':''}" title="Mark as a Big Rock for the week" onclick="toggleRock(${t.id})">${t.is_big_rock?'★':'☆'}</button>
+        <span class="qbadge b${t.quadrant}">Q${t.quadrant}</span>
+        <span class="due ${due.cls}">${due.label}</span>
+        <button class="pill-x" onclick="delTask(${t.id})">&times;</button>
+      </div>`;
+    }).join("");
+    projHTML += `<div class="proj ${pr.goal_id?'':'unaligned'}">
+      <div class="phead">
+        <h3>${esc(pr.name)}</h3>
+        <span class="status-pill ${pr.status}">${pr.status}</span>
+        <button class="pill-x" onclick="delProject(${pr.id})" title="Delete project">&times;</button>
+      </div>
+      ${lineageHTML}
+      <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;">
+        <select class="move-sel" onchange="setProjectGoal(${pr.id}, this.value)">${goalOptionsHTML(pr.goal_id)}</select>
+        <select class="move-sel" onchange="setProjectStatus(${pr.id}, this.value)">
+          <option value="active" ${pr.status==='active'?'selected':''}>active</option>
+          <option value="someday" ${pr.status==='someday'?'selected':''}>someday</option>
+          <option value="done" ${pr.status==='done'?'selected':''}>done</option>
+        </select>
+      </div>
+      <div class="ptasks">
+        ${tasksHTML || `<div class="empty" style="font-size:13.5px;">No tasks yet.</div>`}
+        <div class="ptask-add">
+          <input type="text" placeholder="Add a task…" id="pt-text-${pr.id}" onkeydown="if(event.key==='Enter')addProjectTask(${pr.id})">
+          <select id="pt-imp-${pr.id}" title="Important?"><option value="1">Important</option><option value="0">Not important</option></select>
+          <select id="pt-urg-${pr.id}" title="Urgent?"><option value="0">Not urgent</option><option value="1">Urgent</option></select>
+          <input type="date" id="pt-due-${pr.id}" title="Due date">
+          <button class="btn sm ghost" onclick="addProjectTask(${pr.id})">Add</button>
+        </div>
+      </div>
+    </div>`;
+  });
+
+  // Inbox: tasks with no project
+  const inboxTasks = all(`SELECT * FROM tasks WHERE project_id IS NULL ORDER BY done, id`);
+  const projOptions = projects.map(pr=>`<option value="${pr.id}">${esc(pr.name)}</option>`).join("");
+  const inboxHTML = `<div class="inbox">
+    <h3><i class="ti ti-inbox" style="font-size:17px"></i> Inbox <span style="font-size:12px;color:var(--muted);font-family:var(--sans);font-style:normal;">unsorted tasks with no project</span></h3>
+    ${inboxTasks.length ? inboxTasks.map(t=>{
+      const due = fmtDue(t.due);
+      return `<div class="ptask ${t.done?'done':''}">
+        <input type="checkbox" ${t.done?'checked':''} onchange="toggleTask(${t.id},this.checked)">
+        <span class="txt">${esc(t.text)}</span>
+        <span class="qbadge b${t.quadrant}">Q${t.quadrant}</span>
+        <span class="due ${due.cls}">${due.label}</span>
+        ${projOptions ? `<select class="move-sel" onchange="moveTaskToProject(${t.id}, this.value)"><option value="">move to…</option>${projOptions}</select>` : ``}
+        <button class="pill-x" onclick="delTask(${t.id})">&times;</button>
+      </div>`;
+    }).join("") : `<div class="empty" style="font-size:13.5px;">Inbox empty.</div>`}
+    <div class="ptask-add">
+      <input type="text" placeholder="Capture a quick task…" id="inbox-text" onkeydown="if(event.key==='Enter')addInboxTask()">
+      <select id="inbox-imp" title="Important?"><option value="1">Important</option><option value="0">Not important</option></select>
+      <select id="inbox-urg" title="Urgent?"><option value="0">Not urgent</option><option value="1">Urgent</option></select>
+      <button class="btn sm ghost" onclick="addInboxTask()">Capture</button>
+    </div>
+  </div>`;
+
+  p.innerHTML = leadHTML("projects") + `
+    <div class="stat-row">
+      <div class="stat"><div class="lab">Active projects</div><div class="val">${activeCount}</div></div>
+      <div class="stat"><div class="lab">Open tasks</div><div class="val">${openTasks}</div></div>
+      <div class="stat good"><div class="lab">In Quadrant II</div><div class="val">${q2Count}</div></div>
+      <div class="stat ${unaligned?'warn':''}"><div class="lab">Unaligned</div><div class="val">${unaligned}</div></div>
+    </div>
+    <div class="card" style="margin-bottom:18px;">
+      <div class="proj-form">
+        <div><label class="field">New project</label><input type="text" id="newProjName" placeholder="An outcome worth pursuing…" onkeydown="if(event.key==='Enter')addProject()"></div>
+        <div><label class="field">Serves which goal?</label><select id="newProjGoal">${goalOptionsHTML("")}</select></div>
+        <div><button class="btn accent" onclick="addProject()">Add project</button></div>
+      </div>
+    </div>
+    <div class="section-head"><h2>Projects</h2><div class="rule"></div></div>
+    ${projHTML}
+    ${inboxHTML}`;
+}
+function addProject(){
+  const name = document.getElementById("newProjName").value.trim(); if(!name) return;
+  const goalId = document.getElementById("newProjGoal").value || null;
+  const max = all(`SELECT COALESCE(MAX(ord),0) m FROM projects`)[0].m;
+  run(`INSERT INTO projects(name,goal_id,status,ord) VALUES(?,?,?,?)`,[name, goalId, 'active', max+1]);
+  scheduleSave(); renderProjects(); renderCompass();
+}
+function delProject(id){
+  run(`UPDATE tasks SET project_id=NULL WHERE project_id=?`,[id]); // tasks fall back to Inbox, not deleted
+  run(`DELETE FROM projects WHERE id=?`,[id]);
+  scheduleSave(); renderProjects(); renderCompass();
+}
+function setProjectGoal(id, goalId){ run(`UPDATE projects SET goal_id=? WHERE id=?`,[goalId||null, id]); scheduleSave(); renderProjects(); }
+function setProjectStatus(id, status){ run(`UPDATE projects SET status=? WHERE id=?`,[status, id]); scheduleSave(); renderProjects(); }
+function addProjectTask(projId){
+  const text = document.getElementById("pt-text-"+projId).value.trim(); if(!text) return;
+  const imp = +document.getElementById("pt-imp-"+projId).value;
+  const urg = +document.getElementById("pt-urg-"+projId).value;
+  const due = document.getElementById("pt-due-"+projId).value || null;
+  run(`INSERT INTO tasks(quadrant,text,project_id,due) VALUES(?,?,?,?)`,[quadFromImpUrg(imp,urg), text, projId, due]);
+  scheduleSave(); renderProjects(); renderCompass();
+}
+function addInboxTask(){
+  const text = document.getElementById("inbox-text").value.trim(); if(!text) return;
+  const imp = +document.getElementById("inbox-imp").value;
+  const urg = +document.getElementById("inbox-urg").value;
+  run(`INSERT INTO tasks(quadrant,text) VALUES(?,?)`,[quadFromImpUrg(imp,urg), text]);
+  scheduleSave(); renderProjects(); renderCompass();
+}
+function moveTaskToProject(taskId, projId){ if(!projId) return; run(`UPDATE tasks SET project_id=? WHERE id=?`,[projId, taskId]); scheduleSave(); renderProjects(); renderCompass(); }
+function toggleRock(id){ run(`UPDATE tasks SET is_big_rock = CASE WHEN is_big_rock=1 THEN 0 ELSE 1 END WHERE id=?`,[id]); scheduleSave(); renderProjects(); renderCompass(); }
+
+/* ---------- WEEKLY COMPASS / QUADRANTS ---------- */
+let compassFilter = "all"; // "all" | "rocks"
+function setCompassFilter(f){ compassFilter = f; renderCompass(); }
+function renderCompass(){
+  const p = document.getElementById("panel-compass");
+  if(!p) return;
+  const rocksOnly = compassFilter === "rocks";
+  const matrix = QUADS.map(q=>{
+    const where = rocksOnly ? `quadrant=? AND is_big_rock=1` : `quadrant=?`;
+    const tasks = all(`SELECT t.*, p.name pname FROM tasks t LEFT JOIN projects p ON p.id=t.project_id WHERE ${where} ORDER BY done, t.id`, [q.n]);
+    return `<div class="quad ${q.cls}">
+      <div class="qhead"><div class="qn">${q.num} &middot; ${q.hint}</div><div class="qt">${q.t}</div></div>
+      <div class="qbody">
+        ${tasks.length? tasks.map(t=>{
+          const due = fmtDue(t.due);
+          const crumb = t.pname
+            ? `<i class="ti ti-folder" style="font-size:12px"></i> ${esc(t.pname)}`
+            : (t.saw_dim ? `<i class="ti ti-heart" style="font-size:12px"></i> ${esc(t.saw_dim)} renewal` : `<i class="ti ti-inbox" style="font-size:12px"></i> Inbox`);
+          return `<div class="task ${t.done?'done':''}">
+            <input type="checkbox" ${t.done?'checked':''} onchange="toggleTask(${t.id},this.checked)">
+            <div style="flex:1">
+              <div class="ttext">${t.is_big_rock?'<span style="color:var(--gold)">★</span> ':''}${esc(t.text)}</div>
+              <div style="font-size:11.5px;color:var(--muted);margin-top:1px;">${crumb}${t.due?` &middot; <span class="${due.cls==='today'?'':''}" style="${due.cls==='today'?'color:var(--accent)':due.cls==='over'?'color:#a32d2d':''}">${due.label}</span>`:''}</div>
+            </div>
+            <button class="pill-x" onclick="delTask(${t.id})">&times;</button>
+          </div>`;
+        }).join("") : `<div class="empty" style="font-size:13.5px;">${rocksOnly?'No Big Rocks here.':'Empty'}</div>`}
+      </div>
+    </div>`;
+  }).join("");
+
+  p.innerHTML = leadHTML("compass") + `
+    <div class="section-head"><h2>Time Management Matrix</h2><div class="rule"></div></div>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;flex-wrap:wrap;">
+      <span style="font-size:13px;color:var(--muted);">Showing</span>
+      <button class="btn sm ${compassFilter==='rocks'?'accent':'ghost'}" onclick="setCompassFilter('rocks')">★ This week's Big Rocks</button>
+      <button class="btn sm ${compassFilter==='all'?'accent':'ghost'}" onclick="setCompassFilter('all')">All tasks</button>
+      <span style="margin-left:auto;font-size:12px;color:var(--muted);">Tasks come from your projects &middot; star them in the Projects tab</span>
+    </div>
+    <div class="matrix">${matrix}</div>`;
+}
+function refreshTaskViews(){
+  if(mode === "clock"){ renderClock(); }
+  else { renderCompass(); renderProjects(); }
+}
+function toggleTask(id,on){ run(`UPDATE tasks SET done=? WHERE id=?`,[on?1:0,id]); scheduleSave(); refreshTaskViews(); }
+function delTask(id){ run(`DELETE FROM tasks WHERE id=?`,[id]); scheduleSave(); refreshTaskViews(); }
+
+/* ---------- CLOCK MODE (weekly agenda) ---------- */
+let clockFilter = "rocks"; // "rocks" | "scheduled" | "all"
+let weekOffset = 0;        // 0 = current week, -1 prev, +1 next
+function setClockFilter(f){ clockFilter = f; renderClock(); }
+function shiftWeek(n){ weekOffset += n; renderClock(); }
+function mondayOf(offsetWeeks){
+  const d = new Date();
+  const day = (d.getDay() + 6) % 7; // 0 = Monday
+  d.setDate(d.getDate() - day + offsetWeeks*7);
+  d.setHours(0,0,0,0);
+  return d;
+}
+function weekDays(offsetWeeks){
+  const mon = mondayOf(offsetWeeks);
+  const days = [];
+  for(let i=0;i<7;i++){ const d=new Date(mon); d.setDate(mon.getDate()+i); days.push(d); }
+  return days;
+}
+function fmtTime(hhmm){
+  if(!hhmm) return null;
+  const [h,m] = hhmm.split(":").map(Number);
+  const am = h<12; let hr = h%12; if(hr===0) hr=12;
+  return `${hr}:${String(m).padStart(2,"0")} ${am?'am':'pm'}`;
+}
+function renderClock(){
+  const p = document.getElementById("panel-clock");
+  if(!p) return;
+  const days = weekDays(weekOffset);
+  const isoOf = d => d.toISOString().slice(0,10);
+  const t0 = isoOf(days[0]), t6 = isoOf(days[6]);
+  const today = todayISO();
+
+  // Unscheduled panel: Big Rocks (and optionally others) with no day yet
+  const unWhere = clockFilter==="rocks" ? `is_big_rock=1 AND ` : (clockFilter==="scheduled" ? `is_big_rock=1 AND ` : ``);
+  const unsched = all(`SELECT t.*, p.name pname FROM tasks t LEFT JOIN projects p ON p.id=t.project_id
+    WHERE ${unWhere} done=0 AND (sched_day IS NULL OR sched_day='') ORDER BY t.quadrant, t.id`);
+  const dayOpts = days.map(d=>`<option value="${isoOf(d)}">${d.toLocaleDateString(undefined,{weekday:'short', month:'short', day:'numeric'})}</option>`).join("");
+  const unschedHTML = `<div class="unsched">
+    <h3><i class="ti ti-stack-2" style="font-size:16px"></i> Big Rocks to place</h3>
+    <div class="hint">Schedule these into the week first. The small stuff fills the gaps.</div>
+    ${unsched.length ? unsched.map(t=>`
+      <div class="unsched-item">
+        <div class="ut">${t.is_big_rock?'<span style="color:var(--gold)">★</span> ':''}${esc(t.text)}</div>
+        <div class="urow">
+          <span class="qbadge b${t.quadrant}">Q${t.quadrant}</span>
+          <select onchange="scheduleTaskDay(${t.id}, this.value)">
+            <option value="">to day…</option>${dayOpts}
+          </select>
+        </div>
+      </div>`).join("") : `<div class="empty" style="font-size:13px;">Nothing waiting. ${clockFilter==='rocks'?'Star tasks as Big Rocks in the Projects tab.':''}</div>`}
+  </div>`;
+
+  // Week columns
+  const filterClause = clockFilter==="rocks" ? `AND t.is_big_rock=1` : ``;
+  const weekHTML = days.map(d=>{
+    const iso = isoOf(d);
+    const tasks = all(`SELECT t.*, p.name pname FROM tasks t LEFT JOIN projects p ON p.id=t.project_id
+      WHERE t.sched_day=? ${filterClause} ORDER BY (t.sched_start IS NULL), t.sched_start, t.id`, [iso]);
+    const isToday = iso===today;
+    return `<div class="day ${isToday?'today':''}">
+      <div class="dhead">
+        <span class="dname">${d.toLocaleDateString(undefined,{weekday:'long'})}</span>
+        <span class="ddate">${d.toLocaleDateString(undefined,{month:'short', day:'numeric'})}</span>
+        ${isToday?'<span class="dtoday">TODAY</span>':''}
+      </div>
+      <div class="dbody">
+        ${tasks.length ? tasks.map(t=>{
+          const tm = fmtTime(t.sched_start);
+          const crumb = t.pname ? `<i class="ti ti-folder" style="font-size:11px"></i> ${esc(t.pname)}`
+            : (t.saw_dim ? `<i class="ti ti-heart" style="font-size:11px"></i> ${esc(t.saw_dim)}` : `<i class="ti ti-inbox" style="font-size:11px"></i> Inbox`);
+          return `<div class="slot ${t.done?'done':''}">
+            <input type="checkbox" ${t.done?'checked':''} onchange="toggleTask(${t.id},this.checked)">
+            <span class="stime ${tm?'':'none'}">${tm||'—'}</span>
+            <span class="stext">${t.is_big_rock?'<span style="color:var(--gold)">★</span> ':''}${esc(t.text)} <span class="scrumb">· ${crumb}</span></span>
+            <input type="time" class="timeset" value="${t.sched_start||''}" title="Set a time" onchange="setTaskTime(${t.id}, this.value)">
+            <button class="pill-x" title="Unschedule" onclick="unscheduleTask(${t.id})">&times;</button>
+          </div>`;
+        }).join("") : `<div class="dempty">—</div>`}
+      </div>
+    </div>`;
+  }).join("");
+
+  const rangeLabel = `${days[0].toLocaleDateString(undefined,{month:'short', day:'numeric'})} – ${days[6].toLocaleDateString(undefined,{month:'short', day:'numeric'})}`;
+
+  p.innerHTML = leadHTML("clock") + `
+    <div class="section-head"><h2>The Week</h2><div class="rule"></div></div>
+    <div class="clock-filter">
+      <button class="btn sm ghost" onclick="shiftWeek(-1)">&larr;</button>
+      <span style="font-family:var(--serif);font-size:17px;min-width:150px;text-align:center;">${rangeLabel}</span>
+      <button class="btn sm ghost" onclick="shiftWeek(1)">&rarr;</button>
+      ${weekOffset!==0?`<button class="btn sm ghost" onclick="weekOffset=0;renderClock()">Today</button>`:``}
+      <span style="margin-left:auto;font-size:13px;color:var(--muted);">Showing</span>
+      <button class="btn sm ${clockFilter==='rocks'?'accent':'ghost'}" onclick="setClockFilter('rocks')">★ Big Rocks</button>
+      <button class="btn sm ${clockFilter==='all'?'accent':'ghost'}" onclick="setClockFilter('all')">All scheduled</button>
+    </div>
+    <div class="clock-wrap">
+      ${unschedHTML}
+      <div class="week">${weekHTML}</div>
+    </div>`;
+}
+function scheduleTaskDay(id, day){ if(!day) return; run(`UPDATE tasks SET sched_day=? WHERE id=?`,[day,id]); scheduleSave(); renderClock(); }
+function unscheduleTask(id){ run(`UPDATE tasks SET sched_day=NULL, sched_start=NULL WHERE id=?`,[id]); scheduleSave(); renderClock(); }
+function setTaskTime(id, hhmm){ run(`UPDATE tasks SET sched_start=? WHERE id=?`,[hhmm||null, id]); scheduleSave(); renderClock(); }
+
+/* ---------- ALMANAC (habits, streaks, trends, review) ---------- */
+const DIM_META = {
+  physical:  { name:"Physical",  color:"#b5482f", letter:"P" },
+  mental:    { name:"Mental",    color:"#2f5d50", letter:"M" },
+  social:    { name:"Social",    color:"#b3892b", letter:"S" },
+  spiritual: { name:"Spiritual", color:"#5a4a8a", letter:"Sp" }
+};
+function dimChipStyle(dim){
+  const c = DIM_META[dim]?.color || "#7a7363";
+  return `background:${c}1f;color:${c};`;
+}
+function marksForHabit(id){ return all(`SELECT day FROM habit_marks WHERE habit_id=? ORDER BY day`,[id]).map(r=>r.day); }
+function countInRange(marks, startISO, endISO){ return marks.filter(d=> d>=startISO && d<=endISO).length; }
+function weekStartISO(offset){ return mondayOf(offset).toISOString().slice(0,10); }
+function weekEndISO(offset){ const d=mondayOf(offset); d.setDate(d.getDate()+6); return d.toISOString().slice(0,10); }
+// Week streak: count consecutive past+current weeks where target was met. Current week counts only if already met.
+function weekStreak(marks, target){
+  let streak = 0;
+  for(let w=0; w>-104; w--){
+    const s = weekStartISO(w), e = weekEndISO(w);
+    const got = countInRange(marks, s, e);
+    if(w===0){ if(got>=target) streak++; else continue; }
+    else { if(got>=target) streak++; else break; }
+  }
+  return streak;
+}
+
+function renderAlmanac(){
+  const p = document.getElementById("panel-almanac");
+  if(!p) return;
+  const habits = all(`SELECT * FROM habits WHERE archived=0 ORDER BY ord, id`);
+  const today = todayISO();
+  const wkDays = weekDays(0);
+  const wStart = weekStartISO(0), wEnd = weekEndISO(0);
+  const dows = ["Mo","Tu","We","Th","Fr","Sa","Su"];
+
+  // --- Renewal panel: aggregate tagged habits by dimension ---
+  const renewalHTML = Object.keys(DIM_META).map(dim=>{
+    const dh = all(`SELECT id, target_per_week FROM habits WHERE archived=0 AND dimension=?`,[dim]);
+    let doneThisWeek=0, targetThisWeek=0;
+    dh.forEach(h=>{ const marks=marksForHabit(h.id); doneThisWeek+=countInRange(marks,wStart,wEnd); targetThisWeek+=h.target_per_week; });
+    const meta = DIM_META[dim];
+    const pct = targetThisWeek? Math.min(100, Math.round(100*doneThisWeek/targetThisWeek)) : 0;
+    return `<div class="ren-card" style="border-top-color:${meta.color}">
+      <div class="rtop"><span class="ricon" style="background:${meta.color}">${meta.letter}</span><h4>${meta.name}</h4></div>
+      <div class="rcount">${dh.length} habit${dh.length===1?'':'s'} tagged</div>
+      <div class="rbig">${doneThisWeek}<small> / ${targetThisWeek||0} this week</small></div>
+      <div class="progbar ${pct>=100?'met':''}" style="margin-top:8px;max-width:none;"><span style="width:${pct}%"></span></div>
+    </div>`;
+  }).join("");
+
+  // --- Habit list ---
+  let habitsHTML = "";
+  if(!habits.length){
+    habitsHTML = `<p class="empty">No habits yet. Add one below &mdash; "Meditate", "Read 20 minutes", "Walk the dog". Tag it to a renewal dimension if it fits.</p>`;
+  }
+  habits.forEach(h=>{
+    const marks = marksForHabit(h.id);
+    const doneThisWeek = countInRange(marks, wStart, wEnd);
+    const streak = weekStreak(marks, h.target_per_week);
+    const doneToday = marks.includes(today);
+    const dots = wkDays.map((d,i)=>{
+      const iso = d.toISOString().slice(0,10);
+      const on = marks.includes(iso);
+      const future = iso > today;
+      return `<div class="wd ${on?'on':''} ${future?'future':''}" title="${iso}" ${future?'':`onclick="toggleHabitDay(${h.id},'${iso}')"`}>${dows[i]}</div>`;
+    }).join("");
+    const goal = h.goal_id ? all(`SELECT text FROM goals WHERE id=?`,[h.goal_id])[0] : null;
+    const pct = Math.min(100, Math.round(100*doneThisWeek/h.target_per_week));
+    const cadence = h.target_per_week>=7 ? "daily" : `${h.target_per_week}× / week`;
+    habitsHTML += `<div class="habit">
+      <div class="hhead">
+        <button class="check-today ${doneToday?'on':''}" title="Mark done today" onclick="toggleHabitDay(${h.id},'${today}')">${doneToday?'✓':''}</button>
+        <span class="htitle">${esc(h.name)}</span>
+        ${h.dimension?`<span class="dim-tag" style="${dimChipStyle(h.dimension)}">${DIM_META[h.dimension].name}</span>`:''}
+        ${goal?`<span class="goal-tag">↳ ${esc(goal.text)}</span>`:''}
+        <button class="pill-x" onclick="delHabit(${h.id})" title="Delete habit">&times;</button>
+      </div>
+      <div class="hmeta">
+        <span>Target: <b>${cadence}</b></span>
+        <span>This week: <b>${doneThisWeek}/${h.target_per_week}</b></span>
+        <span>Streak: <b>${streak}</b> week${streak===1?'':'s'} ${streak>0?'🔥':''}</span>
+        <div class="progbar ${pct>=100?'met':''}"><span style="width:${pct}%"></span></div>
+      </div>
+      <div class="wkdots">${dots}</div>
+    </div>`;
+  });
+
+  // --- Goal progress trends ---
+  const goalsWithHabits = all(`SELECT DISTINCT g.id, g.text, r.name rname FROM goals g
+    JOIN roles r ON r.id=g.role_id JOIN habits h ON h.goal_id=g.id WHERE h.archived=0 ORDER BY r.ord, g.id`);
+  let goalTrendHTML = "";
+  if(goalsWithHabits.length){
+    const last30Start = (()=>{ const d=new Date(); d.setDate(d.getDate()-29); return d.toISOString().slice(0,10); })();
+    goalTrendHTML = goalsWithHabits.map(g=>{
+      const gh = all(`SELECT id, target_per_week FROM habits WHERE goal_id=? AND archived=0`,[g.id]);
+      let done=0, possible=0;
+      gh.forEach(h=>{ const marks=marksForHabit(h.id); done+=countInRange(marks,last30Start,today); possible+=h.target_per_week* (30/7); });
+      const pct = possible? Math.round(100*done/possible) : 0;
+      return `<div class="cmp-row"><span class="cn">${esc(g.text)} <span style="color:var(--muted);font-size:12px;">· ${esc(g.rname)}</span></span><span class="cv">${pct}%</span></div>`;
+    }).join("");
+  } else {
+    goalTrendHTML = `<div class="empty" style="font-size:13px;">Link a habit to a goal (in the habit's settings) to see its trend here.</div>`;
+  }
+
+  // --- Weekly review: this week vs last ---
+  const allHabits = habits;
+  let thisWk=0, lastWk=0;
+  allHabits.forEach(h=>{ const m=marksForHabit(h.id); thisWk+=countInRange(m,wStart,wEnd); lastWk+=countInRange(m,weekStartISO(-1),weekEndISO(-1)); });
+  const delta = thisWk-lastWk;
+  const deltaCls = delta>0?'up':delta<0?'down':'flat';
+  const deltaLabel = delta>0?`+${delta}`:`${delta}`;
+  // longest current streak
+  let longest=0, longestName="—";
+  allHabits.forEach(h=>{ const s=weekStreak(marksForHabit(h.id), h.target_per_week); if(s>longest){longest=s;longestName=h.name;} });
+
+  // --- Season heatmap (last 12 weeks, all habits combined) ---
+  const heatStart = mondayOf(-11);
+  const heatRows = [];
+  for(let wi=0; wi<12; wi++){
+    const cells=[];
+    for(let di=0; di<7; di++){
+      const d=new Date(heatStart); d.setDate(heatStart.getDate()+wi*7+di);
+      const iso=d.toISOString().slice(0,10);
+      const c = all(`SELECT COUNT(*) c FROM habit_marks WHERE day=?`,[iso])[0].c;
+      const lvl = c===0?'':c<=1?'l1':c<=2?'l2':c<=4?'l3':'l4';
+      const future = iso>today;
+      cells.push(`<div class="heat-cell ${lvl}" title="${iso}: ${c}" style="${future?'opacity:.25':''}"></div>`);
+    }
+    const wlabel = new Date(heatStart.getTime()+wi*7*864e5).toLocaleDateString(undefined,{month:'short',day:'numeric'});
+    heatRows.push(`<div class="heat-row"><span class="heat-label">${wlabel}</span>${cells.join("")}</div>`);
+  }
+
+  // --- Add-habit form: goal + dimension selectors ---
+  const goalSel = (()=>{
+    const goals = all(`SELECT g.id, g.text, r.name rname FROM goals g JOIN roles r ON r.id=g.role_id ORDER BY r.ord, g.id`);
+    return `<option value="">— no goal —</option>` + goals.map(g=>`<option value="${g.id}">${esc(g.rname)} › ${esc(g.text)}</option>`).join("");
+  })();
+
+  p.innerHTML = leadHTML("almanac") + `
+    <div class="section-head"><h2>Renewal This Week</h2><div class="rule"></div></div>
+    <div class="renewal-grid">${renewalHTML}</div>
+
+    <div class="section-head"><h2>Habits</h2><div class="rule"></div></div>
+    <div class="card" style="margin-bottom:16px;">
+      <div class="habit-add">
+        <div><label class="field">New habit</label><input type="text" id="habitName" placeholder="A recurring action that renews you…" onkeydown="if(event.key==='Enter')addHabit()"></div>
+        <div><label class="field">Dimension</label><select id="habitDim"><option value="">— none —</option><option value="physical">Physical</option><option value="mental">Mental</option><option value="social">Social</option><option value="spiritual">Spiritual</option></select></div>
+        <div><label class="field">Target / week</label><select id="habitTarget"><option value="7">Daily</option><option value="1">1×</option><option value="2">2×</option><option value="3">3×</option><option value="4">4×</option><option value="5">5×</option><option value="6">6×</option></select></div>
+        <div><button class="btn accent" onclick="addHabit()">Add habit</button></div>
+      </div>
+      <div style="margin-top:10px;"><label class="field" style="display:inline;">Link to goal (optional)</label> <select id="habitGoal" style="width:auto;display:inline-block;">${goalSel}</select></div>
+    </div>
+    ${habitsHTML}
+
+    <div class="section-head"><h2>Review &amp; Trends</h2><div class="rule"></div></div>
+    <div class="review-grid">
+      <div class="review-card">
+        <h4>This week vs last</h4>
+        <div class="cmp-row"><span class="cn">Completions this week</span><span class="cv">${thisWk}</span> <span class="delta ${deltaCls}">${deltaLabel}</span></div>
+        <div class="cmp-row"><span class="cn">Completions last week</span><span class="cv">${lastWk}</span></div>
+        <div class="cmp-row"><span class="cn">Longest active streak</span><span class="cv">${longest}w</span> <span style="font-size:12px;color:var(--muted)">${esc(longestName)}</span></div>
+      </div>
+      <div class="review-card">
+        <h4>Goal momentum <span style="font-size:12px;color:var(--muted);font-family:var(--sans);">· last 30 days</span></h4>
+        ${goalTrendHTML}
+      </div>
+    </div>
+    <div class="review-card" style="margin-top:14px;">
+      <h4>The season <span style="font-size:12px;color:var(--muted);font-family:var(--sans);">· last 12 weeks, all habits</span></h4>
+      <div class="heatmap">${heatRows.join("")}</div>
+    </div>`;
+}
+function addHabit(){
+  const name = document.getElementById("habitName").value.trim(); if(!name) return;
+  const dim = document.getElementById("habitDim").value || null;
+  const target = +document.getElementById("habitTarget").value;
+  const goal = document.getElementById("habitGoal").value || null;
+  const max = all(`SELECT COALESCE(MAX(ord),0) m FROM habits`)[0].m;
+  run(`INSERT INTO habits(name,dimension,goal_id,target_per_week,ord) VALUES(?,?,?,?,?)`,[name,dim,goal,target,max+1]);
+  scheduleSave(); renderAlmanac();
+}
+function delHabit(id){ run(`DELETE FROM habit_marks WHERE habit_id=?`,[id]); run(`DELETE FROM habits WHERE id=?`,[id]); scheduleSave(); renderAlmanac(); }
+function toggleHabitDay(id, day){
+  const ex = all(`SELECT id FROM habit_marks WHERE habit_id=? AND day=?`,[id,day]);
+  if(ex.length) run(`DELETE FROM habit_marks WHERE id=?`,[ex[0].id]);
+  else run(`INSERT INTO habit_marks(habit_id,day) VALUES(?,?)`,[id,day]);
+  scheduleSave(); renderAlmanac();
+}
+
+/* ---------- EMOTIONAL BANK ACCOUNTS ---------- */
+function renderBank(){
+  const p = document.getElementById("panel-bank");
+  const accts = all(`SELECT * FROM accounts ORDER BY id`);
+  let body = "";
+  if(!accts.length) body = `<p class="empty">No relationships tracked yet. Add someone important to you.</p>`;
+  accts.forEach(a=>{
+    const entries = all(`SELECT * FROM entries WHERE account_id=? ORDER BY id DESC LIMIT 6`,[a.id]);
+    const dep = all(`SELECT COUNT(*) c FROM entries WHERE account_id=? AND kind='dep'`,[a.id])[0].c;
+    const wd  = all(`SELECT COUNT(*) c FROM entries WHERE account_id=? AND kind='wd'`,[a.id])[0].c;
+    const bal = dep - wd;
+    const cls = bal>0?'pos':bal<0?'neg':'zero';
+    body += `<div class="acct">
+      <div class="ahead">
+        <h3>${esc(a.name)}</h3>
+        <span class="balance ${cls}">${bal>0?'+':''}${bal}</span>
+        <button class="pill-x" onclick="delAcct(${a.id})">&times;</button>
+      </div>
+      <div class="ledger">
+        ${entries.length? entries.map(e=>`<div class="row">
+            <span class="amt ${e.kind==='dep'?'dep':'wd'}">${e.kind==='dep'?'+1':'-1'}</span>
+            <span style="flex:1">${esc(e.note)||'(no note)'}</span>
+            <button class="pill-x" style="font-size:13px" onclick="delEntry(${e.id})">&times;</button>
+          </div>`).join("") : `<div class="empty" style="font-size:13px;">No entries yet.</div>`}
+      </div>
+      <div class="acct-actions">
+        <input type="text" placeholder="What happened?" style="flex:1;min-width:140px" id="note-${a.id}">
+        <button class="btn sm" style="background:var(--accent-2)" onclick="addEntry(${a.id},'dep')">+ Deposit</button>
+        <button class="btn sm" style="background:var(--accent)" onclick="addEntry(${a.id},'wd')">&minus; Withdrawal</button>
+      </div>
+    </div>`;
+  });
+  p.innerHTML = leadHTML("bank") + `
+    <div class="section-head"><h2>Emotional Bank Accounts</h2><div class="rule"></div></div>
+    ${body}
+    <div class="card">
+      <div class="add-inline">
+        <input type="text" id="newAcct" placeholder="Add a person or relationship…" onkeydown="if(event.key==='Enter')addAcct()">
+        <button class="btn accent" onclick="addAcct()">Open account</button>
+      </div>
+    </div>`;
+}
+function addAcct(){ const i=document.getElementById("newAcct"); const n=i.value.trim(); if(!n) return; run(`INSERT INTO accounts(name) VALUES(?)`,[n]); scheduleSave(); renderBank(); }
+function delAcct(id){ run(`DELETE FROM entries WHERE account_id=?`,[id]); run(`DELETE FROM accounts WHERE id=?`,[id]); scheduleSave(); renderBank(); }
+function addEntry(id,kind){ const note=document.getElementById("note-"+id).value.trim(); run(`INSERT INTO entries(account_id,kind,note,ts) VALUES(?,?,?,?)`,[id,kind,note,new Date().toISOString()]); scheduleSave(); renderBank(); }
+function delEntry(id){ run(`DELETE FROM entries WHERE id=?`,[id]); scheduleSave(); renderBank(); }
+
+/* ---------- SHARPEN THE SAW ---------- */
+function last7(){
+  const days=[]; const now=new Date();
+  for(let i=6;i>=0;i--){ const d=new Date(now); d.setDate(now.getDate()-i); days.push(d.toISOString().slice(0,10)); }
+  return days;
+}
+function renderSaw(){
+  const p = document.getElementById("panel-saw");
+  const days = last7();
+  const dows = ["Su","Mo","Tu","We","Th","Fr","Sa"];
+  const cards = SAW_DIMS.map(dim=>{
+    const marks = all(`SELECT day FROM saw_marks WHERE dim=?`,[dim.key]).map(r=>r.day);
+    const intentRow = all(`SELECT intention FROM saw_intent WHERE dim=?`,[dim.key]);
+    const intent = intentRow.length? intentRow[0].intention : "";
+    const dots = days.map(d=>{
+      const on = marks.includes(d);
+      const dow = dows[new Date(d+"T00:00:00").getDay()];
+      return `<div class="dot ${on?'on':''}" title="${d}" onclick="toggleSaw('${dim.key}','${d}')">${dow}</div>`;
+    }).join("");
+    const streak = marks.length;
+    return `<div class="dim">
+      <h3><span class="icon" style="background:${dim.color}">${dim.letter}</span>${dim.name}</h3>
+      <div class="dsub">${dim.sub}</div>
+      <div class="streak-row">
+        <div class="dots">${dots}</div>
+      </div>
+      <div style="font-size:12.5px;color:var(--muted);margin-bottom:8px;">${streak} day${streak===1?'':'s'} invested total</div>
+      <label class="field">This week's intention</label>
+      <textarea data-dim="${dim.key}" placeholder="How will you renew here?">${esc(intent)}</textarea>
+    </div>`;
+  }).join("");
+  p.innerHTML = leadHTML("saw") + `
+    <div class="section-head"><h2>The Four Dimensions of Renewal</h2><div class="rule"></div></div>
+    <div class="saw-grid">${cards}</div>`;
+  p.querySelectorAll("textarea[data-dim]").forEach(ta=>{
+    ta.onchange = ()=>{
+      const dim = ta.dataset.dim;
+      run(`INSERT INTO saw_intent(dim,intention) VALUES(?,?)
+           ON CONFLICT(dim) DO UPDATE SET intention=excluded.intention`,[dim, ta.value]);
+      scheduleSave();
+    };
+  });
+}
+function toggleSaw(dim,day){
+  const ex = all(`SELECT id FROM saw_marks WHERE dim=? AND day=?`,[dim,day]);
+  if(ex.length) run(`DELETE FROM saw_marks WHERE id=?`,[ex[0].id]);
+  else run(`INSERT INTO saw_marks(dim,day) VALUES(?,?)`,[dim,day]);
+  scheduleSave(); renderSaw();
+}
+
+boot();
+</script>
+</body>
+</html>

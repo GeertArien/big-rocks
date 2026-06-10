@@ -1,10 +1,12 @@
 # BigRocks UI/UX design v2 — "Field Notes", three pillars
 
-Second iteration. v1 (in git history) established the visual language — warm
+Second iteration. v1 ([`v1/mockup.html`](./v1/mockup.html),
+[`v1/ui-ux.md`](./v1/ui-ux.md)) established the visual language — warm
 paper, serif display type, terracotta/pine/gold — but its screens were loud:
 the Today dashboard alone pushed five cards of competing information. v2
 keeps the look and reorganizes everything around **three modes that are
-lenses over one data layer**, per the owner's Clock & Compass spec:
+lenses over one data layer**, per the owner's Clock & Compass spec
+([`references/clock-compass-almanac-spec.md`](./references/clock-compass-almanac-spec.md)):
 
 | Mode | Tense | Question it answers | Accent |
 |---|---|---|---|
@@ -19,6 +21,13 @@ live on the same record; completing it anywhere completes it everywhere.
 **Interactive mockup:** open [`mockup.html`](./mockup.html) in a browser.
 Mode switch in the top bar (desktop) / bottom tabs (mobile); the
 **Desktop / Phone** toggle previews both layouts via container queries.
+
+**Folder layout:** `mockup.html` + this file are the current proposal;
+[`v1/`](./v1/) holds the first iteration; [`references/`](./references/)
+holds the owner's original prototypes that inspired each iteration —
+[`seven-habits-planner-v1.html`](./references/seven-habits-planner-v1.html)
+("The Compass"), [`seven-habits-planner-v2.html`](./references/seven-habits-planner-v2.html)
+("The Clock & Compass"), and the three-pillar spec.
 
 ---
 
