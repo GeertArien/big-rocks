@@ -243,6 +243,60 @@ export async function renewalRoutes(fastify: FastifyInstance): Promise<void> {
   );
 
   fastify.get(
+    "/renewal/intentions",
+    {
+      ...auth,
+      schema: {
+        description: "This ISO week's intention per dimension (intent, never scored).",
+        tags: ["renewal"],
+        security: secured,
+        response: {
+          200: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                dimension: { type: "string", enum: DIMENSIONS },
+                text: { type: "string" },
+              },
+            },
+          },
+        },
+      },
+    },
+    async () => service.intentions(),
+  );
+
+  fastify.put(
+    "/renewal/intentions/:dimension",
+    {
+      ...auth,
+      schema: {
+        description: "Set (or clear, with empty text) this week's intention for a dimension.",
+        tags: ["renewal"],
+        security: secured,
+        params: {
+          type: "object",
+          properties: { dimension: { type: "string", enum: DIMENSIONS } },
+          required: ["dimension"],
+        },
+        body: {
+          type: "object",
+          required: ["text"],
+          additionalProperties: false,
+          properties: { text: { type: "string" } },
+        },
+        response: { 204: { type: "null" } },
+      },
+    },
+    async (req, reply) => {
+      const { dimension } = req.params as { dimension: (typeof DIMENSIONS)[number] };
+      await service.setIntention(dimension, (req.body as { text: string }).text);
+      reply.code(204);
+    },
+  );
+
+  fastify.get(
     "/renewal/summary",
     {
       ...auth,

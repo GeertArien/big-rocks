@@ -312,6 +312,21 @@ model HabitMark {
   @@index([day])
 }
 
+// A one-line intention per dimension per ISO week ("This week: keep the long
+// run, even if it rains."). Intent, never scored. History is kept (owner
+// decision) so past intentions become part of the Almanac's record.
+model WeeklyIntention {
+  id        String           @id @default(cuid())
+  dimension RenewalDimension
+  weekStart DateTime // Monday (local midnight) of the ISO week
+  text      String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([dimension, weekStart])
+}
+
 model RenewalActivity {
   id         String           @id @default(cuid())
   dimension  RenewalDimension

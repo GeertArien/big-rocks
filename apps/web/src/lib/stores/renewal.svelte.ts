@@ -1,11 +1,13 @@
 import {
   createHabit,
   deleteHabit,
+  getIntentions,
   getRenewalSummary,
   getRenewalTrends,
   listHabits,
   listRenewalActivities,
   logRenewalActivity,
+  setIntention,
   toggleHabit,
   type DimensionSummary,
   type HabitView,
@@ -61,6 +63,7 @@ class RenewalStore {
   summary = $state<DimensionSummary[]>([]);
   trends = $state<RenewalTrends | null>(null);
   activities = $state<RenewalActivity[]>([]);
+  intentions = $state<Partial<Record<RenewalDimension, string>>>({});
   loading = $state(false);
   error = $state<string | null>(null);
 
@@ -68,11 +71,31 @@ class RenewalStore {
     this.loading = true;
     this.error = null;
     try {
-      [this.habits, this.summary] = await Promise.all([listHabits(), getRenewalSummary()]);
+      const [habits, summary, intentions] = await Promise.all([
+        listHabits(),
+        getRenewalSummary(),
+        getIntentions(),
+      ]);
+      this.habits = habits;
+      this.summary = summary;
+      this.intentions = Object.fromEntries(intentions.map((i) => [i.dimension, i.text]));
     } catch (err) {
       this.error = message(err, "Failed to load habits");
     } finally {
       this.loading = false;
+    }
+  }
+
+  /** Set (or clear, with empty text) this week's intention — optimistic. */
+  async setIntention(dimension: RenewalDimension, text: string): Promise<void> {
+    const prev = this.intentions;
+    const trimmed = text.trim();
+    this.intentions = { ...prev, [dimension]: trimmed || undefined };
+    try {
+      await setIntention(dimension, trimmed);
+    } catch (err) {
+      this.intentions = prev;
+      toast.error(message(err));
     }
   }
 

@@ -180,6 +180,28 @@ export class RenewalService {
     await this.repo.deleteActivity(id);
   }
 
+  // --- Weekly intentions (intent, never scored; history kept) --------------------
+
+  /** This ISO week's intention per dimension (missing = none set). */
+  async intentions(
+    now: Date = new Date(),
+  ): Promise<{ dimension: RenewalDimension; text: string }[]> {
+    const rows = await this.repo.findIntentions(startOfIsoWeek(now));
+    return rows.map((r) => ({ dimension: r.dimension, text: r.text }));
+  }
+
+  /** Set (or clear, with empty text) this week's intention for a dimension. */
+  async setIntention(
+    dimension: RenewalDimension,
+    text: string,
+    now: Date = new Date(),
+  ): Promise<void> {
+    const weekStart = startOfIsoWeek(now);
+    const trimmed = text.trim();
+    if (trimmed) await this.repo.upsertIntention(dimension, weekStart, trimmed);
+    else await this.repo.deleteIntention(dimension, weekStart);
+  }
+
   // --- Aggregates (the Almanac) --------------------------------------------------
 
   /** This week per dimension — habit marks AND one-off activities both count. */

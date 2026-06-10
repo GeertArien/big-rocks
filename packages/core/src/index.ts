@@ -135,6 +135,7 @@ export type {
   HabitMark,
   RenewalDimension,
   RenewalActivity,
+  WeeklyIntention,
   ProactivityTag,
   ApiKey,
   Prisma,
