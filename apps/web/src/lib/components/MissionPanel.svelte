@@ -21,6 +21,9 @@
   }
 </script>
 
+{#if missionStore.loading && !missionStore.mission}
+  <div class="h-56 animate-pulse rounded-lg border border-[var(--color-border)] bg-[var(--color-card)]"></div>
+{:else}
 <section class="flex flex-col gap-3">
   <div class="flex flex-col gap-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-card)] p-4 shadow-sm">
     <div class="flex items-center justify-between">
@@ -58,3 +61,4 @@
     </div>
   </div>
 </section>
+{/if}

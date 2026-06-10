@@ -126,5 +126,8 @@ Built incrementally following the build order in `CLAUDE.md`.
   weekly "big rocks first" view.
 - **Step 3** — Goals (first-class, with derived progress) + a versioned mission
   statement (Habit 2), and influence/concern tagging on tasks (Habit 1); tasks
-  can be linked to a goal. Next: people + recurring commitments, renewal, AI,
-  import.
+  can be linked to a goal.
+- **UX foundation** — app shell with mobile bottom-nav / desktop top-bar,
+  responsive drawer (Sheet) for create/edit, confirm dialogs on delete,
+  optimistic updates with toast feedback, and consistent loading/empty/error
+  states. Next: people + recurring commitments, renewal, AI, import.

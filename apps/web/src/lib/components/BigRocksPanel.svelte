@@ -1,7 +1,10 @@
 <script lang="ts">
   import { Star } from "lucide-svelte";
   import TaskCard from "./TaskCard.svelte";
+  import { Button } from "@/lib/components/ui/button";
   import { tasksStore } from "@/lib/stores/tasks.svelte";
+
+  const loadingFirst = $derived(tasksStore.loading && tasksStore.tasks.length === 0);
 
   // This week's big rocks: pinned Q2 tasks that aren't done.
   const bigRocks = $derived(
@@ -16,6 +19,19 @@
 </script>
 
 <section class="flex flex-col gap-4">
+  {#if tasksStore.error}
+    <div
+      class="flex items-center justify-between gap-2 rounded-md border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700"
+    >
+      <span>{tasksStore.error}</span>
+      <Button variant="outline" size="sm" onclick={() => tasksStore.load()}>Retry</Button>
+    </div>
+  {/if}
+
+  {#if loadingFirst}
+    <div class="h-32 animate-pulse rounded-lg border border-[var(--color-border)] bg-[var(--color-card)]"></div>
+  {/if}
+
   <div class="flex flex-col gap-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-card)] p-3 shadow-sm">
     <div class="flex items-center gap-2">
       <Star class="size-4 text-amber-500" fill="currentColor" />
