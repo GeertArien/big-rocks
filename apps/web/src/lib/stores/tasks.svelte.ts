@@ -87,6 +87,7 @@ class TasksStore {
       dueDate: body.dueDate ?? null,
       completedAt: null,
       goalId: body.goalId ?? null,
+      projectId: body.projectId ?? null,
       createdAt: now,
       updatedAt: now,
     };
@@ -146,6 +147,11 @@ class TasksStore {
     return this.edit(task.id, { goalId }, () => updateTask(task.id, { goalId }), {
       affectsGoals: true,
     });
+  }
+
+  /** Move a task into a project, or back to the Inbox with null. */
+  setProject(task: Task, projectId: string | null): Promise<void> {
+    return this.edit(task.id, { projectId }, () => updateTask(task.id, { projectId }));
   }
 
   /** Full edit from the task form sheet. */

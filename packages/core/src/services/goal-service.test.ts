@@ -19,6 +19,7 @@ class FakeGoalRepository implements GoalRepository {
       description: (data.description as string | null) ?? null,
       targetDate: (data.targetDate as Date | null) ?? null,
       status: (data.status as Goal["status"] | undefined) ?? "ACTIVE",
+      roleId: data.role?.connect?.id ?? null,
       dimension: null,
       createdAt: now,
       updatedAt: now,

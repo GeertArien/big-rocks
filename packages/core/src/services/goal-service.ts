@@ -9,6 +9,7 @@ export interface CreateGoalInput {
   description?: string;
   targetDate?: Date | null;
   status?: GoalStatus;
+  roleId?: string | null;
 }
 
 export interface UpdateGoalInput {
@@ -16,6 +17,7 @@ export interface UpdateGoalInput {
   description?: string | null;
   targetDate?: Date | null;
   status?: GoalStatus;
+  roleId?: string | null;
 }
 
 /** Derived progress for a goal — the share of its tasks that are done. */
@@ -49,6 +51,7 @@ export class GoalService {
       description: input.description,
       targetDate: input.targetDate ?? null,
       ...(input.status ? { status: input.status } : {}),
+      ...(input.roleId ? { role: { connect: { id: input.roleId } } } : {}),
     };
     return deriveProgress(await this.goals.create(data));
   }
@@ -69,6 +72,11 @@ export class GoalService {
     if (input.description !== undefined) data.description = input.description;
     if (input.targetDate !== undefined) data.targetDate = input.targetDate;
     if (input.status !== undefined) data.status = input.status;
+    if (input.roleId !== undefined) {
+      data.role = input.roleId
+        ? { connect: { id: input.roleId } }
+        : { disconnect: true };
+    }
     return deriveProgress(await this.goals.update(id, data));
   }
 

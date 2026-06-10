@@ -2,12 +2,14 @@
   import { Check, Pencil, RotateCcw, Star, Trash2 } from "lucide-svelte";
   import { tasksStore } from "@/lib/stores/tasks.svelte";
   import { goalsStore } from "@/lib/stores/goals.svelte";
+  import { projectsStore } from "@/lib/stores/projects.svelte";
   import { taskActions } from "@/lib/stores/task-actions.svelte";
   import type { Proactivity, Task } from "@/lib/api";
 
   let { task }: { task: Task } = $props();
 
   const done = $derived(task.status === "DONE");
+  const project = $derived(projectsStore.byId(task.projectId));
 
   function toggleChip(active: boolean) {
     return active
@@ -40,6 +42,11 @@
 
   <div class="min-w-0 flex-1">
     <p class="text-sm leading-snug" class:line-through={done}>{task.title}</p>
+    {#if project}
+      <p class="mt-0.5 truncate text-[11px] text-[var(--color-muted-foreground)]">
+        ▤ {project.name}
+      </p>
+    {/if}
     <div class="mt-1.5 flex flex-wrap items-center gap-1.5">
       <button
         onclick={() => tasksStore.setFlags(task, { important: !task.important })}

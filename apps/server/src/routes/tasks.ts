@@ -24,6 +24,7 @@ export async function taskRoutes(fastify: FastifyInstance): Promise<void> {
       dueDate: { type: ["string", "null"], format: "date-time" },
       completedAt: { type: ["string", "null"], format: "date-time" },
       goalId: { type: ["string", "null"] },
+      projectId: { type: ["string", "null"] },
       createdAt: { type: "string", format: "date-time" },
       updatedAt: { type: "string", format: "date-time" },
     },
@@ -52,8 +53,10 @@ export async function taskRoutes(fastify: FastifyInstance): Promise<void> {
           properties: {
             status: { type: "string", enum: ["TODO", "DONE", "ARCHIVED"] },
             goalId: { type: "string" },
+            projectId: { type: "string" },
             proactivity: { type: "string", enum: ["INFLUENCE", "CONCERN"] },
             unlinked: { type: "boolean", description: "Only tasks not linked to any goal." },
+            inbox: { type: "boolean", description: "Only tasks not in any project (the Inbox)." },
           },
         },
         response: { 200: { type: "array", items: taskSchema } },
@@ -63,13 +66,16 @@ export async function taskRoutes(fastify: FastifyInstance): Promise<void> {
       const q = req.query as {
         status?: "TODO" | "DONE" | "ARCHIVED";
         goalId?: string;
+        projectId?: string;
         proactivity?: "INFLUENCE" | "CONCERN";
         unlinked?: boolean;
+        inbox?: boolean;
       };
       return service.list({
         status: q.status,
         proactivity: q.proactivity,
         goalId: q.unlinked ? null : q.goalId,
+        projectId: q.inbox ? null : q.projectId,
       });
     },
   );
@@ -130,6 +136,7 @@ export async function taskRoutes(fastify: FastifyInstance): Promise<void> {
             urgent: { type: "boolean" },
             dueDate: { type: "string", format: "date-time" },
             goalId: { type: "string" },
+            projectId: { type: "string" },
             proactivity: { type: "string", enum: ["INFLUENCE", "CONCERN"] },
           },
         },
@@ -144,6 +151,7 @@ export async function taskRoutes(fastify: FastifyInstance): Promise<void> {
         urgent?: boolean;
         dueDate?: string;
         goalId?: string;
+        projectId?: string;
         proactivity?: "INFLUENCE" | "CONCERN";
       };
       const task = await service.create({
@@ -175,6 +183,7 @@ export async function taskRoutes(fastify: FastifyInstance): Promise<void> {
             urgent: { type: "boolean" },
             dueDate: { type: ["string", "null"], format: "date-time" },
             goalId: { type: ["string", "null"] },
+            projectId: { type: ["string", "null"] },
             isBigRock: { type: "boolean" },
             plannedWeek: { type: ["string", "null"], format: "date-time" },
             proactivity: { type: ["string", "null"], enum: ["INFLUENCE", "CONCERN", null] },

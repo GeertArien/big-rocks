@@ -49,6 +49,7 @@ class GoalsStore {
       description: body.description ?? null,
       targetDate: body.targetDate ?? null,
       status: body.status ?? "ACTIVE",
+      roleId: body.roleId ?? null,
       dimension: null,
       progress: { total: 0, done: 0, ratio: 0 },
       createdAt: now,
