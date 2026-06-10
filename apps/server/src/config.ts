@@ -16,6 +16,10 @@ export interface ServerConfig {
   openaiApiKey: string | undefined;
   /** Model name as the OpenAI-compatible endpoint knows it. */
   openaiModel: string | undefined;
+  /** VAPID keys for web push; unset = push disabled. */
+  vapidPublicKey: string | undefined;
+  vapidPrivateKey: string | undefined;
+  vapidSubject: string | undefined;
   /** Absolute or relative path to the built frontend, served in production. */
   webDistPath: string | undefined;
   isProduction: boolean;
@@ -32,6 +36,9 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): ServerConfig {
     openaiBaseUrl: env.OPENAI_BASE_URL || undefined,
     openaiApiKey: env.OPENAI_API_KEY || undefined,
     openaiModel: env.OPENAI_MODEL || undefined,
+    vapidPublicKey: env.VAPID_PUBLIC_KEY || undefined,
+    vapidPrivateKey: env.VAPID_PRIVATE_KEY || undefined,
+    vapidSubject: env.VAPID_SUBJECT || undefined,
     webDistPath: env.WEB_DIST_PATH,
     isProduction: env.NODE_ENV === "production",
   };

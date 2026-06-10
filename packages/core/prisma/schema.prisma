@@ -339,6 +339,42 @@ model RenewalActivity {
 }
 
 // ---------------------------------------------------------------------------
+// Web push (step 9): one subscription row per browser/device, plus a single
+// settings row (per-type toggles, quiet hours, last-sent stamps for dedupe).
+// ---------------------------------------------------------------------------
+
+model PushSubscription {
+  id       String @id @default(cuid())
+  endpoint String @unique
+  p256dh   String
+  auth     String
+
+  createdAt DateTime @default(now())
+}
+
+// Single-user: expect one row, created on first read.
+model NotificationSettings {
+  id String @id @default(cuid())
+
+  overdueCommitments Boolean @default(true)
+  morningRocks       Boolean @default(true)
+  weeklyReview       Boolean @default(true)
+
+  // Local hours (0-23). Morning reminder fires at morningHour; nothing is
+  // sent inside the quiet window (quietStart..quietEnd, wrapping midnight).
+  morningHour Int @default(8)
+  quietStart  Int @default(22)
+  quietEnd    Int @default(8)
+
+  // Dedupe stamps so the scheduler sends each kind at most once per period.
+  lastOverdueSentAt DateTime?
+  lastMorningSentAt DateTime?
+  lastReviewSentAt  DateTime?
+
+  updatedAt DateTime @updatedAt
+}
+
+// ---------------------------------------------------------------------------
 // Auth: API keys (token-based, single-user). Store a hash, never plaintext.
 // ---------------------------------------------------------------------------
 
