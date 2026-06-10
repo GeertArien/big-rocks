@@ -38,18 +38,20 @@ describe("server app", () => {
     expect(res.statusCode).toBe(401);
   });
 
-  it("gates the role and project routes behind auth", async () => {
-    for (const url of ["/api/roles", "/api/projects"]) {
+  it("gates the role, project, and people routes behind auth", async () => {
+    for (const url of ["/api/roles", "/api/projects", "/api/people", "/api/commitments/overdue"]) {
       const res = await app.inject({ method: "GET", url });
       expect(res.statusCode).toBe(401);
     }
   });
 
-  it("documents the role and project routes in the OpenAPI spec", async () => {
+  it("documents the role, project, and people routes in the OpenAPI spec", async () => {
     const res = await app.inject({ method: "GET", url: "/docs/json" });
     const paths = Object.keys(res.json().paths as Record<string, unknown>);
     expect(paths).toContain("/api/roles");
     expect(paths).toContain("/api/projects");
+    expect(paths).toContain("/api/people");
+    expect(paths).toContain("/api/commitments/overdue");
   });
 
   it("rejects protected routes with a wrong token", async () => {

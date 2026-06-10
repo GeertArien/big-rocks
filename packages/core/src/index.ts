@@ -15,6 +15,8 @@ export { startOfIsoWeek, isSameIsoWeek } from "./domain/week.js";
 export {
   deriveStatus,
   nextDueDate,
+  periodHistory,
+  intervalMs,
   type Cadence,
   type CommitmentStatus,
 } from "./domain/cadence.js";
@@ -42,6 +44,16 @@ export {
   type ProjectRepository,
   type ProjectWithTasks,
 } from "./repositories/project-repository.js";
+export {
+  PrismaPersonRepository,
+  type PersonRepository,
+  type PersonWithRelations,
+} from "./repositories/person-repository.js";
+export {
+  PrismaCommitmentRepository,
+  type CommitmentRepository,
+  type CommitmentWithParticipants,
+} from "./repositories/commitment-repository.js";
 
 // Services
 export {
@@ -72,6 +84,15 @@ export {
   type ProjectProgress,
   type ProjectWithProgress,
 } from "./services/project-service.js";
+export {
+  PeopleService,
+  type CreatePersonInput,
+  type UpdatePersonInput,
+  type CreateCommitmentInput,
+  type UpdateCommitmentInput,
+  type CommitmentView,
+  type PersonOverview,
+} from "./services/people-service.js";
 
 // AI
 export {
@@ -92,6 +113,9 @@ export type {
   Person,
   Commitment,
   CommitmentLog,
+  EbaEntry,
+  EbaKind,
+  CadenceUnit,
   RenewalActivity,
   ProactivityTag,
   ApiKey,

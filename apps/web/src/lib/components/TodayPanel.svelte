@@ -4,6 +4,7 @@
   import { Button } from "@/lib/components/ui/button";
   import { tasksStore } from "@/lib/stores/tasks.svelte";
   import { projectsStore } from "@/lib/stores/projects.svelte";
+  import { peopleStore } from "@/lib/stores/people.svelte";
   import { navStore } from "@/lib/stores/nav.svelte";
   import { formatTime, isSameLocalDay } from "@/lib/week";
 
@@ -113,6 +114,19 @@
         </div>
       {/if}
     </div>
+
+    <!-- The single nudge: the worst overdue relationship commitment. -->
+    {#if peopleStore.worstOverdue}
+      <div
+        class="flex items-center gap-3 rounded-xl border border-[#e5c4b8] bg-[var(--terra-soft)] px-3.5 py-2.5 text-[13px] text-[#6e2a18]"
+      >
+        <span class="min-w-0 flex-1">
+          No <b>{peopleStore.worstOverdue.title.toLowerCase()}</b> with
+          <b>{peopleStore.worstOverdue.personName}</b> logged on cadence.
+        </span>
+        <Button size="sm" onclick={() => navStore.go("compass", "people")}>People →</Button>
+      </div>
+    {/if}
 
     <!-- Today's agenda: scheduled slots, then due-today items. -->
     <div

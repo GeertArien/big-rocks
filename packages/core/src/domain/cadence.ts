@@ -30,6 +30,33 @@ export function nextDueDate(lastOccurred: Date, cadence: Cadence): Date {
   return new Date(lastOccurred.getTime() + days * MS_PER_DAY);
 }
 
+/** The cadence interval in milliseconds. */
+export function intervalMs(cadence: Cadence): number {
+  return unitInDays(cadence.unit) * Math.max(1, cadence.value) * MS_PER_DAY;
+}
+
+/**
+ * Hit/miss history for the last `periods` cadence intervals, oldest first —
+ * the streak/history view (chosen over pass/fail-per-period rows). A period
+ * is "hit" when at least one occurrence falls inside it.
+ */
+export function periodHistory(
+  occurrences: Date[],
+  cadence: Cadence,
+  periods = 8,
+  now: Date = new Date(),
+): boolean[] {
+  const interval = intervalMs(cadence);
+  const times = occurrences.map((d) => d.getTime());
+  const history: boolean[] = [];
+  for (let i = periods - 1; i >= 0; i--) {
+    const end = now.getTime() - i * interval;
+    const start = end - interval;
+    history.push(times.some((t) => t > start && t <= end));
+  }
+  return history;
+}
+
 /**
  * Derive an on-track / due-soon / overdue status from the cadence and the most
  * recent occurrence. "Due soon" is the final 20% of the interval.

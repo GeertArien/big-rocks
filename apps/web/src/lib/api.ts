@@ -68,6 +68,41 @@ export interface Project {
   updatedAt: string;
 }
 
+export type CadenceUnit = "DAY" | "WEEK" | "MONTH";
+export type CommitmentStatus = "ON_TRACK" | "DUE_SOON" | "OVERDUE";
+export type EbaKind = "DEPOSIT" | "WITHDRAWAL";
+
+export interface CommitmentView {
+  id: string;
+  title: string;
+  cadenceUnit: CadenceUnit;
+  cadenceValue: number;
+  status: CommitmentStatus;
+  lastOccurredAt: string | null;
+  nextDueAt: string | null;
+  history: boolean[];
+}
+
+export interface PersonOverview {
+  id: string;
+  name: string;
+  relationship: string | null;
+  notes: string | null;
+  balance: number;
+  ledger: { id: string; kind: EbaKind; note: string | null; occurredAt: string }[];
+  commitments: CommitmentView[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface OverdueCommitment {
+  personId: string;
+  personName: string;
+  commitmentId: string;
+  title: string;
+  lastOccurredAt: string | null;
+}
+
 export interface Mission {
   id: string;
   content: string;
@@ -267,6 +302,61 @@ export function updateProject(id: string, body: UpdateProjectBody): Promise<Proj
 
 export function deleteProject(id: string): Promise<void> {
   return request<void>(`/projects/${id}`, { method: "DELETE" });
+}
+
+// --- People + commitments + EBA (Habits 4–6) ---------------------------------
+
+export function listPeople(): Promise<PersonOverview[]> {
+  return request<PersonOverview[]>("/people");
+}
+
+export function createPerson(body: {
+  name: string;
+  relationship?: string;
+  notes?: string;
+}): Promise<PersonOverview> {
+  return request<PersonOverview>("/people", { method: "POST", body: JSON.stringify(body) });
+}
+
+export function deletePerson(id: string): Promise<void> {
+  return request<void>(`/people/${id}`, { method: "DELETE" });
+}
+
+export function addEbaEntry(
+  personId: string,
+  body: { kind: EbaKind; note?: string },
+): Promise<PersonOverview> {
+  return request<PersonOverview>(`/people/${personId}/eba`, {
+    method: "POST",
+    body: JSON.stringify(body),
+  });
+}
+
+export function createCommitment(body: {
+  title: string;
+  description?: string;
+  cadenceUnit: CadenceUnit;
+  cadenceValue?: number;
+  personIds: string[];
+}): Promise<{ id: string }> {
+  return request<{ id: string }>("/commitments", {
+    method: "POST",
+    body: JSON.stringify(body),
+  });
+}
+
+export function deleteCommitment(id: string): Promise<void> {
+  return request<void>(`/commitments/${id}`, { method: "DELETE" });
+}
+
+export function logOccurrence(
+  commitmentId: string,
+  body: { personId?: string; note?: string } = {},
+): Promise<void> {
+  return request<void>(`/commitments/${commitmentId}/log`, {
+    method: "POST",
+    body: JSON.stringify(body),
+  });
 }
 
 // --- Mission statement (Habit 2) -------------------------------------------
