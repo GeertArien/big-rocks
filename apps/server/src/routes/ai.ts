@@ -70,12 +70,7 @@ export async function aiRoutes(
   const auth = { preHandler: fastify.requireAuth };
   const secured = [{ bearerAuth: [] }];
 
-  /** Shared guard: 503 when the provider is the no-op. */
-  function requireAi(reply: { code: (n: number) => { send: (b: unknown) => unknown } }): boolean {
-    if (provider.available) return true;
-    reply.code(503).send({ error: "AI is disabled — set ANTHROPIC_API_KEY on the server." });
-    return false;
-  }
+  const AI_DISABLED = { error: "AI is disabled — set ANTHROPIC_API_KEY on the server." };
 
   fastify.get(
     "/ai/status",
@@ -111,7 +106,7 @@ export async function aiRoutes(
       },
     },
     async (req, reply) => {
-      if (!requireAi(reply)) return;
+      if (!provider.available) return reply.code(503).send(AI_DISABLED);
       return service.classify((req.body as { text: string }).text);
     },
   );
@@ -140,7 +135,7 @@ export async function aiRoutes(
       },
     },
     async (req, reply) => {
-      if (!requireAi(reply)) return;
+      if (!provider.available) return reply.code(503).send(AI_DISABLED);
       const result = await service.intake((req.body as { text: string }).text);
       reply.code(201);
       return result;
@@ -160,7 +155,7 @@ export async function aiRoutes(
       },
     },
     async (req, reply) => {
-      if (!requireAi(reply)) return;
+      if (!provider.available) return reply.code(503).send(AI_DISABLED);
       try {
         return await service.tagTask((req.params as { id: string }).id);
       } catch {
@@ -190,7 +185,7 @@ export async function aiRoutes(
       },
     },
     async (req, reply) => {
-      if (!requireAi(reply)) return;
+      if (!provider.available) return reply.code(503).send(AI_DISABLED);
       return { content: await service.refineMission((req.body as { draft: string }).draft) };
     },
   );
@@ -216,7 +211,7 @@ export async function aiRoutes(
       },
     },
     async (_req, reply) => {
-      if (!requireAi(reply)) return;
+      if (!provider.available) return reply.code(503).send(AI_DISABLED);
       return service.weeklyReview();
     },
   );
