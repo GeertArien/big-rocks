@@ -83,8 +83,12 @@ export async function buildApp(
       await missionRoutes(api);
       await keyRoutes(api, apiKeys);
       await aiRoutes(api, {
+        aiProvider: config.aiProvider,
         anthropicApiKey: config.anthropicApiKey,
         anthropicModel: config.anthropicModel,
+        openaiBaseUrl: config.openaiBaseUrl,
+        openaiApiKey: config.openaiApiKey,
+        openaiModel: config.openaiModel,
       });
     },
     { prefix: "/api" },

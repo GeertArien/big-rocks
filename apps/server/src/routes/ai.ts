@@ -3,6 +3,7 @@ import {
   AiService,
   AnthropicAiProvider,
   NoopAiProvider,
+  OpenAiCompatibleProvider,
   PeopleService,
   ProjectService,
   RenewalService,
@@ -17,25 +18,52 @@ import {
 } from "@big-rocks/core";
 
 export interface AiRouteOptions {
+  aiProvider: string | undefined;
   anthropicApiKey: string | undefined;
   anthropicModel: string | undefined;
+  openaiBaseUrl: string | undefined;
+  openaiApiKey: string | undefined;
+  openaiModel: string | undefined;
+}
+
+/**
+ * Pick the provider from the environment. AI_PROVIDER forces a choice;
+ * otherwise it's inferred: Anthropic when ANTHROPIC_API_KEY is set, else an
+ * OpenAI-compatible endpoint (ChatGPT, Ollama, LM Studio, OpenRouter…) when
+ * OPENAI_BASE_URL + OPENAI_MODEL are set, else the Noop provider (AI off).
+ */
+export function selectProvider(options: AiRouteOptions): AiProvider {
+  const openaiConfigured = !!(options.openaiBaseUrl && options.openaiModel);
+  const choice =
+    options.aiProvider ??
+    (options.anthropicApiKey ? "anthropic" : openaiConfigured ? "openai-compatible" : "none");
+
+  if (choice === "anthropic" && options.anthropicApiKey) {
+    return new AnthropicAiProvider({
+      apiKey: options.anthropicApiKey,
+      model: options.anthropicModel,
+    });
+  }
+  if (choice === "openai-compatible" && openaiConfigured) {
+    return new OpenAiCompatibleProvider({
+      baseUrl: options.openaiBaseUrl!,
+      apiKey: options.openaiApiKey,
+      model: options.openaiModel!,
+    });
+  }
+  return new NoopAiProvider();
 }
 
 /**
  * AI jobs (build-order step 7). All behind the swappable AiProvider; with no
- * ANTHROPIC_API_KEY the routes answer 503 instead of calling out. `unaligned`
- * is deterministic and works without a key.
+ * provider configured the routes answer 503 instead of calling out.
+ * `unaligned` is deterministic and works without a key.
  */
 export async function aiRoutes(
   fastify: FastifyInstance,
   options: AiRouteOptions,
 ): Promise<void> {
-  const provider: AiProvider = options.anthropicApiKey
-    ? new AnthropicAiProvider({
-        apiKey: options.anthropicApiKey,
-        model: options.anthropicModel,
-      })
-    : new NoopAiProvider();
+  const provider = selectProvider(options);
 
   const service = new AiService(
     provider,
@@ -70,7 +98,10 @@ export async function aiRoutes(
   const auth = { preHandler: fastify.requireAuth };
   const secured = [{ bearerAuth: [] }];
 
-  const AI_DISABLED = { error: "AI is disabled — set ANTHROPIC_API_KEY on the server." };
+  const AI_DISABLED = {
+    error:
+      "AI is disabled — set ANTHROPIC_API_KEY (or OPENAI_BASE_URL + OPENAI_MODEL) on the server.",
+  };
 
   fastify.get(
     "/ai/status",

@@ -141,8 +141,11 @@ attach to it). Keep it as a plain attribute when it's just a value or a derived 
 - **Database:** SQLite to start, accessed via Prisma. MUST stay modular so Postgres can be swapped in
   later by changing the provider + DATABASE_URL. All DB access goes through a repository/service layer —
   never call the ORM directly from route handlers.
-- **AI:** server-side calls to the Anthropic API. Keep the AI provider behind an interface so it is
-  swappable. Key supplied via env var, never committed.
+- **AI:** server-side calls behind a swappable `AiProvider` interface (deliberately no LLM
+  framework). Two implementations: the Anthropic API (default), and an OpenAI-compatible
+  provider covering ChatGPT, local models (Ollama/LM Studio/vLLM), and gateways
+  (OpenRouter/LiteLLM) via `AI_PROVIDER` + `OPENAI_BASE_URL`/`OPENAI_MODEL`. Prompts are
+  shared across providers. Keys supplied via env vars, never committed.
 
 ---
 

@@ -5,17 +5,9 @@ import type {
   TaskClassification,
   WeeklyReviewContext,
 } from "./provider.js";
+import { CLASSIFY_SYSTEM, MISSION_SYSTEM, REVIEW_SYSTEM } from "./prompts.js";
 
 const DEFAULT_MODEL = "claude-opus-4-8";
-
-const CLASSIFY_SYSTEM = `You classify a single free-text todo sentence for a Covey-style planner.
-Judge importance (does it serve a meaningful outcome, relationship, or responsibility?)
-and urgency (does it genuinely demand attention soon?) separately — a due date alone
-does not make something urgent. Tag proactivity: INFLUENCE when the user can act on it,
-CONCERN when it is outside their control (worrying about the news, other people's
-choices); null when the tag adds nothing. Extract a due date only when the sentence
-implies one, resolving relative dates against the provided current date. Keep the title
-short and imperative, dropping date/meta noise.`;
 
 const CLASSIFY_SCHEMA = {
   type: "object",
@@ -42,17 +34,6 @@ const PROACTIVITY_SCHEMA = {
     proactivity: { type: "string", enum: ["INFLUENCE", "CONCERN"] },
   },
 } as const;
-
-const MISSION_SYSTEM = `You refine personal mission statements (Covey's Habit 2 — begin
-with the end in mind). Keep the author's voice, values, and imagery; tighten the prose;
-prefer present tense and first person; aim for two to four sentences. Return ONLY the
-refined statement — no preamble, no quotes, no commentary.`;
-
-const REVIEW_SYSTEM = `You write the weekly review for a Covey-style planner ("put first
-things first"). You receive a JSON snapshot of the user's week. Write 3-5 sentences in a
-warm, candid coach's voice: name what landed, what slipped, and the single most
-important thing to protect next week. Mention relationships before chores. Plain prose,
-no lists, no headers, no emoji.`;
 
 /** Server-side Anthropic implementation. Key comes from the environment, never code. */
 export class AnthropicAiProvider implements AiProvider {

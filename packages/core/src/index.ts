@@ -123,6 +123,10 @@ export {
 } from "./ai/provider.js";
 export { AnthropicAiProvider } from "./ai/anthropic-provider.js";
 export {
+  OpenAiCompatibleProvider,
+  type OpenAiCompatibleOptions,
+} from "./ai/openai-compatible-provider.js";
+export {
   AiService,
   type AiIntakeResult,
   type UnalignedReport,

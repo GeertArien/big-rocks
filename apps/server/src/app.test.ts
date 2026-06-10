@@ -1,7 +1,13 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import type { FastifyInstance } from "fastify";
+import {
+  AnthropicAiProvider,
+  NoopAiProvider,
+  OpenAiCompatibleProvider,
+} from "@big-rocks/core";
 import { buildApp } from "./app.js";
 import { loadConfig } from "./config.js";
+import { selectProvider } from "./routes/ai.js";
 
 /**
  * App-level tests using Fastify's `inject` — no network, no real database calls
@@ -16,7 +22,10 @@ describe("server app", () => {
         ...loadConfig(),
         authToken: "test-token",
         // Force the Noop provider so AI tests don't depend on the local env.
+        aiProvider: undefined,
         anthropicApiKey: undefined,
+        openaiBaseUrl: undefined,
+        openaiModel: undefined,
         isProduction: false,
       },
     });
@@ -118,5 +127,55 @@ describe("server app", () => {
       headers: { "content-type": "application/json" },
     });
     expect(res.statusCode).toBe(401);
+  });
+});
+
+describe("AI provider selection", () => {
+  const base = {
+    aiProvider: undefined,
+    anthropicApiKey: undefined,
+    anthropicModel: undefined,
+    openaiBaseUrl: undefined,
+    openaiApiKey: undefined,
+    openaiModel: undefined,
+  };
+
+  it("is Noop when nothing is configured", () => {
+    expect(selectProvider(base)).toBeInstanceOf(NoopAiProvider);
+  });
+
+  it("infers Anthropic from its key", () => {
+    expect(
+      selectProvider({ ...base, anthropicApiKey: "sk-ant-x" }),
+    ).toBeInstanceOf(AnthropicAiProvider);
+  });
+
+  it("infers OpenAI-compatible from base URL + model (no key needed)", () => {
+    expect(
+      selectProvider({
+        ...base,
+        openaiBaseUrl: "http://localhost:11434/v1",
+        openaiModel: "llama3.2",
+      }),
+    ).toBeInstanceOf(OpenAiCompatibleProvider);
+  });
+
+  it("AI_PROVIDER forces the choice when both are configured", () => {
+    const both = {
+      ...base,
+      anthropicApiKey: "sk-ant-x",
+      openaiBaseUrl: "http://localhost:11434/v1",
+      openaiModel: "llama3.2",
+    };
+    expect(selectProvider(both)).toBeInstanceOf(AnthropicAiProvider);
+    expect(
+      selectProvider({ ...both, aiProvider: "openai-compatible" }),
+    ).toBeInstanceOf(OpenAiCompatibleProvider);
+  });
+
+  it("falls back to Noop when the forced provider is unconfigured", () => {
+    expect(
+      selectProvider({ ...base, aiProvider: "openai-compatible" }),
+    ).toBeInstanceOf(NoopAiProvider);
   });
 });
