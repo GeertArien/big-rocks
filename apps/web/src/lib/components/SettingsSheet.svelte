@@ -83,8 +83,11 @@
   function pickFile(e: Event) {
     const file = (e.currentTarget as HTMLInputElement).files?.[0] ?? null;
     importFile = file;
-    // Suggest the file name as the project; the user can edit or clear it.
-    if (file) importProject = file.name.replace(/\.csv$/i, "");
+    // Suggest the file name as the project (minus the " [id]" suffix Todoist
+    // appends in backup zips); the user can edit or clear it.
+    if (file) {
+      importProject = file.name.replace(/\.csv$/i, "").replace(/ \[[^\]]+\]$/, "");
+    }
   }
 
   async function runImport() {
