@@ -214,22 +214,25 @@ attach to it). Keep it as a plain attribute when it's just a value or a derived 
 
 ---
 
-## Suggested build order
+## Build order (COMPLETE)
 
-Steps 1–3 are DONE (scaffold; quadrant matrix + big-rocks week; goals + mission + influence/concern).
-The remaining order follows the approved design rollout (`docs/design/ui-ux.md`) — one GitHub issue
-per step:
+The original scaffold steps and the full design rollout (`docs/design/ui-ux.md`) are done — every
+step shipped as its own PR with its issue closed:
 
 1. ✅ Field Notes theme + three-mode shell (Compass / Clock / Almanac), Clock · Today landing.
-2. Compass: Role + Project entities, Projects view with Inbox (issue #25).
-3. Clock: task scheduling fields (`scheduledDay`/`scheduledTime`), Week agenda + rocks tray (issue #26).
-4. People: recurring commitments with cadence tracking + EBA ledger (Habits 4–6, issue #5).
-5. Habits + renewal across the three modes (Habit 7, issue #6) — Habit/HabitMark coexist with
-   one-off RenewalActivity.
-6. REST API hardening + OpenAPI + token auth; then the MCP adapter; Settings → agent access UI (issue #7).
-7. AI integration jobs (issue #8).
-8. Todoist CSV import (upload export → map → tasks/projects) (issue #9).
-9. PWA polish + web push notifications + mobile QA (issue #10).
+2. ✅ Compass: Role + Project entities, Projects view with Inbox (issue #25).
+3. ✅ Clock: task scheduling fields (`scheduledDay`/`scheduledTime`), Week agenda + rocks tray (issue #26).
+4. ✅ People: recurring commitments with cadence tracking + EBA ledger (Habits 4–6, issue #5).
+5. ✅ Habits + renewal across the three modes (Habit 7, issue #6) — Habit/HabitMark coexist with
+   one-off RenewalActivity; weekly intentions kept per ISO week.
+6. ✅ REST API hardening + OpenAPI + token auth (ApiKey, hash only); the MCP adapter
+   (`packages/mcp`); Settings → agent access UI (issue #7).
+7. ✅ AI integration jobs (issue #8) — Anthropic + OpenAI-compatible providers behind `AiProvider`.
+8. ✅ Todoist CSV import (upload export → map → tasks/projects) (issue #9).
+9. ✅ PWA + web push notifications (issue #10) — real-device QA happens on the owner's deployment.
+
+New work starts from a fresh proposal against this file's principles (schema changes still need
+owner approval first).
 
 ---
 

@@ -144,6 +144,9 @@ Built incrementally following the build order in `CLAUDE.md`.
   states.
 - **Design + shell** — approved "Field Notes" design (`docs/design/ui-ux.md`):
   three modes as tenses (Compass defines, Clock does, Almanac remembers),
-  warm paper/ink theme, serif display type, and a new Clock · Today home
-  screen. Next: roles + projects, task scheduling, people + commitments,
-  habits + renewal, AI, import.
+  warm paper/ink theme, serif display type, and the Clock · Today home screen.
+- **Full rollout complete** — roles + projects with an Inbox, task scheduling
+  (Week agenda + rocks tray), people with commitment cadences + emotional bank
+  accounts, habits + renewal across the three modes with weekly intentions,
+  API keys + the MCP adapter, AI jobs (Anthropic or any OpenAI-compatible
+  endpoint), Todoist CSV import, and an installable PWA with web push.
