@@ -5,8 +5,10 @@ import Fastify, { type FastifyInstance } from "fastify";
 import fastifyStatic from "@fastify/static";
 import fastifySwagger from "@fastify/swagger";
 import fastifySwaggerUi from "@fastify/swagger-ui";
+import { ApiKeyService, PrismaApiKeyRepository, prisma } from "@big-rocks/core";
 import { loadConfig, type ServerConfig } from "./config.js";
 import { authPlugin } from "./plugins/auth.js";
+import { keyRoutes } from "./routes/keys.js";
 import { healthRoutes } from "./routes/health.js";
 import { taskRoutes } from "./routes/tasks.js";
 import { goalRoutes } from "./routes/goals.js";
@@ -64,7 +66,8 @@ export async function buildApp(
   });
   await app.register(fastifySwaggerUi, { routePrefix: "/docs" });
 
-  await app.register(authPlugin, { token: config.authToken });
+  const apiKeys = new ApiKeyService(new PrismaApiKeyRepository(prisma));
+  await app.register(authPlugin, { token: config.authToken, apiKeys });
 
   // API routes under /api.
   await app.register(
@@ -77,6 +80,7 @@ export async function buildApp(
       await peopleRoutes(api);
       await renewalRoutes(api);
       await missionRoutes(api);
+      await keyRoutes(api, apiKeys);
     },
     { prefix: "/api" },
   );

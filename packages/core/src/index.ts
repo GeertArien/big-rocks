@@ -60,6 +60,10 @@ export {
   type HabitRepository,
   type HabitWithMarks,
 } from "./repositories/habit-repository.js";
+export {
+  PrismaApiKeyRepository,
+  type ApiKeyRepository,
+} from "./repositories/api-key-repository.js";
 
 // Services
 export {
@@ -99,6 +103,7 @@ export {
   type CommitmentView,
   type PersonOverview,
 } from "./services/people-service.js";
+export { ApiKeyService, type ApiKeyView } from "./services/api-key-service.js";
 export {
   RenewalService,
   DIMENSIONS,

@@ -11,7 +11,7 @@ in first — let the smaller tasks fill in around them.
 ## Architecture
 
 A pnpm monorepo. All business logic lives in **`packages/core`** (the single
-source of truth); the HTTP layer and the future MCP adapter are thin consumers.
+source of truth); the HTTP layer and the MCP adapter are thin consumers.
 
 ```
 apps/
@@ -19,6 +19,7 @@ apps/
   server/   Fastify HTTP layer — thin routes that call core; serves the built web app
 packages/
   core/     Prisma schema + client, repositories, services, AI provider interface
+  mcp/      MCP server (stdio) wrapping the core services as agent tools
 ```
 
 - **Repositories** are the only code that touches Prisma. Services depend on
@@ -26,7 +27,11 @@ packages/
   adapter clean.
 - The **quadrant** (importance × urgency) is always *derived*, never stored.
 - The **REST API is the source of truth**, with an auto-generated OpenAPI spec at
-  `/docs` and bearer-token auth.
+  `/docs` and bearer-token auth: the `API_AUTH_TOKEN` admin token, or named
+  **API keys** generated in Settings (hash-only storage, revocable).
+- The **MCP server** (`pnpm --filter @big-rocks/mcp start`, with `DATABASE_URL`
+  set) exposes the same services as tools for agents — tasks, quadrants, big
+  rocks, goals, people, commitments, habits, and renewal.
 
 ## Prerequisites
 
