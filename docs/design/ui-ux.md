@@ -1,118 +1,114 @@
-# BigRocks UI/UX design v2 — "Field Notes", three pillars
+# BigRocks UI/UX design v3 — "Field Notes": Compass defines, Clock does, Almanac remembers
 
-Second iteration. v1 ([`v1/mockup.html`](./v1/mockup.html),
-[`v1/ui-ux.md`](./v1/ui-ux.md)) established the visual language — warm
-paper, serif display type, terracotta/pine/gold — but its screens were loud:
-the Today dashboard alone pushed five cards of competing information. v2
-keeps the look and reorganizes everything around **three modes that are
-lenses over one data layer**, per the owner's Clock & Compass spec
-([`references/clock-compass-almanac-spec.md`](./references/clock-compass-almanac-spec.md)):
+Third iteration. v1 ([`v1/`](./v1/)) set the visual language; v2
+([`v2/`](./v2/)) adopted the owner's three-pillar Clock & Compass spec
+([`references/clock-compass-almanac-spec.md`](./references/clock-compass-almanac-spec.md))
+and calmed the screens — but it sorted *entities* into modes, which made
+the Compass/Almanac boundary blurry (renewal split across both) and left
+"doing" (today's rocks, today's check-ins) with no home. v3 fixes that
+with one rule:
 
-| Mode | Tense | Question it answers | Accent |
-|---|---|---|---|
-| **Compass** | Intent | What matters, and why? | pine |
-| **Clock** | Plan | When will I actually do it? | terracotta |
-| **Almanac** | Record | What did I actually do, over time? | gold |
+> **Compass defines. Clock does. Almanac remembers.**
 
-A task is one thing seen three ways: its Compass attributes (project,
-quadrant, big-rock flag) and its Clock attributes (scheduled day, time)
-live on the same record; completing it anywhere completes it everywhere.
+Modes are *tenses*, not containers. Every entity is **defined** in
+Compass (intent), **acted on** in Clock (now), and **reviewed** in
+Almanac (record). A habit is the clearest example: defined in
+Compass → Renew (dimension, cadence, goal link, weekly intention),
+checked off in Clock → Today, trended in Almanac. The Almanac is
+**read-only by design** — nothing is created or edited there, which is
+what keeps the boundary crisp.
 
 **Interactive mockup:** open [`mockup.html`](./mockup.html) in a browser.
-Mode switch in the top bar (desktop) / bottom tabs (mobile); the
-**Desktop / Phone** toggle previews both layouts via container queries.
+It boots into **Clock → Today**, the everyday home screen. Mode switch in
+the top bar (desktop) / bottom tabs (mobile); the **Desktop / Phone**
+toggle previews both layouts via container queries.
 
 **Folder layout:** `mockup.html` + this file are the current proposal;
-[`v1/`](./v1/) holds the first iteration; [`references/`](./references/)
-holds the owner's original prototypes that inspired each iteration —
-[`seven-habits-planner-v1.html`](./references/seven-habits-planner-v1.html)
-("The Compass"), [`seven-habits-planner-v2.html`](./references/seven-habits-planner-v2.html)
-("The Clock & Compass"), and the three-pillar spec.
+[`v1/`](./v1/) and [`v2/`](./v2/) hold earlier iterations;
+[`references/`](./references/) holds the owner's original prototypes
+("The Compass", "The Clock & Compass") and the three-pillar spec.
 
 ---
 
-## Calm principles (what changed from v1)
-
-1. **One question per screen.** The dense Today dashboard is gone. Each
-   mode opens on a single primary surface; secondary views are quiet
-   underline sub-tabs, not extra cards.
-2. **One accent at a time.** The active mode sets the accent color for
-   kickers, tabs, and primary buttons. Pills, badges, and nudges were cut
-   back to the few that carry a decision.
-3. **Detail folds away.** Projects, people, and goals are collapsed rows
-   that expand in place (`<details>`); ledgers, task lists, and actions
-   appear only when opened. Edit affordances appear on hover.
-4. **Narrow reading column.** Content is capped at ~760px (~980px for the
-   matrix and week views) instead of filling the frame.
-5. **AI whispers.** One ✦ surface per mode at most: the capture preview,
-   and a single weekly-review note at the end of Almanac → Trends. No
-   inline AI chips scattered across screens.
-
 ## Information architecture
 
-- **Compass** (sub-tabs): Mission & Goals → Projects → Matrix → People
-  - *Mission & Goals*: mission centerpiece; goals grouped by **role**, each
-    with a thin progress bar and target date.
-  - *Projects*: collapsed project rows with lineage (`Goal › Role`); an
-    unlinked project is flagged in text ("worth doing, or worth dropping?"),
-    never blocked. Inbox of loose tasks at the bottom; deleting a project
-    returns tasks to the Inbox.
-  - *Matrix*: the quadrant lens over all tasks, Q2 outlined, big-rocks
-    filter. Quadrant is the user's judgment — independent of due date.
-  - *People*: one row per person — relationship, cadence status pill, and
-    emotional-bank-account balance; expands to the ledger and log actions.
-- **Clock**: one screen — week navigation, a "Rocks to place" tray
-  (unscheduled starred tasks assigned to days via dropdown, no drag), and
-  a Monday–Sunday agenda with today outlined. Default filter: big rocks.
-- **Almanac** (sub-tabs): This week → Review & Trends
-  - *This week*: four renewal-dimension cards aggregating tagged habits,
-    then the habit list (check-today circle, 7-day dots, week-streak).
-  - *Review & Trends*: this-week-vs-last, goal momentum (30 days, via
-    linked habits), 12-week season heatmap, AI weekly review note.
-  - Streaks count **consecutive weeks the target was met**; the current
-    week never breaks a streak while in progress.
-- **Settings & agents** (gear icon): notifications (web push / PWA), AI
-  job toggles, API keys + MCP endpoint + OpenAPI link, Todoist CSV import.
+- **Compass** (pine — intent): Mission & Goals · Projects · Matrix · People · Renew
+  - *Mission & Goals*: mission centerpiece; goals as expandable cards
+    (progress bar, status pill, target date) grouped under role headers;
+    a goal expands to its projects and linked habits with a jump to the
+    Projects tab. (v1's goal cards, kept from owner feedback.)
+  - *Projects*: collapsed cards with lineage (`Goal › Role`); unlinked
+    projects flagged in text, never blocked; Inbox of loose tasks below.
+  - *Matrix*: the quadrant lens over all tasks; rows carry full context —
+    project (▤), person (♥), goal (◎), inbox (⌂) crumbs and due chips.
+    Quadrant is the user's judgment, independent of due date.
+  - *People*: v1-style cards in a two-column grid — avatar, relationship,
+    status pill, commitment + cadence, 8-period hit/miss history, log /
+    plan-as-rock actions; EBA balance pill with the ledger folded behind
+    a disclosure.
+  - *Renew*: the four dimensions as definition cards — each lists its
+    habits (name, cadence, goal link, passive this-week count), an
+    add-habit affordance, a "feeds" link chip, and the weekly intention
+    line. No check-offs here.
+- **Clock** (terracotta — now): Today · Week
+  - *Today* (default landing): the dark big-rocks jar card (chips + 2/5
+    meter), at most one nudge (overdue commitment that's also an unplaced
+    rock), today's agenda (scheduled slots + due-today items with
+    crumbs), and habit check-ins (circle, dimension tag, week count).
+  - *Week*: rocks-to-place tray (dropdown scheduling, no drag) +
+    Monday–Sunday agenda, today outlined.
+- **Almanac** (gold — record, strictly read-only): Review · The Season
+  - *Review*: renewal aggregates per dimension, this-week-vs-last with
+    delta, goal momentum (30 days via linked habits), AI weekly review.
+  - *The Season*: per-habit streak rows (this week's marks, week-streak)
+    and the 12-week heatmap. Streaks count **weeks the target was met**;
+    an unfinished current week never breaks the chain.
+- **Settings & agents** (gear): notifications (web push / PWA), AI job
+  toggles, API keys + MCP endpoint + OpenAPI link, Todoist CSV import.
 
-Navigation: centered three-mode segmented switch in the top bar (desktop);
-three bottom tabs + capture FAB (mobile). Capture (⌘K / FAB) opens a sheet
-with an AI preview of quadrant, goal, person link, and day before saving.
+Navigation: centered three-mode switch (desktop) / three bottom tabs +
+capture FAB (mobile). Capture (⌘K / FAB) opens a sheet with an AI preview
+of quadrant, goal, person link, and day before saving.
+
+## Calm principles (carried from v2)
+
+One question per screen; sub-tabs instead of stacked dashboards; collapsed
+detail rows; ~760px reading column (≈980px for matrix/week/people grids);
+one accent at a time (`--mode` variable); AI limited to the capture
+preview and one weekly-review note.
+
+The one deliberate exception is Clock → Today: it is allowed to aggregate
+(rocks + agenda + check-ins) because "what do I do right now?" is one
+question — that's the v1 dashboard, reborn in the correct tense and
+trimmed to three surfaces.
 
 ## Tokens
 
-Unchanged from v1: paper `#f5f1e8`, card `#fcfaf4`, ink `#211d16`,
-terracotta `#9c3b22`, pine `#2e5d4f`, gold `#a07414`, plum `#5a4a8a` (AI),
-Q1–Q4 badge colors; Fraunces for display, Inter for UI. New: a `--mode`
-variable carries the active pillar's accent through the chrome.
+Unchanged: paper `#f5f1e8`, card `#fcfaf4`, ink `#211d16`, terracotta
+`#9c3b22`, pine `#2e5d4f`, gold `#a07414`, plum `#5a4a8a` (AI), star
+`#b3892b`, Q1–Q4 badge colors; Fraunces display / Inter UI.
 
 ## ⚠ Schema implications (need approval before implementation)
 
-The approved model is `Mission → Goal → Task` (+ Person,
-RecurringCommitment, RenewalDimension, RenewalActivity). v2 implies these
-deltas, each an explicit decision:
+Same five deltas as v2, unchanged by v3 (v3 only moves *where* things
+appear, not what exists):
 
-1. **Role** — new entity above Goal (`Goal.roleId` nullable); role carries
-   a name + optional mission line. Replaces "flat goal list" with grouping.
-2. **Project** — new entity between Goal and Task (`Project.goalId`
-   nullable, `Task.projectId` nullable). Flat (no sub-projects in v2).
-3. **Task scheduling fields** — `scheduledDay` (date) and `scheduledTime`
-   (optional) on Task, powering Clock mode. Quadrant stays derived from
-   importance × urgency and independent of dates.
-4. **Habit + HabitMark** — Almanac's habit model (name, optional
-   RenewalDimension link, optional Goal link, `targetPerWeek`). This can
-   *be* the existing RenewalActivity concept generalized, and should reuse
-   the shared cadence logic that RecurringCommitment uses. Open question:
-   does Habit absorb RenewalActivity, or sit alongside it?
-5. **EBA entries** — People adds deposit/withdrawal ledger entries per
-   person, alongside the existing occurrence log of RecurringCommitment.
+1. **Role** — entity above Goal (`Goal.roleId` nullable), name + mission line.
+2. **Project** — entity between Goal and Task (`Project.goalId` nullable,
+   `Task.projectId` nullable), flat.
+3. **Task scheduling fields** — `scheduledDay` / `scheduledTime` on Task.
+4. **Habit + HabitMark** — name, optional RenewalDimension link, optional
+   Goal link, `targetPerWeek`; reuses shared cadence logic. Open question:
+   does Habit absorb RenewalActivity?
+5. **EBA entries** — deposit/withdrawal ledger per person, alongside
+   RecurringCommitment occurrences.
 
 ## Suggested rollout
 
-1. Re-theme + shell: Field Notes tokens, top-bar mode switch, bottom tabs,
-   capture sheet (no schema changes; existing screens map to Compass).
-2. Compass: Matrix polish, Projects + Inbox (after schema decision 1–2).
-3. Clock: scheduling fields + week agenda (decision 3).
-4. Almanac: habits, streaks, trends (decisions 4) — supersedes the v1
-   Renew dashboard plan for issue #6.
-5. People: cadence + EBA ledger (decision 5, issue #5).
+1. Re-theme + shell: tokens, mode switch, bottom tabs, capture sheet.
+2. Compass: Matrix polish; Mission & Goals; Projects + Inbox (decisions 1–2).
+3. Clock: Today + Week (decision 3) — Today composes existing task data
+   before habits exist; check-ins arrive with step 5.
+4. People: cadence + EBA ledger (decision 5, issue #5).
+5. Renew definitions + Almanac record (decision 4, issue #6).
 6. Settings & agents surface (issues #7–#9), PWA/push (#10).
