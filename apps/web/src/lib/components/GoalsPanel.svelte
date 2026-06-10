@@ -109,7 +109,7 @@
 
           <div class="flex items-center gap-2">
             <div class="h-2 flex-1 overflow-hidden rounded-full bg-[var(--color-muted)]">
-              <div class="h-full bg-emerald-500" style={`width: ${pct(goal.progress.ratio)}%`}></div>
+              <div class="h-full bg-[var(--pine)]" style={`width: ${pct(goal.progress.ratio)}%`}></div>
             </div>
             <span class="w-20 text-right text-xs text-[var(--color-muted-foreground)]">
               {goal.progress.done}/{goal.progress.total} · {pct(goal.progress.ratio)}%

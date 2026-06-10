@@ -34,7 +34,7 @@
 
   <div class="flex flex-col gap-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-card)] p-3 shadow-sm">
     <div class="flex items-center gap-2">
-      <Star class="size-4 text-amber-500" fill="currentColor" />
+      <Star class="size-4 text-[var(--star)]" fill="currentColor" />
       <h2 class="text-sm font-semibold">This week's big rocks</h2>
       <span class="text-xs text-[var(--color-muted-foreground)]">{bigRocks.length}</span>
     </div>

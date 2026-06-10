@@ -178,21 +178,21 @@ export const QUADRANT_META: Record<
   Quadrant,
   { title: string; hint: string; dot: string }
 > = {
-  Q1: { title: "Urgent & Important", hint: "Do now", dot: "bg-red-500" },
+  Q1: { title: "Urgent & Important", hint: "Do now", dot: "bg-[var(--q1)]" },
   Q2: {
     title: "Important, Not Urgent",
     hint: "Big rocks — plan first",
-    dot: "bg-emerald-500",
+    dot: "bg-[var(--q2)]",
   },
   Q3: {
     title: "Urgent, Not Important",
     hint: "Delegate / minimize",
-    dot: "bg-amber-500",
+    dot: "bg-[var(--q3)]",
   },
   Q4: {
     title: "Not Urgent, Not Important",
     hint: "Eliminate",
-    dot: "bg-slate-400",
+    dot: "bg-[var(--q4)]",
   },
 };
 
