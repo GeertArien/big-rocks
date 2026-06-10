@@ -5,6 +5,7 @@
   import { tasksStore } from "@/lib/stores/tasks.svelte";
   import { projectsStore } from "@/lib/stores/projects.svelte";
   import { peopleStore } from "@/lib/stores/people.svelte";
+  import { DIMENSION_META, renewalStore } from "@/lib/stores/renewal.svelte";
   import { navStore } from "@/lib/stores/nav.svelte";
   import { formatTime, isSameLocalDay } from "@/lib/week";
 
@@ -178,5 +179,45 @@
         {/each}
       </div>
     </div>
+
+    <!-- Check-ins: today's habits (defined in Compass · Renew). -->
+    {#if renewalStore.habits.length > 0}
+      <div
+        class="flex flex-col gap-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] p-4 shadow-sm"
+      >
+        <h2 class="font-display text-base font-semibold">Check-ins</h2>
+        <p class="text-xs text-[var(--color-muted-foreground)]">
+          Today's habits — defined in Compass · Renew.
+        </p>
+        <div class="mt-1 flex flex-col">
+          {#each renewalStore.habits as habit (habit.id)}
+            <div class="flex items-center gap-3 border-b border-dotted border-[var(--color-border)] py-2 last:border-b-0">
+              <button
+                onclick={() => renewalStore.toggleToday(habit)}
+                aria-label={habit.markedToday ? "Unmark today" : "Mark done today"}
+                class="flex size-7 shrink-0 items-center justify-center rounded-full border-2 transition-colors {habit.markedToday
+                  ? 'border-[var(--pine)] bg-[var(--pine)] text-white'
+                  : 'border-[var(--color-input)] text-transparent hover:border-[var(--pine)]'}"
+              >
+                <Check class="size-3.5" />
+              </button>
+              <span class="min-w-0 flex-1 truncate text-[13.5px] font-medium">{habit.name}</span>
+              {#if habit.dimension}
+                {@const meta = DIMENSION_META[habit.dimension]}
+                <span
+                  class="rounded-full px-2 py-0.5 text-[10px] font-semibold"
+                  style={`color: ${meta.color}; background: ${meta.soft}`}
+                >
+                  {meta.label}
+                </span>
+              {/if}
+              <span class="text-[11px] text-[var(--color-muted-foreground)]">
+                {habit.doneThisWeek}/{habit.targetPerWeek} wk
+              </span>
+            </div>
+          {/each}
+        </div>
+      </div>
+    {/if}
   {/if}
 </section>

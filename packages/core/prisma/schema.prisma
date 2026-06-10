@@ -147,6 +147,7 @@ model Goal {
 
   tasks    Task[]
   projects Project[]
+  habits   Habit[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -271,6 +272,45 @@ model CommitmentLog {
 // ---------------------------------------------------------------------------
 // Sharpen the Saw: renewal (Habit 7)
 // ---------------------------------------------------------------------------
+
+// A recurring renewal practice. Defined in Compass, checked off in Clock,
+// trended in the Almanac. Coexists with one-off RenewalActivity (owner
+// decision): dimension aggregates count BOTH; streaks are habit-only.
+model Habit {
+  id   String @id @default(cuid())
+  name String
+
+  // Optional dimension tag — tagged habits feed the renewal aggregates.
+  dimension RenewalDimension?
+
+  // Optional goal link — threads habit -> goal -> role, feeds goal momentum.
+  goal   Goal?   @relation(fields: [goalId], references: [id], onDelete: SetNull)
+  goalId String?
+
+  // Target cadence: daily (7) or N times per week (1-6).
+  targetPerWeek Int     @default(7)
+  archived      Boolean @default(false)
+
+  marks HabitMark[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([goalId])
+}
+
+// One check-off per habit per day.
+model HabitMark {
+  id      String   @id @default(cuid())
+  habit   Habit    @relation(fields: [habitId], references: [id], onDelete: Cascade)
+  habitId String
+  day     DateTime // local midnight of the marked day
+
+  createdAt DateTime @default(now())
+
+  @@unique([habitId, day])
+  @@index([day])
+}
 
 model RenewalActivity {
   id         String           @id @default(cuid())

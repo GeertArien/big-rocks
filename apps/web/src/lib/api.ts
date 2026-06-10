@@ -103,6 +103,45 @@ export interface OverdueCommitment {
   lastOccurredAt: string | null;
 }
 
+export type RenewalDimension = "PHYSICAL" | "MENTAL" | "SOCIAL_EMOTIONAL" | "SPIRITUAL";
+
+export interface HabitView {
+  id: string;
+  name: string;
+  dimension: RenewalDimension | null;
+  goalId: string | null;
+  goalTitle: string | null;
+  targetPerWeek: number;
+  weekDays: boolean[];
+  doneThisWeek: number;
+  markedToday: boolean;
+  streak: number;
+}
+
+export interface RenewalActivity {
+  id: string;
+  dimension: RenewalDimension;
+  title: string;
+  note: string | null;
+  occurredAt: string;
+}
+
+export interface DimensionSummary {
+  dimension: RenewalDimension;
+  habitsDone: number;
+  habitsTarget: number;
+  oneOffs: number;
+  total: number;
+}
+
+export interface RenewalTrends {
+  thisWeek: number;
+  lastWeek: number;
+  longestStreak: { weeks: number; habitName: string | null };
+  goalMomentum: { goalId: string; title: string; pct: number }[];
+  heatmap: number[][];
+}
+
 export interface Mission {
   id: string;
   content: string;
@@ -354,6 +393,55 @@ export function logOccurrence(
   body: { personId?: string; note?: string } = {},
 ): Promise<void> {
   return request<void>(`/commitments/${commitmentId}/log`, {
+    method: "POST",
+    body: JSON.stringify(body),
+  });
+}
+
+// --- Habits + renewal (Habit 7) ------------------------------------------------
+
+export function listHabits(): Promise<HabitView[]> {
+  return request<HabitView[]>("/habits");
+}
+
+export function createHabit(body: {
+  name: string;
+  dimension?: RenewalDimension;
+  goalId?: string;
+  targetPerWeek?: number;
+}): Promise<HabitView> {
+  return request<HabitView>("/habits", { method: "POST", body: JSON.stringify(body) });
+}
+
+export function deleteHabit(id: string): Promise<void> {
+  return request<void>(`/habits/${id}`, { method: "DELETE" });
+}
+
+export function toggleHabit(id: string, day?: string): Promise<HabitView> {
+  return request<HabitView>(`/habits/${id}/toggle`, {
+    method: "POST",
+    body: JSON.stringify(day ? { day } : {}),
+  });
+}
+
+export function getRenewalSummary(): Promise<DimensionSummary[]> {
+  return request<DimensionSummary[]>("/renewal/summary");
+}
+
+export function getRenewalTrends(): Promise<RenewalTrends> {
+  return request<RenewalTrends>("/renewal/trends");
+}
+
+export function listRenewalActivities(): Promise<RenewalActivity[]> {
+  return request<RenewalActivity[]>("/renewal/activities");
+}
+
+export function logRenewalActivity(body: {
+  dimension: RenewalDimension;
+  title: string;
+  note?: string;
+}): Promise<RenewalActivity> {
+  return request<RenewalActivity>("/renewal/activities", {
     method: "POST",
     body: JSON.stringify(body),
   });

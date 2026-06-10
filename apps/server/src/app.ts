@@ -13,6 +13,7 @@ import { goalRoutes } from "./routes/goals.js";
 import { roleRoutes } from "./routes/roles.js";
 import { projectRoutes } from "./routes/projects.js";
 import { peopleRoutes } from "./routes/people.js";
+import { renewalRoutes } from "./routes/renewal.js";
 import { missionRoutes } from "./routes/mission.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -74,6 +75,7 @@ export async function buildApp(
       await roleRoutes(api);
       await projectRoutes(api);
       await peopleRoutes(api);
+      await renewalRoutes(api);
       await missionRoutes(api);
     },
     { prefix: "/api" },
