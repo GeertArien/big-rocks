@@ -15,6 +15,7 @@ export async function goalRoutes(fastify: FastifyInstance): Promise<void> {
       description: { type: ["string", "null"] },
       targetDate: { type: ["string", "null"], format: "date-time" },
       status: { type: "string", enum: GOAL_STATUSES },
+      roleId: { type: ["string", "null"] },
       dimension: { type: ["string", "null"] },
       progress: {
         type: "object",
@@ -94,6 +95,7 @@ export async function goalRoutes(fastify: FastifyInstance): Promise<void> {
             description: { type: "string" },
             targetDate: { type: "string", format: "date-time" },
             status: { type: "string", enum: GOAL_STATUSES },
+            roleId: { type: "string" },
           },
         },
         response: { 201: goalSchema },
@@ -105,6 +107,7 @@ export async function goalRoutes(fastify: FastifyInstance): Promise<void> {
         description?: string;
         targetDate?: string;
         status?: (typeof GOAL_STATUSES)[number];
+        roleId?: string;
       };
       const goal = await service.create({
         ...body,
@@ -132,6 +135,7 @@ export async function goalRoutes(fastify: FastifyInstance): Promise<void> {
             description: { type: ["string", "null"] },
             targetDate: { type: ["string", "null"], format: "date-time" },
             status: { type: "string", enum: GOAL_STATUSES },
+            roleId: { type: ["string", "null"] },
           },
         },
         response: { 200: goalSchema, 404: errorSchema },

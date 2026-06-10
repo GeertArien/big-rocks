@@ -25,6 +25,7 @@ class FakeTaskRepository implements TaskRepository {
       dueDate: (data.dueDate as Date | null) ?? null,
       completedAt: null,
       goalId: null,
+      projectId: null,
       source: "MANUAL",
       externalId: null,
       externalPriority: null,

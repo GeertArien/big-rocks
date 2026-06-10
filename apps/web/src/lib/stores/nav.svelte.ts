@@ -7,7 +7,7 @@ import { BookOpen, Clock3, Compass } from "lucide-svelte";
  */
 export type Mode = "compass" | "clock" | "almanac";
 
-export type CompassSub = "goals" | "matrix";
+export type CompassSub = "goals" | "projects" | "matrix";
 export type ClockSub = "today" | "week";
 export type AlmanacSub = "record";
 export type Sub = CompassSub | ClockSub | AlmanacSub;
@@ -40,7 +40,13 @@ export const SUBS: Record<Mode, SubItem[]> = {
       id: "goals",
       label: "Mission & Goals",
       title: "Begin with the end in mind.",
-      subtitle: "Your mission, and the few results that matter most.",
+      subtitle: "Your mission, the roles you live by, and the results that matter most.",
+    },
+    {
+      id: "projects",
+      label: "Projects",
+      title: "Goals become action.",
+      subtitle: "Multi-step outcomes, each traceable to a goal. Loose tasks wait in the Inbox.",
     },
     {
       id: "matrix",

@@ -10,6 +10,7 @@ export interface CreateTaskInput {
   urgent?: boolean;
   dueDate?: Date | null;
   goalId?: string | null;
+  projectId?: string | null;
   proactivity?: ProactivityTag | null;
 }
 
@@ -20,6 +21,7 @@ export interface UpdateTaskInput {
   urgent?: boolean;
   dueDate?: Date | null;
   goalId?: string | null;
+  projectId?: string | null;
   isBigRock?: boolean;
   plannedWeek?: Date | null;
   proactivity?: ProactivityTag | null;
@@ -30,6 +32,8 @@ export interface TaskFilter {
   status?: TaskStatus;
   /** A specific goal's tasks, or `null` for tasks not linked to any goal. */
   goalId?: string | null;
+  /** A specific project's tasks, or `null` for the Inbox (no project). */
+  projectId?: string | null;
   proactivity?: ProactivityTag;
 }
 
@@ -70,6 +74,7 @@ export class TaskService {
       dueDate: input.dueDate ?? null,
       proactivity: input.proactivity ?? null,
       ...(input.goalId ? { goal: { connect: { id: input.goalId } } } : {}),
+      ...(input.projectId ? { project: { connect: { id: input.projectId } } } : {}),
     };
     return withQuadrant(await this.tasks.create(data));
   }
@@ -84,6 +89,7 @@ export class TaskService {
     const where: Prisma.TaskWhereInput = {};
     if (filter.status) where.status = filter.status;
     if (filter.goalId !== undefined) where.goalId = filter.goalId;
+    if (filter.projectId !== undefined) where.projectId = filter.projectId;
     if (filter.proactivity) where.proactivity = filter.proactivity;
     return (await this.tasks.findMany(where)).map(withQuadrant);
   }
@@ -105,6 +111,11 @@ export class TaskService {
     if (input.goalId !== undefined) {
       data.goal = input.goalId
         ? { connect: { id: input.goalId } }
+        : { disconnect: true };
+    }
+    if (input.projectId !== undefined) {
+      data.project = input.projectId
+        ? { connect: { id: input.projectId } }
         : { disconnect: true };
     }
     return withQuadrant(await this.tasks.update(id, data));

@@ -33,6 +33,15 @@ export {
   PrismaMissionRepository,
   type MissionRepository,
 } from "./repositories/mission-repository.js";
+export {
+  PrismaRoleRepository,
+  type RoleRepository,
+} from "./repositories/role-repository.js";
+export {
+  PrismaProjectRepository,
+  type ProjectRepository,
+  type ProjectWithTasks,
+} from "./repositories/project-repository.js";
 
 // Services
 export {
@@ -51,6 +60,18 @@ export {
   type GoalWithProgress,
 } from "./services/goal-service.js";
 export { MissionService } from "./services/mission-service.js";
+export {
+  RoleService,
+  type CreateRoleInput,
+  type UpdateRoleInput,
+} from "./services/role-service.js";
+export {
+  ProjectService,
+  type CreateProjectInput,
+  type UpdateProjectInput,
+  type ProjectProgress,
+  type ProjectWithProgress,
+} from "./services/project-service.js";
 
 // AI
 export {
@@ -64,6 +85,9 @@ export type {
   Task,
   Goal,
   GoalStatus,
+  Role,
+  Project,
+  ProjectStatus,
   MissionStatement,
   Person,
   Commitment,

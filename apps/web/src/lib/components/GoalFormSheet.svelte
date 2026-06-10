@@ -3,6 +3,7 @@
   import { Button } from "@/lib/components/ui/button";
   import { Input } from "@/lib/components/ui/input";
   import { GOAL_STATUS_LABELS, goalsStore } from "@/lib/stores/goals.svelte";
+  import { rolesStore } from "@/lib/stores/roles.svelte";
   import type { Goal, GoalStatus } from "@/lib/api";
 
   type Props = { open: boolean; goal?: Goal | null };
@@ -14,6 +15,7 @@
   let description = $state("");
   let status = $state<GoalStatus>("ACTIVE");
   let targetDate = $state("");
+  let roleId = $state("");
   let submitting = $state(false);
 
   const editing = $derived(goal !== null);
@@ -25,6 +27,7 @@
       description = goal?.description ?? "";
       status = goal?.status ?? "ACTIVE";
       targetDate = goal?.targetDate ? goal.targetDate.slice(0, 10) : "";
+      roleId = goal?.roleId ?? "";
     }
     lastOpen = open;
   });
@@ -41,6 +44,7 @@
         description: description.trim() || null,
         status,
         targetDate: date,
+        roleId: roleId || null,
       });
     } else {
       await goalsStore.add({
@@ -48,6 +52,7 @@
         description: description.trim() || undefined,
         status,
         targetDate: date ?? undefined,
+        roleId: roleId || undefined,
       });
     }
     submitting = false;
@@ -92,6 +97,21 @@
       <span class="text-xs font-medium text-[var(--color-muted-foreground)]">Target date</span>
       <Input type="date" bind:value={targetDate} />
     </label>
+
+    {#if rolesStore.roles.length > 0}
+      <label class="flex flex-col gap-1">
+        <span class="text-xs font-medium text-[var(--color-muted-foreground)]">Role</span>
+        <select
+          bind:value={roleId}
+          class="rounded-md border border-[var(--color-border)] bg-transparent px-2 py-2 text-sm"
+        >
+          <option value="">— no role —</option>
+          {#each rolesStore.roles as role (role.id)}
+            <option value={role.id}>{role.name}</option>
+          {/each}
+        </select>
+      </label>
+    {/if}
   </form>
 
   {#snippet footer()}

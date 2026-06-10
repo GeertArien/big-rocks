@@ -6,6 +6,7 @@ export type Quadrant = "Q1" | "Q2" | "Q3" | "Q4";
 export type TaskStatus = "TODO" | "DONE" | "ARCHIVED";
 export type Proactivity = "INFLUENCE" | "CONCERN";
 export type GoalStatus = "ACTIVE" | "ON_HOLD" | "ACHIEVED" | "DROPPED";
+export type ProjectStatus = "ACTIVE" | "SOMEDAY" | "DONE";
 
 export interface Task {
   id: string;
@@ -21,6 +22,7 @@ export interface Task {
   dueDate: string | null;
   completedAt: string | null;
   goalId: string | null;
+  projectId: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -37,7 +39,28 @@ export interface Goal {
   description: string | null;
   targetDate: string | null;
   status: GoalStatus;
+  roleId: string | null;
   dimension: string | null;
+  progress: GoalProgress;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Role {
+  id: string;
+  name: string;
+  mission: string | null;
+  order: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Project {
+  id: string;
+  name: string;
+  description: string | null;
+  status: ProjectStatus;
+  goalId: string | null;
   progress: GoalProgress;
   createdAt: string;
   updatedAt: string;
@@ -98,6 +121,7 @@ export interface CreateTaskBody {
   urgent?: boolean;
   dueDate?: string;
   goalId?: string;
+  projectId?: string;
   proactivity?: Proactivity;
 }
 
@@ -114,6 +138,7 @@ export interface UpdateTaskBody {
   isBigRock?: boolean;
   plannedWeek?: string | null;
   goalId?: string | null;
+  projectId?: string | null;
   proactivity?: Proactivity | null;
 }
 
@@ -147,6 +172,7 @@ export interface CreateGoalBody {
   description?: string;
   targetDate?: string;
   status?: GoalStatus;
+  roleId?: string;
 }
 
 export function createGoal(body: CreateGoalBody): Promise<Goal> {
@@ -158,6 +184,7 @@ export interface UpdateGoalBody {
   description?: string | null;
   targetDate?: string | null;
   status?: GoalStatus;
+  roleId?: string | null;
 }
 
 export function updateGoal(id: string, body: UpdateGoalBody): Promise<Goal> {
@@ -169,6 +196,71 @@ export function updateGoal(id: string, body: UpdateGoalBody): Promise<Goal> {
 
 export function deleteGoal(id: string): Promise<void> {
   return request<void>(`/goals/${id}`, { method: "DELETE" });
+}
+
+// --- Roles (Habit 2) ---------------------------------------------------------
+
+export function listRoles(): Promise<Role[]> {
+  return request<Role[]>("/roles");
+}
+
+export interface CreateRoleBody {
+  name: string;
+  mission?: string;
+  order?: number;
+}
+
+export function createRole(body: CreateRoleBody): Promise<Role> {
+  return request<Role>("/roles", { method: "POST", body: JSON.stringify(body) });
+}
+
+export interface UpdateRoleBody {
+  name?: string;
+  mission?: string | null;
+  order?: number;
+}
+
+export function updateRole(id: string, body: UpdateRoleBody): Promise<Role> {
+  return request<Role>(`/roles/${id}`, { method: "PATCH", body: JSON.stringify(body) });
+}
+
+export function deleteRole(id: string): Promise<void> {
+  return request<void>(`/roles/${id}`, { method: "DELETE" });
+}
+
+// --- Projects ----------------------------------------------------------------
+
+export function listProjects(status?: ProjectStatus): Promise<Project[]> {
+  return request<Project[]>(`/projects${status ? `?status=${status}` : ""}`);
+}
+
+export interface CreateProjectBody {
+  name: string;
+  description?: string;
+  goalId?: string;
+  status?: ProjectStatus;
+}
+
+export function createProject(body: CreateProjectBody): Promise<Project> {
+  return request<Project>("/projects", { method: "POST", body: JSON.stringify(body) });
+}
+
+export interface UpdateProjectBody {
+  name?: string;
+  description?: string | null;
+  goalId?: string | null;
+  status?: ProjectStatus;
+}
+
+export function updateProject(id: string, body: UpdateProjectBody): Promise<Project> {
+  return request<Project>(`/projects/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify(body),
+  });
+}
+
+export function deleteProject(id: string): Promise<void> {
+  return request<void>(`/projects/${id}`, { method: "DELETE" });
 }
 
 // --- Mission statement (Habit 2) -------------------------------------------

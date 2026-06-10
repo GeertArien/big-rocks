@@ -34,6 +34,12 @@ enum GoalStatus {
   DROPPED
 }
 
+enum ProjectStatus {
+  ACTIVE
+  SOMEDAY
+  DONE
+}
+
 // Habit 1: is this within your influence (actionable) or just a concern?
 enum ProactivityTag {
   INFLUENCE
@@ -86,6 +92,11 @@ model Task {
   goal   Goal?   @relation(fields: [goalId], references: [id], onDelete: SetNull)
   goalId String?
 
+  // A task belongs to at most one Project; SetNull = deleting a project
+  // returns its tasks to the Inbox rather than destroying them.
+  project   Project? @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  projectId String?
+
   // Import provenance (Todoist CSV / AI intake).
   source           TaskSource @default(MANUAL)
   externalId       String?
@@ -95,7 +106,23 @@ model Task {
   updatedAt DateTime @updatedAt
 
   @@index([goalId])
+  @@index([projectId])
   @@index([status])
+}
+
+// A role the user plays in life (Parent, Professional, Self…). Goals group
+// under roles; the link is optional like every link in the hierarchy.
+model Role {
+  id      String  @id @default(cuid())
+  name    String
+  // Optional per-role mission line ("Present, not just around.").
+  mission String?
+  order   Int     @default(0)
+
+  goals Goal[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Goal {
@@ -105,13 +132,41 @@ model Goal {
   targetDate  DateTime?
   status      GoalStatus @default(ACTIVE)
 
+  // Goals group under a Role (optional). Deleting a role keeps its goals.
+  role   Role?   @relation(fields: [roleId], references: [id], onDelete: SetNull)
+  roleId String?
+
   // Optional link into the Sharpen-the-Saw dimensions (e.g. learning -> MENTAL).
   dimension RenewalDimension?
+
+  tasks    Task[]
+  projects Project[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([roleId])
+}
+
+// A multi-step outcome between Goal and Task ("Launch the newsletter").
+// Flat — no sub-projects (locked-in decision).
+model Project {
+  id          String        @id @default(cuid())
+  name        String
+  description String?
+  status      ProjectStatus @default(ACTIVE)
+
+  // A project serves at most one Goal; unlinked projects are flagged in the
+  // UI ("worth doing, or worth dropping?") but never blocked.
+  goal   Goal?   @relation(fields: [goalId], references: [id], onDelete: SetNull)
+  goalId String?
 
   tasks Task[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([goalId])
 }
 
 // Single-user: expect one row with isActive = true.

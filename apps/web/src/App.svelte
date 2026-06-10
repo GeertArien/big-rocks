@@ -3,6 +3,7 @@
   import { Settings } from "lucide-svelte";
   import QuadrantBoard from "@/lib/components/QuadrantBoard.svelte";
   import BigRocksPanel from "@/lib/components/BigRocksPanel.svelte";
+  import ProjectsPanel from "@/lib/components/ProjectsPanel.svelte";
   import TodayPanel from "@/lib/components/TodayPanel.svelte";
   import AlmanacPanel from "@/lib/components/AlmanacPanel.svelte";
   import GoalsPanel from "@/lib/components/GoalsPanel.svelte";
@@ -16,6 +17,8 @@
   import { ConfirmDialog } from "@/lib/components/ui/confirm";
   import { tasksStore } from "@/lib/stores/tasks.svelte";
   import { goalsStore } from "@/lib/stores/goals.svelte";
+  import { rolesStore } from "@/lib/stores/roles.svelte";
+  import { projectsStore } from "@/lib/stores/projects.svelte";
   import { missionStore } from "@/lib/stores/mission.svelte";
   import { taskActions } from "@/lib/stores/task-actions.svelte";
   import { navStore } from "@/lib/stores/nav.svelte";
@@ -30,6 +33,8 @@
       .catch(() => (health = "down"));
     tasksStore.load();
     goalsStore.load();
+    rolesStore.load();
+    projectsStore.load();
     missionStore.load();
   }
 
@@ -88,6 +93,8 @@
     {#if navStore.mode === "compass"}
       {#if navStore.sub === "matrix"}
         <QuadrantBoard />
+      {:else if navStore.sub === "projects"}
+        <ProjectsPanel />
       {:else}
         <div class="flex flex-col gap-6">
           <MissionPanel />
