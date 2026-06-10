@@ -107,7 +107,7 @@
         aria-label={task.isBigRock ? "Unpin big rock" : "Pin as this week's big rock"}
         title={task.isBigRock ? "Unpin big rock" : "Pin as big rock"}
         class="flex size-6 items-center justify-center rounded hover:bg-[var(--color-accent)]"
-        class:text-amber-500={task.isBigRock}
+        class:text-[var(--star)]={task.isBigRock}
         class:text-[var(--color-muted-foreground)]={!task.isBigRock}
       >
         <Star class="size-3.5" fill={task.isBigRock ? "currentColor" : "none"} />

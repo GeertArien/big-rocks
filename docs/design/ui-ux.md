@@ -88,7 +88,7 @@ Unchanged: paper `#f5f1e8`, card `#fcfaf4`, ink `#211d16`, terracotta
 `#9c3b22`, pine `#2e5d4f`, gold `#a07414`, plum `#5a4a8a` (AI), star
 `#b3892b`, Q1–Q4 badge colors; Fraunces display / Inter UI.
 
-## ⚠ Schema implications (need approval before implementation)
+## Schema deltas (all five APPROVED by the owner, 2026-06-10)
 
 Same five deltas as v2, unchanged by v3 (v3 only moves *where* things
 appear, not what exists):
@@ -98,8 +98,10 @@ appear, not what exists):
    `Task.projectId` nullable), flat.
 3. **Task scheduling fields** — `scheduledDay` / `scheduledTime` on Task.
 4. **Habit + HabitMark** — name, optional RenewalDimension link, optional
-   Goal link, `targetPerWeek`; reuses shared cadence logic. Open question:
-   does Habit absorb RenewalActivity?
+   Goal link, `targetPerWeek`; reuses shared cadence logic. RESOLVED
+   (owner): Habit does **not** absorb RenewalActivity — habits cover
+   recurring renewal; RenewalActivity stays for one-offs (a retreat, a
+   long hike). Dimension aggregates count both; streaks are habit-only.
 5. **EBA entries** — deposit/withdrawal ledger per person, alongside
    RecurringCommitment occurrences.
 

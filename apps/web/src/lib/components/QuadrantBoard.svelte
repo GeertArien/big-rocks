@@ -56,7 +56,7 @@
         <div
           class="flex flex-col gap-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-card)] p-3 shadow-sm"
           class:ring-1={q === "Q2"}
-          class:ring-emerald-500={q === "Q2"}
+          class:ring-[var(--pine)]={q === "Q2"}
         >
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">

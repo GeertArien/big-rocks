@@ -21,6 +21,12 @@ The app is built around two pillars from the book, plus a renewal layer that tie
 The "big rocks" metaphor (Quadrant II — important but not urgent) is the heart of the app:
 put the big rocks in first, let the smaller tasks fill in around them.
 
+**UI organization (approved design, see `docs/design/ui-ux.md`):** three modes as tenses over one data
+layer — **Compass defines** (mission, roles, goals, projects, matrix, people, renewal habits),
+**Clock does** (Today + Week; the everyday home is Clock · Today), **Almanac remembers** (read-only:
+streaks, trends, the season). The same item appears through each lens; completing it anywhere
+completes it everywhere.
+
 ---
 
 ## Habit → Feature map
@@ -30,19 +36,21 @@ put the big rocks in first, let the smaller tasks fill in around them.
 - **Habit 2 — Begin with the End in Mind:** a personal mission statement plus **Goals as first-class
   entities**. A Goal is a durable outcome (not a kind of task) with its own title, description, and
   optional target date. Tasks **belong to** a Goal via an optional one-to-many link (a task has at most
-  one goal; the link is nullable, since not every task serves a goal). This forms a three-tier hierarchy:
-  mission statement → goals → tasks. Goals can show their own progress (e.g. share of their tasks done).
-  AI can flag tasks that connect to no goal.
+  one goal; the link is nullable, since not every task serves a goal). The full hierarchy is
+  mission statement → roles → goals → projects → tasks (every link optional). Goals can show their own
+  progress (e.g. share of their tasks done). AI can flag tasks that connect to no goal.
 - **Habit 3 — Put First Things First:** the quadrant matrix (importance × urgency) and a weekly
   "big rocks first" planning view. This is the core mechanic.
 - **Habits 4/5/6 — Public Victory (recurring relationship commitments):** a list of the people who
   matter, each with recurring commitments on a cadence (e.g. monthly activity with each kid, regular
   date night with spouse, weekly call to parents). The app tracks cadence adherence and surfaces
   what's overdue.
-- **Habit 7 — Sharpen the Saw:** a renewal dashboard across four dimensions (physical, mental,
-  social/emotional, spiritual), each a RenewalDimension entity that activities point to. The
-  social/emotional dimension relates to the relationship commitments; the spiritual dimension relates to
-  the mission statement; mental relates to learning goals.
+- **Habit 7 — Sharpen the Saw:** renewal across four dimensions (physical, mental, social/emotional,
+  spiritual), each a RenewalDimension entity. Recurring renewal is modeled as **Habits** (defined in
+  Compass, checked off in Clock · Today, trended in the Almanac); one-off renewal is logged as
+  RenewalActivity — both count toward a dimension. The social/emotional dimension relates to the
+  relationship commitments; the spiritual dimension relates to the mission statement; mental relates
+  to learning goals.
 
 ---
 
@@ -70,11 +78,18 @@ Default assumption if unspecified: per-person tracking with a streak/history vie
 Keep all DB access behind a repository/service layer (see conventions). Core entities:
 
 - **MissionStatement** — a single personal mission document (the top of the hierarchy).
-- **Goal** — a first-class, durable outcome. Fields: title, description, optional target date, status.
-  A flat list (no nesting/sub-goals for now).
+- **Role** — a role the user plays in life (Parent, Professional, Self…), with a name and an optional
+  per-role mission line. Goals carry an **optional `roleId`** so they group under roles.
+- **Goal** — a first-class, durable outcome. Fields: title, description, optional target date, status,
+  optional `roleId`. No nesting/sub-goals.
+- **Project** — a multi-step outcome between Goal and Task ("Launch the newsletter"). Optional `goalId`,
+  status (active/someday/done), flat (no sub-projects). Deleting a project returns its tasks to the
+  Inbox (tasks with no project) — never deletes them.
 - **Task** — a discrete action. Has importance + urgency (quadrant is DERIVED from these, not stored —
-  see guideline), optional due date, completion. Holds an **optional `goalId`** (nullable) — a task
-  belongs to at most one Goal. Links to **Tags** many-to-many.
+  see guideline), optional due date, completion, and **optional `scheduledDay` + `scheduledTime`**
+  (the Clock lens; independent of quadrant — urgency is a human judgment, not derived from dates).
+  Holds an **optional `goalId`** and an **optional `projectId`** (both nullable). Links to **Tags**
+  many-to-many.
 - **Tag** — a first-class entity (not a loose string). Has identity so it can be renamed in one place and
   queried ("show everything tagged X"). Many-to-many with Task. This is the one intentional
   many-to-many relationship — a task genuinely has several tags.
@@ -82,14 +97,23 @@ Keep all DB access behind a repository/service layer (see conventions). Core ent
   Person, NOT its own entity (see guideline — deliberate non-case).
 - **RecurringCommitment** — links to a Person (or people), with a target cadence and a log of
   occurrences; derives an on-track/due-soon/overdue status.
+- **EBA entry** — an emotional-bank-account ledger line per Person: deposit or withdrawal with a note;
+  the balance is derived. Coexists with the commitment occurrence log (different things: occurrences
+  track cadence, EBA entries track relationship quality).
 - **RenewalDimension** — the four fixed Sharpen-the-Saw dimensions (physical, mental, social/emotional,
   spiritual) as a small reference entity, each able to carry its own target/description/balance for the
   dashboard.
-- **RenewalActivity** — a Sharpen-the-Saw entry that points to a RenewalDimension.
+- **Habit** — a recurring renewal practice: name, target cadence (daily or N×/week), optional
+  RenewalDimension link, optional Goal link. **HabitMark** records one check-off per habit per day.
+  Streaks count consecutive WEEKS the target was met; an unfinished current week never breaks a streak.
+- **RenewalActivity** — a ONE-OFF Sharpen-the-Saw entry (a retreat, a long hike) pointing to a
+  RenewalDimension, with date + note. Habits do NOT absorb these (owner decision): habits cover
+  recurring renewal, RenewalActivity covers one-offs, and dimension aggregates count BOTH. Streaks
+  remain habit-only (a one-off has no target to streak against).
 
-Hierarchy: **MissionStatement → Goal → Task** (each link downward optional). Decisions locked in:
-one goal per task (optional), flat goal list. Leave room to add many-to-many or sub-goals later, but
-do NOT build those now.
+Hierarchy: **MissionStatement → Role → Goal → Project → Task** (every link downward optional — loose
+tasks live in the Inbox). Decisions locked in: one goal per task/project (optional), flat goals and
+flat projects. Leave room to add many-to-many or sub-projects later, but do NOT build those now.
 
 ### Modeling guideline (entity vs attribute)
 
@@ -97,12 +121,12 @@ Promote something to its own entity when it has **identity** (you'd want to rena
 **its own attributes** (it carries data beyond a name), or **its own relationships** (other things
 attach to it). Keep it as a plain attribute when it's just a value or a derived computation.
 
-- Applied: Goal, Tag, and RenewalDimension are entities by this test.
+- Applied: Role, Goal, Project, Tag, Habit, and RenewalDimension are entities by this test.
 - Deliberate non-cases (do NOT over-model these): a task's **quadrant** stays a derived value computed
   from importance × urgency (never stored, so it can't drift); a person's **relationship type** stays a
   field on Person.
-- Cadence/recurrence logic is shared by RecurringCommitment and any recurring tasks — model it once and
-  reuse it rather than duplicating the schedule logic in two places.
+- Cadence/recurrence logic is shared by RecurringCommitment, Habit, and any recurring tasks — model it
+  once and reuse it rather than duplicating the schedule logic in multiple places.
 
 ## Tech stack
 
@@ -189,18 +213,20 @@ attach to it). Keep it as a plain attribute when it's just a value or a derived 
 
 ## Suggested build order
 
-1. Scaffold: Vite/React + TypeScript + Tailwind first and get it running; THEN initialize shadcn/ui
-   (it needs Tailwind already configured and scaffolds its own `components.json`); THEN add the Fastify
-   backend + Prisma/SQLite; Dockerize. Do not try to do all of this in one shot — the shadcn init must
-   come after Tailwind is working.
-2. Core task model + quadrant matrix + big-rocks weekly view (Habit 3).
-3. Goals + mission statement (Habit 2); influence/concern tagging (Habit 1).
-4. People + recurring relationship commitments with cadence tracking (Habits 4–6).
-5. Sharpen-the-Saw renewal dashboard (Habit 7).
-6. REST API hardening + OpenAPI + token auth; then the MCP adapter.
-7. AI integration jobs.
-8. Todoist CSV import (upload export → map → tasks).
-9. PWA polish + mobile QA.
+Steps 1–3 are DONE (scaffold; quadrant matrix + big-rocks week; goals + mission + influence/concern).
+The remaining order follows the approved design rollout (`docs/design/ui-ux.md`) — one GitHub issue
+per step:
+
+1. ✅ Field Notes theme + three-mode shell (Compass / Clock / Almanac), Clock · Today landing.
+2. Compass: Role + Project entities, Projects view with Inbox (issue #25).
+3. Clock: task scheduling fields (`scheduledDay`/`scheduledTime`), Week agenda + rocks tray (issue #26).
+4. People: recurring commitments with cadence tracking + EBA ledger (Habits 4–6, issue #5).
+5. Habits + renewal across the three modes (Habit 7, issue #6) — Habit/HabitMark coexist with
+   one-off RenewalActivity.
+6. REST API hardening + OpenAPI + token auth; then the MCP adapter; Settings → agent access UI (issue #7).
+7. AI integration jobs (issue #8).
+8. Todoist CSV import (upload export → map → tasks/projects) (issue #9).
+9. PWA polish + web push notifications + mobile QA (issue #10).
 
 ---
 

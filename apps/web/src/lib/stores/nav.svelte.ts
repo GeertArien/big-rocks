@@ -1,29 +1,104 @@
 import type { ComponentType } from "svelte";
-import { CalendarCheck, Compass, LayoutGrid, Target } from "lucide-svelte";
+import { BookOpen, Clock3, Compass } from "lucide-svelte";
 
-export type Section = "matrix" | "week" | "goals" | "mission";
+/**
+ * Navigation model (docs/design/ui-ux.md): three modes as tenses —
+ * Compass defines, Clock does, Almanac remembers — each with sub-screens.
+ */
+export type Mode = "compass" | "clock" | "almanac";
 
-export interface NavItem {
-  id: Section;
+export type CompassSub = "goals" | "matrix";
+export type ClockSub = "today" | "week";
+export type AlmanacSub = "record";
+export type Sub = CompassSub | ClockSub | AlmanacSub;
+
+export interface ModeItem {
+  id: Mode;
   label: string;
-  /** Short label for the mobile bottom bar. */
-  short: string;
   icon: ComponentType;
+  /** CSS color var carrying the mode's accent through the chrome. */
+  accent: string;
 }
 
-/** Single source of truth for the app's top-level sections. */
-export const NAV_ITEMS: NavItem[] = [
-  { id: "matrix", label: "Matrix", short: "Matrix", icon: LayoutGrid },
-  { id: "week", label: "This Week", short: "Week", icon: CalendarCheck },
-  { id: "goals", label: "Goals", short: "Goals", icon: Target },
-  { id: "mission", label: "Mission", short: "Mission", icon: Compass },
+export interface SubItem {
+  id: Sub;
+  label: string;
+  /** Serif page title shown above the sub-tabs. */
+  title: string;
+  subtitle: string;
+}
+
+export const MODES: ModeItem[] = [
+  { id: "compass", label: "Compass", icon: Compass, accent: "var(--pine)" },
+  { id: "clock", label: "Clock", icon: Clock3, accent: "var(--terra)" },
+  { id: "almanac", label: "Almanac", icon: BookOpen, accent: "var(--gold)" },
 ];
 
-class NavStore {
-  current = $state<Section>("matrix");
+export const SUBS: Record<Mode, SubItem[]> = {
+  compass: [
+    {
+      id: "goals",
+      label: "Mission & Goals",
+      title: "Begin with the end in mind.",
+      subtitle: "Your mission, and the few results that matter most.",
+    },
+    {
+      id: "matrix",
+      label: "Matrix",
+      title: "The weekly compass.",
+      subtitle: "Every open task by importance × urgency. Live in Quadrant II.",
+    },
+  ],
+  clock: [
+    {
+      id: "today",
+      label: "Today",
+      title: "First things first.",
+      subtitle: "Today's rocks and today's work. Everything else can wait.",
+    },
+    {
+      id: "week",
+      label: "Week",
+      title: "Schedule the rocks first.",
+      subtitle: "Pin Q2 tasks as big rocks; the small things fill the gaps.",
+    },
+  ],
+  almanac: [
+    {
+      id: "record",
+      label: "Record",
+      title: "What you actually did.",
+      subtitle: "Read-only by design — only evidence, gathered over weeks.",
+    },
+  ],
+};
 
-  go(section: Section): void {
-    this.current = section;
+const DEFAULT_SUB: Record<Mode, Sub> = {
+  compass: "goals",
+  clock: "today",
+  almanac: "record",
+};
+
+class NavStore {
+  /** Clock · Today is the everyday home screen. */
+  mode = $state<Mode>("clock");
+  sub = $state<Sub>("today");
+
+  go(mode: Mode, sub?: Sub): void {
+    this.mode = mode;
+    this.sub = sub ?? DEFAULT_SUB[mode];
+  }
+
+  goSub(sub: Sub): void {
+    this.sub = sub;
+  }
+
+  get modeItem(): ModeItem {
+    return MODES.find((m) => m.id === this.mode) ?? MODES[0]!;
+  }
+
+  get subItem(): SubItem {
+    return SUBS[this.mode].find((s) => s.id === this.sub) ?? SUBS[this.mode][0]!;
   }
 }
 

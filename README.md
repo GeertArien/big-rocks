@@ -130,4 +130,9 @@ Built incrementally following the build order in `CLAUDE.md`.
 - **UX foundation** — app shell with mobile bottom-nav / desktop top-bar,
   responsive drawer (Sheet) for create/edit, confirm dialogs on delete,
   optimistic updates with toast feedback, and consistent loading/empty/error
-  states. Next: people + recurring commitments, renewal, AI, import.
+  states.
+- **Design + shell** — approved "Field Notes" design (`docs/design/ui-ux.md`):
+  three modes as tenses (Compass defines, Clock does, Almanac remembers),
+  warm paper/ink theme, serif display type, and a new Clock · Today home
+  screen. Next: roles + projects, task scheduling, people + commitments,
+  habits + renewal, AI, import.
