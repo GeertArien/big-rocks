@@ -38,20 +38,35 @@ describe("server app", () => {
     expect(res.statusCode).toBe(401);
   });
 
-  it("gates the role, project, and people routes behind auth", async () => {
-    for (const url of ["/api/roles", "/api/projects", "/api/people", "/api/commitments/overdue"]) {
+  it("gates the entity routes behind auth", async () => {
+    for (const url of [
+      "/api/roles",
+      "/api/projects",
+      "/api/people",
+      "/api/commitments/overdue",
+      "/api/habits",
+      "/api/renewal/summary",
+    ]) {
       const res = await app.inject({ method: "GET", url });
       expect(res.statusCode).toBe(401);
     }
   });
 
-  it("documents the role, project, and people routes in the OpenAPI spec", async () => {
+  it("documents the entity routes in the OpenAPI spec", async () => {
     const res = await app.inject({ method: "GET", url: "/docs/json" });
     const paths = Object.keys(res.json().paths as Record<string, unknown>);
-    expect(paths).toContain("/api/roles");
-    expect(paths).toContain("/api/projects");
-    expect(paths).toContain("/api/people");
-    expect(paths).toContain("/api/commitments/overdue");
+    for (const path of [
+      "/api/roles",
+      "/api/projects",
+      "/api/people",
+      "/api/commitments/overdue",
+      "/api/habits",
+      "/api/renewal/summary",
+      "/api/renewal/trends",
+      "/api/renewal/activities",
+    ]) {
+      expect(paths).toContain(path);
+    }
   });
 
   it("rejects protected routes with a wrong token", async () => {

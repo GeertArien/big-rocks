@@ -7,9 +7,9 @@ import { BookOpen, Clock3, Compass } from "lucide-svelte";
  */
 export type Mode = "compass" | "clock" | "almanac";
 
-export type CompassSub = "goals" | "projects" | "matrix" | "people";
+export type CompassSub = "goals" | "projects" | "matrix" | "people" | "renew";
 export type ClockSub = "today" | "week";
-export type AlmanacSub = "record";
+export type AlmanacSub = "review" | "season";
 export type Sub = CompassSub | ClockSub | AlmanacSub;
 
 export interface ModeItem {
@@ -60,6 +60,12 @@ export const SUBS: Record<Mode, SubItem[]> = {
       title: "The people who matter.",
       subtitle: "Recurring commitments kept on cadence, and an emotional bank account each.",
     },
+    {
+      id: "renew",
+      label: "Renew",
+      title: "Sharpen the saw.",
+      subtitle: "Define the habits that renew you — a dimension, a cadence, the goal each serves.",
+    },
   ],
   clock: [
     {
@@ -77,10 +83,16 @@ export const SUBS: Record<Mode, SubItem[]> = {
   ],
   almanac: [
     {
-      id: "record",
-      label: "Record",
+      id: "review",
+      label: "Review",
       title: "What you actually did.",
       subtitle: "Read-only by design — only evidence, gathered over weeks.",
+    },
+    {
+      id: "season",
+      label: "The Season",
+      title: "How the season is trending.",
+      subtitle: "Streaks count weeks the target was met — an unfinished week never breaks the chain.",
     },
   ],
 };
@@ -88,7 +100,7 @@ export const SUBS: Record<Mode, SubItem[]> = {
 const DEFAULT_SUB: Record<Mode, Sub> = {
   compass: "goals",
   clock: "today",
-  almanac: "record",
+  almanac: "review",
 };
 
 class NavStore {

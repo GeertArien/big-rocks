@@ -12,6 +12,7 @@ export {
   type ImportanceUrgency,
 } from "./domain/quadrant.js";
 export { startOfIsoWeek, isSameIsoWeek } from "./domain/week.js";
+export { weekStreak, countThisWeek } from "./domain/habit.js";
 export {
   deriveStatus,
   nextDueDate,
@@ -54,6 +55,11 @@ export {
   type CommitmentRepository,
   type CommitmentWithParticipants,
 } from "./repositories/commitment-repository.js";
+export {
+  PrismaHabitRepository,
+  type HabitRepository,
+  type HabitWithMarks,
+} from "./repositories/habit-repository.js";
 
 // Services
 export {
@@ -93,6 +99,15 @@ export {
   type CommitmentView,
   type PersonOverview,
 } from "./services/people-service.js";
+export {
+  RenewalService,
+  DIMENSIONS,
+  type CreateHabitInput,
+  type UpdateHabitInput,
+  type HabitView,
+  type DimensionSummary,
+  type RenewalTrends,
+} from "./services/renewal-service.js";
 
 // AI
 export {
@@ -116,6 +131,9 @@ export type {
   EbaEntry,
   EbaKind,
   CadenceUnit,
+  Habit,
+  HabitMark,
+  RenewalDimension,
   RenewalActivity,
   ProactivityTag,
   ApiKey,
