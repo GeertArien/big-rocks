@@ -1,4 +1,4 @@
-import type { Prisma, ProactivityTag, Task, TaskStatus } from "@prisma/client";
+import type { Prisma, ProactivityTag, Task, TaskSource, TaskStatus } from "@prisma/client";
 import { startOfIsoWeek } from "../domain/week.js";
 import { deriveQuadrant, type Quadrant } from "../domain/quadrant.js";
 import type { TaskRepository } from "../repositories/task-repository.js";
@@ -14,6 +14,9 @@ export interface CreateTaskInput {
   proactivity?: ProactivityTag | null;
   scheduledDay?: Date | null;
   scheduledTime?: string | null;
+  /** Import provenance (Todoist CSV / AI intake); defaults to MANUAL. */
+  source?: TaskSource;
+  externalPriority?: number | null;
 }
 
 export interface UpdateTaskInput {
@@ -81,6 +84,10 @@ export class TaskService {
       proactivity: input.proactivity ?? null,
       scheduledDay: input.scheduledDay ?? null,
       scheduledTime: input.scheduledTime ?? null,
+      ...(input.source ? { source: input.source } : {}),
+      ...(input.externalPriority != null
+        ? { externalPriority: input.externalPriority }
+        : {}),
       ...(input.goalId ? { goal: { connect: { id: input.goalId } } } : {}),
       ...(input.projectId ? { project: { connect: { id: input.projectId } } } : {}),
     };

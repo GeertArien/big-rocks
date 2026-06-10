@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Copy, ExternalLink, KeyRound, Plus } from "lucide-svelte";
+  import { Copy, ExternalLink, KeyRound, Plus, Upload } from "lucide-svelte";
   import { Sheet } from "@/lib/components/ui/sheet";
   import { Button } from "@/lib/components/ui/button";
   import { Input } from "@/lib/components/ui/input";
@@ -8,10 +8,13 @@
   import { aiStore } from "@/lib/stores/ai.svelte";
   import {
     createApiKey,
+    importTodoist,
     listApiKeys,
     revokeApiKey,
     type ApiKeyView,
   } from "@/lib/api";
+  import { tasksStore } from "@/lib/stores/tasks.svelte";
+  import { projectsStore } from "@/lib/stores/projects.svelte";
 
   type Health = "checking" | "ok" | "down";
   type Props = { open: boolean; health: Health; onSaved: () => void };
@@ -70,6 +73,42 @@
 
   function copy(text: string, label: string) {
     navigator.clipboard.writeText(text).then(() => toast.success(`${label} copied`));
+  }
+
+  // --- Todoist import -------------------------------------------------------
+  let importFile = $state<File | null>(null);
+  let importProject = $state("");
+  let importing = $state(false);
+
+  function pickFile(e: Event) {
+    const file = (e.currentTarget as HTMLInputElement).files?.[0] ?? null;
+    importFile = file;
+    // Suggest the file name as the project (minus the " [id]" suffix Todoist
+    // appends in backup zips); the user can edit or clear it.
+    if (file) {
+      importProject = file.name.replace(/\.csv$/i, "").replace(/ \[[^\]]+\]$/, "");
+    }
+  }
+
+  async function runImport() {
+    if (!importFile || importing) return;
+    importing = true;
+    try {
+      const csv = await importFile.text();
+      const result = await importTodoist(csv, importProject.trim() || undefined);
+      toast.success(
+        `Imported ${result.imported} task${result.imported === 1 ? "" : "s"}` +
+          (result.skipped ? ` (${result.skipped} skipped)` : ""),
+      );
+      importFile = null;
+      importProject = "";
+      tasksStore.load();
+      projectsStore.refresh();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Import failed");
+    } finally {
+      importing = false;
+    }
   }
 
   const statusMeta = $derived(
@@ -210,6 +249,35 @@
           MCP command
         </Button>
       </div>
+    </div>
+
+    <!-- Todoist import: a one-shot file upload, no credentials stored. -->
+    <div class="flex flex-col gap-2 border-t border-[var(--color-border)] pt-4">
+      <div class="flex items-center gap-2">
+        <Upload class="size-4 text-[var(--color-muted-foreground)]" />
+        <span class="text-sm font-medium">Import from Todoist</span>
+      </div>
+      <p class="text-xs text-[var(--color-muted-foreground)]">
+        Upload a Todoist <b>CSV export</b> (per-project). p1–p4 seed
+        importance/urgency; nothing Todoist-related is stored on the server.
+      </p>
+      <input
+        type="file"
+        accept=".csv,text/csv"
+        onchange={pickFile}
+        class="rounded-lg border border-dashed border-[var(--color-input)] bg-[var(--color-secondary)]/40 p-3 text-xs text-[var(--color-muted-foreground)] file:mr-3 file:rounded-md file:border-0 file:bg-[var(--color-primary)] file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-[var(--color-primary-foreground)]"
+      />
+      {#if importFile}
+        <div class="flex gap-2">
+          <Input
+            bind:value={importProject}
+            placeholder="project name (blank = Inbox)"
+          />
+          <Button size="sm" onclick={runImport} disabled={importing}>
+            {importing ? "Importing…" : "Import"}
+          </Button>
+        </div>
+      {/if}
     </div>
   </div>
 

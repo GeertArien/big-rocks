@@ -525,6 +525,24 @@ export function aiReview(): Promise<{ summary: string; generatedAt: string }> {
   return request<{ summary: string; generatedAt: string }>("/ai/review");
 }
 
+// --- Todoist import ------------------------------------------------------------
+
+export interface TodoistImportResult {
+  imported: number;
+  skipped: number;
+  projectId: string | null;
+}
+
+export function importTodoist(
+  csv: string,
+  projectName?: string,
+): Promise<TodoistImportResult> {
+  return request<TodoistImportResult>("/import/todoist", {
+    method: "POST",
+    body: JSON.stringify({ csv, ...(projectName ? { projectName } : {}) }),
+  });
+}
+
 // --- Mission statement (Habit 2) -------------------------------------------
 
 export function getMission(): Promise<Mission | null> {
