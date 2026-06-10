@@ -458,6 +458,31 @@ export function logRenewalActivity(body: {
   });
 }
 
+// --- API keys (agent & service access) ----------------------------------------
+
+export interface ApiKeyView {
+  id: string;
+  name: string;
+  createdAt: string;
+  lastUsedAt: string | null;
+  revokedAt: string | null;
+}
+
+export function listApiKeys(): Promise<ApiKeyView[]> {
+  return request<ApiKeyView[]>("/keys");
+}
+
+export function createApiKey(name: string): Promise<{ key: string; record: ApiKeyView }> {
+  return request<{ key: string; record: ApiKeyView }>("/keys", {
+    method: "POST",
+    body: JSON.stringify({ name }),
+  });
+}
+
+export function revokeApiKey(id: string): Promise<ApiKeyView> {
+  return request<ApiKeyView>(`/keys/${id}/revoke`, { method: "POST" });
+}
+
 // --- Mission statement (Habit 2) -------------------------------------------
 
 export function getMission(): Promise<Mission | null> {

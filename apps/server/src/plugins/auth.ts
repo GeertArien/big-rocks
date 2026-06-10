@@ -1,5 +1,6 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 import fp from "fastify-plugin";
+import type { ApiKeyService } from "@big-rocks/core";
 
 declare module "fastify" {
   interface FastifyInstance {
@@ -9,14 +10,17 @@ declare module "fastify" {
 }
 
 export interface AuthOptions {
-  /** The expected bearer token. If undefined, protected routes return 503. */
+  /** The admin bearer token from the environment. If undefined, dev mode. */
   token: string | undefined;
+  /** Verifies generated API keys (agents/services). Optional for tests. */
+  apiKeys?: Pick<ApiKeyService, "verify">;
 }
 
 /**
- * Token-based auth (single-user model). Routes opt in via the `requireAuth`
- * preHandler rather than it being global, so public routes (health, docs)
- * stay open.
+ * Token-based auth (single-user model). A request is authorized by either
+ * the env admin token (the owner's UI) or a generated, non-revoked API key
+ * (agents/services). Routes opt in via the `requireAuth` preHandler so
+ * public routes (health, docs) stay open.
  */
 export const authPlugin = fp<AuthOptions>(async (fastify, opts) => {
   if (!opts.token) {
@@ -28,16 +32,19 @@ export const authPlugin = fp<AuthOptions>(async (fastify, opts) => {
   fastify.decorate(
     "requireAuth",
     async (req: FastifyRequest, reply: FastifyReply) => {
-      // Dev convenience: with no token configured, the API is open. Token-based
-      // auth is hardened in build-order step 6.
+      // Dev convenience: with no admin token configured, the API is open.
       if (!opts.token) return;
       const header = req.headers.authorization;
       const provided = header?.startsWith("Bearer ")
         ? header.slice("Bearer ".length)
         : undefined;
-      if (!provided || provided !== opts.token) {
+      if (!provided) {
         reply.code(401).send({ error: "Unauthorized" });
+        return;
       }
+      if (provided === opts.token) return;
+      if (opts.apiKeys && (await opts.apiKeys.verify(provided))) return;
+      reply.code(401).send({ error: "Unauthorized" });
     },
   );
 });

@@ -1,5 +1,10 @@
 import type { FastifyInstance } from "fastify";
-import { PrismaTaskRepository, TaskService, prisma } from "@big-rocks/core";
+import {
+  PrismaTaskRepository,
+  TaskService,
+  groupByQuadrant,
+  prisma,
+} from "@big-rocks/core";
 
 /**
  * Task routes. Handlers stay thin: JSON-schema validation + delegation to the
@@ -80,6 +85,32 @@ export async function taskRoutes(fastify: FastifyInstance): Promise<void> {
         projectId: q.inbox ? null : q.projectId,
       });
     },
+  );
+
+  // --- Quadrant matrix ------------------------------------------------------
+  fastify.get(
+    "/tasks/quadrants",
+    {
+      ...auth,
+      schema: {
+        description:
+          "Open tasks grouped by derived quadrant — the matrix, ready to render.",
+        tags: ["tasks"],
+        security: secured,
+        response: {
+          200: {
+            type: "object",
+            properties: {
+              Q1: { type: "array", items: taskSchema },
+              Q2: { type: "array", items: taskSchema },
+              Q3: { type: "array", items: taskSchema },
+              Q4: { type: "array", items: taskSchema },
+            },
+          },
+        },
+      },
+    },
+    async () => groupByQuadrant(await service.list({ status: "TODO" })),
   );
 
   // --- This week's big rocks ---------------------------------------------
@@ -241,10 +272,16 @@ export async function taskRoutes(fastify: FastifyInstance): Promise<void> {
         tags: ["tasks"],
         security: secured,
         params: { type: "object", properties: { id: { type: "string" } }, required: ["id"] },
-        response: { 200: taskSchema },
+        response: { 200: taskSchema, 404: errorSchema },
       },
     },
-    async (req) => service.complete((req.params as { id: string }).id),
+    async (req, reply) => {
+      const { id } = req.params as { id: string };
+      if ((await service.get(id)) === null) {
+        return reply.code(404).send({ error: "Task not found" });
+      }
+      return service.complete(id);
+    },
   );
 
   fastify.post(
@@ -256,10 +293,16 @@ export async function taskRoutes(fastify: FastifyInstance): Promise<void> {
         tags: ["tasks"],
         security: secured,
         params: { type: "object", properties: { id: { type: "string" } }, required: ["id"] },
-        response: { 200: taskSchema },
+        response: { 200: taskSchema, 404: errorSchema },
       },
     },
-    async (req) => service.reopen((req.params as { id: string }).id),
+    async (req, reply) => {
+      const { id } = req.params as { id: string };
+      if ((await service.get(id)) === null) {
+        return reply.code(404).send({ error: "Task not found" });
+      }
+      return service.reopen(id);
+    },
   );
 
   // --- Delete -------------------------------------------------------------
