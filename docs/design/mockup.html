@@ -1,0 +1,1537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BigRocks — UI/UX Mockup v3 · Compass defines, Clock does, Almanac remembers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   BigRocks "Field Notes" v3 — three tenses, one quiet page.
+   The rule that keeps the pillars honest:
+     Compass DEFINES (mission, roles, goals, projects, people,
+                      renewal habits — all intent)
+     Clock   DOES    (today's rocks, agenda, check-ins; the week)
+     Almanac REMEMBERS (read-only: streaks, trends, the season)
+   ============================================================ */
+:root {
+  --ink:        #211d16;
+  --ink-soft:   #4f4a3f;
+  --muted:      #847b69;
+  --paper:      #f5f1e8;
+  --paper-2:    #ece6d7;
+  --card:       #fcfaf4;
+  --card-2:     #f8f4ea;
+  --line:       #e3dccb;
+  --line-2:     #cfc4ab;
+
+  --terra:      #9c3b22;
+  --terra-soft: #f3e3dd;
+  --pine:       #2e5d4f;
+  --pine-soft:  #e2ece8;
+  --gold:       #a07414;
+  --gold-soft:  #f5ecd8;
+  --plum:       #5a4a8a;
+  --plum-soft:  #eceaf5;
+
+  --q1: #b5482f; --q1-bg: #faece7;
+  --q2: #2e5d4f; --q2-bg: #e2f0ea;
+  --q3: #a07414; --q3-bg: #f7eed7;
+  --q4: #837b6a; --q4-bg: #f0ede4;
+
+  --over: #a32d2d;
+  --star: #b3892b;
+
+  --serif: "Fraunces", "Iowan Old Style", "Palatino", Georgia, serif;
+  --sans:  "Inter", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+
+  --shadow-1: 0 1px 0 rgba(40,30,15,.03), 0 8px 24px -20px rgba(40,30,15,.35);
+  --shadow-2: 0 2px 4px rgba(40,30,15,.05), 0 24px 60px -30px rgba(40,30,15,.5);
+}
+
+* { box-sizing: border-box; }
+html, body { margin:0; padding:0; }
+body {
+  font-family: var(--sans);
+  color: var(--ink);
+  background: #d8d2c2;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+button { font-family: var(--sans); cursor: pointer; }
+
+/* ---------- mockup chrome (not part of the app) ---------- */
+.mock-bar {
+  display:flex; align-items:center; gap:14px; flex-wrap:wrap;
+  padding: 10px 18px;
+  font-size: 12.5px; color:#5a5448;
+  background:#cfc8b6; border-bottom:1px solid #b8b09b;
+}
+.mock-bar b { letter-spacing:.08em; text-transform:uppercase; font-size:11px; }
+.mock-bar .spacer{ flex:1; }
+.mock-toggle {
+  border:1px solid #9a917c; background:#e7e1d2; color:#3c382f;
+  border-radius:20px; padding:5px 14px; font-size:12.5px; font-weight:600;
+}
+.mock-toggle.on { background:var(--ink); color:var(--paper); border-color:var(--ink); }
+
+.stage { padding: 22px; display:flex; justify-content:center; }
+body.phone .stage { padding: 30px 12px; }
+
+/* ---------- app frame ---------- */
+.app {
+  container-type: inline-size;
+  container-name: app;
+  width: min(1180px, 100%);
+  height: calc(100vh - 110px);
+  min-height: 640px;
+  background: var(--paper);
+  background-image:
+    radial-gradient(circle at 15% 8%,  #faf6ec 0, transparent 50%),
+    radial-gradient(circle at 88% 92%, #ede7d8 0, transparent 45%);
+  border-radius: 18px;
+  box-shadow: var(--shadow-2);
+  overflow: hidden;
+  display: flex; flex-direction: column;
+  position: relative;
+}
+body.phone .app {
+  width: 393px; height: 800px;
+  border-radius: 42px;
+  border: 10px solid #2a2722;
+}
+
+/* per-mode accent */
+.app { --mode: var(--pine); --mode-soft: var(--pine-soft); }
+.app.m-clock   { --mode: var(--terra); --mode-soft: var(--terra-soft); }
+.app.m-almanac { --mode: var(--gold);  --mode-soft: var(--gold-soft); }
+.app.m-settings{ --mode: var(--ink-soft); --mode-soft: var(--paper-2); }
+
+/* ---------- top bar ---------- */
+.topbar {
+  display:flex; align-items:center; gap:10px;
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--line);
+  background: color-mix(in srgb, var(--card) 80%, transparent);
+  backdrop-filter: blur(6px);
+  flex: 0 0 auto;
+}
+.brand { display:flex; align-items:center; gap:9px; }
+.rock-mark {
+  width: 30px; height: 30px; border-radius: 9px;
+  background: var(--ink); color: var(--paper);
+  display:grid; place-items:center; font-size: 15px;
+}
+.brand .name { font-family: var(--serif); font-weight:600; font-size:17px; letter-spacing:-.01em; }
+
+.modeswitch {
+  display:none; align-items:center; gap:2px;
+  margin: 0 auto;
+  border:1px solid var(--line-2); border-radius: 24px;
+  background: var(--card); padding: 3px;
+}
+.modeswitch button {
+  display:flex; align-items:center; gap:7px;
+  border:none; background:none; border-radius: 20px;
+  padding: 7px 18px;
+  font-size: 13px; font-weight:600; letter-spacing:.02em;
+  color: var(--muted);
+  transition: background .15s, color .15s;
+}
+.modeswitch button:hover { color: var(--ink); }
+.modeswitch button.on.compass { background: var(--pine);  color:#fff; }
+.modeswitch button.on.clock   { background: var(--terra); color:#fff; }
+.modeswitch button.on.almanac { background: var(--gold);  color:#fff; }
+.modeswitch .glyph { font-size:14px; line-height:1; }
+
+.iconbtn {
+  width: 36px; height: 36px; border-radius: 10px;
+  border: none; background: none; color: var(--ink-soft);
+  display:grid; place-items:center; font-size: 17px;
+  position: relative;
+}
+.iconbtn:hover { background: var(--paper-2); }
+.iconbtn .dot { position:absolute; top:7px; right:7px; width:8px; height:8px; border-radius:50%; background:var(--terra); border:1.5px solid var(--card); }
+.topbar .grow { flex:1; }
+
+/* ---------- content ---------- */
+.content { flex:1; overflow-y:auto; padding: 26px 18px 110px; }
+.inner { max-width: 760px; margin: 0 auto; }
+.inner.wide { max-width: 980px; }
+
+.screen { display:none; animation: rise .3s ease; }
+.screen.active { display:block; }
+@keyframes rise { from { opacity:0; transform: translateY(8px);} to { opacity:1; transform:none; } }
+
+.kicker { font-size: 10.5px; letter-spacing:.26em; text-transform:uppercase; color: var(--mode); margin: 2px 0 8px; font-weight:600; }
+h1.page {
+  font-family: var(--serif); font-weight: 600;
+  font-size: clamp(23px, 4cqw, 30px);
+  letter-spacing: -.015em; line-height: 1.1;
+  margin: 0 0 6px;
+}
+h1.page em { font-style: italic; color: var(--mode); }
+.page-sub { color: var(--muted); font-size: 13.5px; margin: 0 0 22px; line-height:1.5; max-width:60ch; }
+
+/* sub-tabs */
+.subtabs {
+  display:flex; gap:2px; overflow-x:auto;
+  border-bottom: 1px solid var(--line);
+  margin: 0 0 26px;
+  scrollbar-width: none;
+}
+.subtabs::-webkit-scrollbar { display:none; }
+.subtabs button {
+  border:none; background:none;
+  padding: 9px 14px 11px;
+  font-size: 13px; font-weight: 500; white-space:nowrap;
+  color: var(--muted);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+}
+.subtabs button:hover { color: var(--ink); }
+.subtabs button.on { color: var(--mode); border-bottom-color: var(--mode); font-weight: 600; }
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  box-shadow: var(--shadow-1);
+  padding: 18px 20px;
+}
+.card h3 {
+  margin: 0 0 2px; font-family: var(--serif);
+  font-weight: 600; font-size: 16.5px; letter-spacing: -.01em;
+}
+.card .sub { font-size: 12px; color: var(--muted); margin-bottom: 12px; }
+.card .head-row { display:flex; align-items:baseline; gap:10px; }
+.card .head-row .more { margin-left:auto; font-size:12px; font-weight:600; color:var(--mode); background:none; border:none; padding:0; }
+
+.btn {
+  border:none; border-radius: 10px; padding: 9px 16px;
+  font-size: 13.5px; font-weight: 600;
+  background: var(--ink); color: var(--paper);
+  transition: transform .08s;
+}
+.btn:active { transform: scale(.97); }
+.btn.mode { background: var(--mode); color:#fff; }
+.btn.ghost { background: none; color: var(--ink); border:1px solid var(--line-2); }
+.btn.ghost:hover { background: var(--paper-2); }
+.btn.sm { padding: 6px 12px; font-size: 12.5px; border-radius: 8px; }
+.btn.dashed { width:100%; border:1.5px dashed var(--line-2); background:none; color:var(--muted); font-weight:500; }
+.btn.dashed:hover { color:var(--ink); border-color:var(--ink-soft); }
+
+.pill {
+  display:inline-flex; align-items:center; gap:5px;
+  font-size: 11px; font-weight: 600; letter-spacing:.02em;
+  border-radius: 20px; padding: 3px 10px;
+}
+.pill.ok   { color: var(--pine); background: var(--pine-soft); }
+.pill.warn { color: var(--gold); background: var(--gold-soft); }
+.pill.over { color: #fff;        background: var(--over); }
+.pill.mut  { color: var(--muted); background: var(--paper-2); }
+
+.qb { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 6px; letter-spacing:.05em; flex:0 0 auto; }
+.qb.q1 { color: var(--q1); background: var(--q1-bg); }
+.qb.q2 { color: var(--q2); background: var(--q2-bg); }
+.qb.q3 { color: var(--q3); background: var(--q3-bg); }
+.qb.q4 { color: var(--q4); background: var(--q4-bg); }
+
+/* task rows */
+.trow { display:flex; align-items:flex-start; gap:11px; padding: 9px 2px; border-bottom: 1px dotted var(--line); }
+.trow:last-child { border-bottom:none; }
+.cb {
+  width: 19px; height: 19px; flex:0 0 auto; margin-top:1px;
+  border: 1.6px solid var(--line-2); border-radius: 6px; background: #fffdf7;
+  display:grid; place-items:center; font-size: 11px; color:transparent;
+}
+.trow.done .cb { background: var(--pine); border-color: var(--pine); color:#fff; }
+.trow .tmain { flex:1; min-width:0; }
+.trow .ttl { font-size: 14px; line-height: 1.4; font-weight:500; }
+.trow.done .ttl { text-decoration: line-through; color: var(--muted); font-weight:400; }
+.trow .meta { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-top:3px; font-size: 11.5px; color: var(--muted); }
+.crumb { display:inline-flex; align-items:center; gap:4px; }
+.due.today { color: var(--terra); font-weight:600; }
+.due.over  { color: var(--over);  font-weight:600; }
+.rockstar { background:none; border:none; font-size:16px; padding:2px; color:var(--line-2); flex:0 0 auto; }
+.rockstar.on { color: var(--star); }
+
+.empty { color: var(--muted); font-style: italic; font-family: var(--serif); font-size: 13.5px; padding: 6px 0; }
+
+/* ============ COMPASS · mission & goals ============ */
+.mission-card {
+  background: var(--card);
+  border:1px solid var(--line); border-radius: 14px;
+  box-shadow: var(--shadow-1);
+  padding: 26px 22px;
+  text-align:center; position:relative; margin-bottom: 26px;
+}
+.mission-card::before, .mission-card::after {
+  content:""; position:absolute; left:18px; right:18px; height:1px; background:var(--line-2);
+}
+.mission-card::before { top:10px; } .mission-card::after { bottom:10px; }
+.mission-card .lbl { font-size:10px; letter-spacing:.28em; text-transform:uppercase; color:var(--muted); margin-bottom:12px; }
+.mission-card .txt { font-family: var(--serif); font-style:italic; font-size: clamp(16px, 2.6cqw, 19px); line-height:1.55; max-width: 52ch; margin: 0 auto; color: var(--ink-soft); }
+.mission-card .edit { position:absolute; top:14px; right:14px; opacity:0; transition:opacity .15s; }
+.mission-card:hover .edit { opacity:1; }
+
+.role-head { display:flex; align-items:baseline; gap:10px; border-left: 3px solid var(--pine); padding-left: 13px; margin: 26px 0 12px; }
+.role-head h3 { font-family:var(--serif); font-weight:600; font-size:17.5px; margin:0; }
+.role-head .rm { font-family:var(--serif); font-style:italic; font-size:12.5px; color:var(--muted); }
+
+.goal-card { margin-bottom: 12px; padding:0; overflow:hidden; }
+.goal-card > summary { list-style:none; cursor:pointer; padding: 15px 18px; }
+.goal-card > summary::-webkit-details-marker { display:none; }
+.goal-top { display:flex; align-items:center; gap:10px; }
+.goal-top .chev { font-size:11px; color:var(--muted); transition: transform .15s; }
+details[open] > summary .chev { transform: rotate(90deg); }
+.goal-top h3 { margin:0; font-family:var(--serif); font-size:16.5px; font-weight:600; flex:1; }
+.goal-meta { display:flex; align-items:center; gap:10px; margin-top:9px; padding-left:21px; flex-wrap:wrap; }
+.gbar { flex:1; min-width:120px; height:6px; border-radius:4px; background:var(--paper-2); overflow:hidden; }
+.gbar i { display:block; height:100%; background: var(--pine); border-radius:4px; }
+.goal-meta .pct { font-size:12px; font-weight:600; color:var(--pine); }
+.goal-meta .tgt { font-size:11.5px; color:var(--muted); }
+.goal-body { border-top:1px solid var(--line); background: var(--card-2); padding: 10px 18px 14px; }
+.goal-proj { display:flex; align-items:center; gap:9px; padding: 7px 0; border-bottom:1px dotted var(--line); font-size:13.5px; }
+.goal-proj:last-of-type { border-bottom:none; }
+.goal-proj .nm { font-weight:600; flex:1; }
+.goal-proj .cnt { font-size:11.5px; color:var(--muted); }
+.goal-body .jump { display:inline-block; margin-top:8px; font-size:12px; font-weight:600; color:var(--mode); background:none; border:none; padding:0; }
+
+/* ============ COMPASS · projects ============ */
+.proj-card { margin-bottom: 12px; padding:0; overflow:hidden; }
+.proj-card > summary { list-style:none; cursor:pointer; padding: 14px 18px; }
+.proj-card > summary::-webkit-details-marker { display:none; }
+.proj-top { display:flex; align-items:center; gap:10px; }
+.proj-top .chev { font-size:11px; color:var(--muted); transition: transform .15s; }
+.proj-top h3 { margin:0; font-family:var(--serif); font-size:16px; font-weight:600; flex:1; }
+.proj-top .cnt { font-size:11.5px; color:var(--muted); }
+.lineage { font-size:12px; color:var(--muted); margin-top:4px; padding-left:21px; }
+.lineage.warn { color:var(--gold); }
+.proj-body { border-top:1px solid var(--line); background: var(--card-2); padding: 4px 18px 12px; }
+.add-row { display:flex; gap:8px; padding: 10px 0 2px; }
+.add-row input { flex:1; font-family:var(--sans); font-size:13px; padding: 8px 12px; border:1px solid var(--line-2); border-radius:9px; background:#fffdf7; color:var(--ink); }
+.add-row input::placeholder{ color:var(--muted); }
+.inbox-sec { margin-top: 28px; }
+.sec-head { display:flex; align-items:baseline; gap:10px; margin: 0 0 8px; }
+.sec-head h3 { font-family:var(--serif); font-weight:600; font-size:16px; margin:0; }
+.sec-head .rule { flex:1; height:1px; background:var(--line); }
+.sec-head .n { font-size:11.5px; color:var(--muted); }
+
+/* ============ COMPASS · matrix ============ */
+.matrix-tools { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:18px; }
+.seg { display:inline-flex; border:1px solid var(--line-2); border-radius: 10px; overflow:hidden; background:var(--card); }
+.seg button { border:none; background:none; padding: 7px 14px; font-size: 12.5px; font-weight:600; color:var(--muted); }
+.seg button.on { background: var(--mode); color: #fff; }
+
+.matrix { display:grid; gap:14px; grid-template-columns: 1fr; }
+.quad { border:1px solid var(--line); border-radius: 14px; background:var(--card); overflow:hidden; box-shadow: var(--shadow-1); }
+.quad .qhead { display:flex; align-items:baseline; gap:9px; padding: 10px 16px; border-bottom:1px solid var(--line); }
+.quad .qhead .qn { font-size:10px; font-weight:700; letter-spacing:.16em; text-transform:uppercase; }
+.quad .qhead .qt { font-family: var(--serif); font-size: 14.5px; font-weight:600; }
+.quad .qhead .hint { margin-left:auto; font-size:11px; color:var(--muted); font-style:italic; }
+.quad .qbody { padding: 4px 16px 10px; min-height: 70px; }
+.quad.qd1 .qhead { background: var(--q1-bg); } .quad.qd1 .qn { color: var(--q1); }
+.quad.qd2 .qhead { background: var(--q2-bg); } .quad.qd2 .qn { color: var(--q2); }
+.quad.qd3 .qhead { background: var(--q3-bg); } .quad.qd3 .qn { color: var(--q3); }
+.quad.qd4 .qhead { background: var(--q4-bg); } .quad.qd4 .qn { color: var(--q4); }
+.quad.qd2 { outline: 2px solid var(--pine); outline-offset: -1px; }
+
+/* ============ COMPASS · people (v1-style cards) ============ */
+.people-grid { display:grid; gap:14px; grid-template-columns: 1fr; }
+.person-card { padding: 16px 18px; }
+.p-head { display:flex; align-items:center; gap:12px; margin-bottom:10px; }
+.avatar {
+  width: 40px; height:40px; border-radius:50%; flex:0 0 auto;
+  display:grid; place-items:center; font-family:var(--serif);
+  font-weight:600; font-size:15px; color:#fff;
+}
+.p-head .nm { font-family:var(--serif); font-weight:600; font-size:16px; }
+.p-head .rel { font-size:11.5px; color:var(--muted); }
+.p-head .grow { flex:1; }
+.balance { font-family:var(--serif); font-weight:600; font-size:14px; padding: 2px 11px; border-radius:16px; }
+.balance.pos { color:var(--pine); background:var(--pine-soft); }
+.balance.neg { color:var(--terra); background:var(--terra-soft); }
+.commit { border-top:1px dotted var(--line); padding-top: 10px; }
+.commit .c-row { display:flex; align-items:center; gap:9px; }
+.commit .c-name { font-size:13.5px; font-weight:600; flex:1; }
+.commit .c-cad { font-size:11.5px; color:var(--muted); }
+.hist { display:flex; gap:4px; margin-top:9px; align-items:center; }
+.hdot { width:14px; height:14px; border-radius:4px; background:var(--paper-2); border:1px solid var(--line); }
+.hdot.hit { background: var(--pine); border-color: var(--pine); }
+.hdot.miss { background: var(--terra-soft); border-color:#dcb4a6; }
+.hist .nxt { margin-left:auto; font-size:11.5px; color:var(--muted); }
+.p-acts { display:flex; gap:8px; margin-top:11px; flex-wrap:wrap; }
+.ledger { margin-top: 10px; }
+.ledger > summary { list-style:none; cursor:pointer; font-size:11.5px; font-weight:600; color:var(--muted); }
+.ledger > summary::-webkit-details-marker { display:none; }
+.ledger > summary:hover { color:var(--ink); }
+.ledger-row { display:flex; gap:10px; font-size:12.5px; color:var(--ink-soft); padding:4px 0; border-bottom:1px dotted var(--line); }
+.ledger-row:last-child { border-bottom:none; }
+.ledger-row .amt { font-weight:700; width:22px; }
+.ledger-row .amt.dep { color:var(--pine); } .ledger-row .amt.wd { color:var(--terra); }
+.ledger-row .when { margin-left:auto; color:var(--muted); font-size:11px; }
+
+/* ============ COMPASS · renew (define habits) ============ */
+.renew-grid { display:grid; gap:14px; grid-template-columns: 1fr; }
+.dim-card { padding: 16px 18px; }
+.dim-card .dh { display:flex; align-items:center; gap:11px; margin-bottom: 4px; }
+.dim-ic { width:34px; height:34px; border-radius: 10px; display:grid; place-items:center; font-size:15px; color:#fff; flex:0 0 auto; }
+.dim-card .dh .nm { font-family:var(--serif); font-weight:600; font-size:16px; }
+.dim-card .dh .ds { font-size:11px; color:var(--muted); }
+.dim-link { display:inline-flex; align-items:center; gap:6px; font-size:11px; font-weight:600; border-radius:14px; padding:3px 10px; margin: 4px 0 8px; }
+.hdef { display:flex; align-items:center; gap:9px; padding: 8px 0; border-top:1px dotted var(--line); }
+.hdef .hn { font-size:13.5px; font-weight:500; flex:1; min-width:0; }
+.hdef .cad { font-size:11px; font-weight:600; color:var(--ink-soft); background:var(--paper-2); border-radius:12px; padding:2px 9px; flex:0 0 auto; }
+.hdef .gl { font-size:11px; color:var(--muted); flex:0 0 auto; }
+.hdef .wk { font-size:11px; color:var(--muted); flex:0 0 auto; }
+.dim-card .intent { font-family:var(--serif); font-style:italic; font-size:12.5px; color:var(--muted); border-top:1px dotted var(--line); padding-top:9px; margin-top:2px; }
+.dim-card .addh { background:none; border:none; padding:6px 0 0; font-size:12px; font-weight:600; color:var(--muted); }
+.dim-card .addh:hover { color:var(--ink); }
+.renew-note { font-size:12px; color:var(--muted); margin-top:16px; font-style:italic; font-family:var(--serif); }
+
+/* ============ CLOCK · today ============ */
+.rocks-card { background: linear-gradient(135deg, #2c2820 0%, #3a3326 100%); color: #f0ead9; border:none; margin-bottom:14px; }
+.rocks-card h3 { color:#f7f2e4; }
+.rocks-card .sub { color:#b8ad92; }
+.rocks-row { display:flex; gap:9px; flex-wrap:wrap; margin: 4px 0 12px; }
+.rock-chip {
+  display:flex; align-items:center; gap:8px;
+  border-radius: 11px; padding: 7px 12px;
+  background: rgba(255,253,247,.08); border:1px solid rgba(255,253,247,.14);
+  font-size: 12.5px; font-weight:500; color:#ece5d2;
+}
+.rock-chip .st { font-size:13px; }
+.rock-chip.done { background: rgba(94,158,134,.22); border-color: rgba(94,158,134,.45); }
+.rock-chip.done .lbl { text-decoration: line-through; opacity:.75; }
+.rocks-meter { display:flex; align-items:center; gap:12px; }
+.rocks-meter .bar { flex:1; height:6px; border-radius:5px; background:rgba(255,253,247,.14); overflow:hidden; }
+.rocks-meter .bar i { display:block; height:100%; width:40%; background: var(--star); border-radius:5px; }
+.rocks-meter .num { font-family:var(--serif); font-size:14px; }
+
+.slot { display:flex; align-items:center; gap:10px; padding: 8px 0; border-bottom:1px dotted var(--line); }
+.slot:last-child { border-bottom:none; }
+.slot .scb {
+  width: 19px; height: 19px; flex:0 0 auto;
+  border: 1.6px solid var(--line-2); border-radius: 6px; background: #fffdf7;
+  display:grid; place-items:center; font-size: 11px; color:transparent;
+}
+.slot.done .scb { background: var(--pine); border-color: var(--pine); color:#fff; }
+.slot .stime { font-size:11.5px; font-weight:600; color:var(--terra); width:46px; flex:0 0 auto; }
+.slot .stime.none { color:var(--line-2); font-weight:400; }
+.slot .stext { flex:1; font-size:13.5px; line-height:1.35; min-width:0; }
+.slot .stext .crumb { display:block; font-size:11px; color:var(--muted); margin-top:1px; }
+.slot.done .stext { text-decoration:line-through; color:var(--muted); }
+
+.checkin { display:flex; align-items:center; gap:11px; padding: 8px 0; border-bottom:1px dotted var(--line); }
+.checkin:last-child { border-bottom:none; }
+.check-today {
+  width:28px; height:28px; border-radius:50%; flex:0 0 auto;
+  border:2px solid var(--line-2); background:#fffdf7;
+  display:grid; place-items:center; font-size:13px; color:transparent;
+  transition: all .12s;
+}
+.check-today:hover { border-color: var(--pine); }
+.check-today.on { background:var(--pine); border-color:var(--pine); color:#fff; }
+.checkin .hname { font-size:13.5px; font-weight:500; flex:1; min-width:0; }
+.dim-tag { font-size:10px; font-weight:600; padding:2px 8px; border-radius:14px; flex:0 0 auto; }
+.checkin .hwk { font-size:11px; color:var(--muted); flex:0 0 auto; }
+
+.nudge {
+  display:flex; align-items:center; gap:11px;
+  border-radius: 12px; padding: 11px 14px;
+  background: var(--terra-soft); border:1px solid #e5c4b8;
+  font-size: 13px; line-height:1.45; color:#6e2a18;
+  margin-bottom: 14px;
+}
+.nudge .act { margin-left:auto; flex:0 0 auto; }
+
+/* ============ CLOCK · week ============ */
+.clock-tools { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:18px; }
+.wknav { display:inline-flex; align-items:center; gap:4px; border:1px solid var(--line-2); border-radius:10px; background:var(--card); padding:3px; }
+.wknav button { border:none; background:none; padding:4px 10px; font-size:14px; color:var(--ink-soft); border-radius:7px; }
+.wknav button:hover { background:var(--paper-2); }
+.wknav .lbl { font-family:var(--serif); font-size:13.5px; font-weight:600; padding:0 8px; }
+
+.clock-wrap { display:grid; gap:16px; grid-template-columns: 1fr; align-items:start; }
+.rocks-tray { padding: 16px 18px; }
+.tray-item { border:1px solid var(--line); border-radius:10px; background:#fffdf7; padding: 10px 12px; margin-top:10px; }
+.tray-item .tt { font-size:13.5px; font-weight:500; line-height:1.35; margin-bottom:7px; }
+.tray-item .tt .st { color:var(--star); }
+.tray-item .trw { display:flex; align-items:center; gap:7px; }
+.tray-item select { flex:1; font-family:var(--sans); font-size:12px; padding:5px 8px; border:1px solid var(--line-2); border-radius:7px; background:#fff; color:var(--ink-soft); }
+
+.daylist { display:flex; flex-direction:column; gap:10px; }
+.day { border:1px solid var(--line); border-radius:12px; background:var(--card); box-shadow:var(--shadow-1); overflow:hidden; }
+.day.today { outline:2px solid var(--terra); outline-offset:-1px; }
+.day .dhead { display:flex; align-items:baseline; gap:8px; padding: 8px 16px; background:var(--card-2); border-bottom:1px solid var(--line); }
+.day .dhead .dname { font-family:var(--serif); font-weight:600; font-size:14.5px; }
+.day .dhead .ddate { font-size:11.5px; color:var(--muted); }
+.day .dhead .dtag { margin-left:auto; font-size:10.5px; font-weight:700; letter-spacing:.1em; color:var(--terra); }
+.day .dbody { padding: 2px 16px 6px; }
+.day .dempty { color:var(--line-2); font-family:var(--serif); font-style:italic; font-size:13px; padding:8px 0; }
+
+/* ============ ALMANAC (read-only) ============ */
+.ren-grid { display:grid; gap:12px; grid-template-columns: 1fr 1fr; margin-bottom: 14px; }
+.ren-card { border:1px solid var(--line); border-radius:12px; background:var(--card); padding: 13px 15px; box-shadow:var(--shadow-1); border-top:3px solid var(--muted); }
+.ren-card .rt { display:flex; align-items:center; gap:8px; margin-bottom:6px; }
+.ren-card .rt h4 { font-family:var(--serif); font-size:14px; font-weight:600; margin:0; }
+.ren-card .rbig { font-family:var(--serif); font-size:21px; font-weight:600; }
+.ren-card .rbig small { font-size:12px; color:var(--muted); font-weight:400; }
+.progbar { height:5px; border-radius:4px; background:var(--paper-2); overflow:hidden; margin-top:8px; }
+.progbar i { display:block; height:100%; border-radius:4px; background:var(--pine); }
+.progbar.met i { background:var(--star); }
+
+.streak-row { display:flex; align-items:center; gap:11px; padding: 10px 0; border-bottom:1px dotted var(--line); }
+.streak-row:last-child { border-bottom:none; }
+.streak-row .hname { font-size:13.5px; font-weight:500; flex:1; min-width:0; }
+.wkdots { display:flex; gap:4px; }
+.wd { width:20px; height:20px; border-radius:6px; border:1px solid var(--line); background:#fffdf7; font-size:8.5px; color:var(--muted); display:grid; place-items:center; }
+.wd.on { background:var(--pine); border-color:var(--pine); color:#fff; }
+.wd.future { opacity:.35; }
+.streak-row .stk { font-size:11.5px; color:var(--muted); width:74px; text-align:right; flex:0 0 auto; }
+.streak-row .stk b { color:var(--ink); }
+
+.review-grid { display:grid; gap:14px; grid-template-columns:1fr; }
+.cmp-row { display:flex; align-items:baseline; gap:8px; padding: 7px 0; border-bottom:1px dotted var(--line); }
+.cmp-row:last-child { border-bottom:none; }
+.cmp-row .cn { flex:1; font-size:13.5px; }
+.cmp-row .cv { font-family:var(--serif); font-weight:600; font-size:15px; }
+.delta { font-size:11px; font-weight:600; padding:1px 8px; border-radius:12px; }
+.delta.up { color:var(--pine); background:var(--pine-soft); }
+.delta.down { color:var(--terra); background:var(--terra-soft); }
+.heatmap { display:flex; flex-direction:column; gap:3px; margin-top:4px; }
+.heat-row { display:flex; gap:3px; align-items:center; }
+.heat-cell { width:14px; height:14px; border-radius:3px; background:var(--paper-2); }
+.heat-cell.l1 { background:#e3ddc9; } .heat-cell.l2 { background:#cbd9c6; }
+.heat-cell.l3 { background:#8fb89f; } .heat-cell.l4 { background:var(--pine); }
+.heat-label { font-size:10.5px; color:var(--muted); width:42px; flex:0 0 auto; }
+.ai-note { border-left:3px solid var(--plum); }
+.ai-note .quote { font-family:var(--serif); font-style:italic; font-size:14px; line-height:1.55; color:var(--ink-soft); margin:2px 0 0; }
+
+/* ============ SETTINGS ============ */
+.set-section { margin-bottom: 16px; }
+.set-row { display:flex; align-items:center; gap:12px; padding: 11px 0; border-bottom:1px dotted var(--line); }
+.set-row:last-child { border-bottom:none; }
+.set-row .t { flex:1; min-width:0; }
+.set-row .t .nm { font-size:13.5px; font-weight:600; }
+.set-row .t .ds { font-size:11.5px; color:var(--muted); margin-top:1px; }
+.switch { width:40px; height:23px; border-radius:14px; background:var(--line-2); position:relative; border:none; flex:0 0 auto; }
+.switch::after { content:""; position:absolute; top:2.5px; left:3px; width:18px; height:18px; border-radius:50%; background:#fff; transition: left .15s; }
+.switch.on { background: var(--pine); }
+.switch.on::after { left:19px; }
+.keyrow { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size:12px; background:var(--paper-2); border:1px solid var(--line); border-radius:8px; padding:8px 12px; display:flex; align-items:center; gap:10px; overflow:hidden; margin-bottom:8px; }
+.keyrow .k { flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--ink-soft); }
+.keyrow .scope { font-family:var(--sans); }
+.dropzone {
+  border: 1.5px dashed var(--line-2); border-radius: 12px;
+  padding: 22px; text-align:center; color: var(--muted); font-size:13px;
+  background: var(--card-2); margin-top: 6px;
+}
+.dropzone b { color: var(--ink-soft); }
+
+/* ---------- bottom nav (mobile) ---------- */
+.bottomnav {
+  position:absolute; bottom:0; left:0; right:0; z-index:20;
+  display:flex; align-items:stretch;
+  background: color-mix(in srgb, var(--card) 92%, transparent);
+  backdrop-filter: blur(8px);
+  border-top:1px solid var(--line);
+  padding: 6px 10px calc(8px + env(safe-area-inset-bottom));
+}
+.bottomnav button {
+  flex:1; border:none; background:none;
+  display:flex; flex-direction:column; align-items:center; gap:3px;
+  padding: 7px 2px 4px; color: var(--muted);
+  font-size: 10.5px; font-weight:600; letter-spacing:.02em;
+}
+.bottomnav button .ic { font-size: 19px; line-height:1; }
+.bottomnav button.on.compass { color: var(--pine); }
+.bottomnav button.on.clock   { color: var(--terra); }
+.bottomnav button.on.almanac { color: var(--gold); }
+
+.fab {
+  position:absolute; right:16px; bottom:84px; z-index:21;
+  width: 54px; height:54px; border-radius: 18px;
+  background: var(--ink); color:#fff; border:none;
+  font-size: 24px; line-height:1;
+  box-shadow: 0 10px 24px -8px rgba(33,29,22,.6);
+}
+.fab:active { transform: scale(.95); }
+
+/* ---------- capture modal ---------- */
+.overlay {
+  position:absolute; inset:0; z-index:40;
+  background: rgba(33,29,22,.45); backdrop-filter: blur(2px);
+  display:none; align-items:flex-end; justify-content:center;
+}
+.overlay.open { display:flex; }
+.capture-sheet {
+  width: 100%; max-width: 540px;
+  background: var(--card); border-radius: 20px 20px 0 0;
+  padding: 20px 20px 26px;
+  box-shadow: var(--shadow-2);
+  animation: rise .25s ease;
+}
+.capture-sheet .grab { width:40px; height:4px; border-radius:3px; background:var(--line-2); margin: 0 auto 16px; }
+.capture-sheet h3 { font-family:var(--serif); font-size:17px; margin:0 0 10px; }
+.capture-sheet textarea {
+  width:100%; font-family:var(--sans); font-size:15px; line-height:1.5;
+  border:1px solid var(--line-2); border-radius: 12px; background:#fffdf7;
+  padding: 12px 14px; min-height: 72px; resize:none; color:var(--ink);
+}
+.ai-preview { margin-top:12px; border:1px solid #ddd6ea; background: var(--plum-soft); border-radius: 12px; padding: 12px 14px; }
+.ai-preview .lbl { font-size:10.5px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--plum); margin-bottom:8px; }
+.ai-preview .chips { display:flex; gap:7px; flex-wrap:wrap; }
+.ai-preview .chip { font-size:11.5px; font-weight:600; background:#fff; border:1px solid #ddd6ea; border-radius:16px; padding:4px 11px; color:var(--ink-soft); }
+.capture-sheet .acts { display:flex; gap:9px; margin-top:14px; justify-content:flex-end; }
+
+/* ============================================================
+   Container queries — desktop layout ≥820px inside the app
+   ============================================================ */
+@container app (min-width: 820px) {
+  .modeswitch { display:inline-flex; }
+  .bottomnav, .fab { display:none; }
+  .content { padding: 30px 28px 60px; }
+  .overlay { align-items:center; }
+  .capture-sheet { border-radius: 20px; }
+  .capture-sheet .grab { display:none; }
+
+  .matrix { grid-template-columns: 1fr 1fr; }
+  .clock-wrap { grid-template-columns: 264px 1fr; }
+  .ren-grid { grid-template-columns: repeat(4, 1fr); }
+  .review-grid { grid-template-columns: 1fr 1fr; }
+  .people-grid { grid-template-columns: 1fr 1fr; }
+  .renew-grid { grid-template-columns: 1fr 1fr; }
+  .today-grid { display:grid; grid-template-columns: 7fr 5fr; gap:14px; align-items:start; }
+}
+</style>
+</head>
+<body>
+
+<!-- ======= mockup chrome ======= -->
+<div class="mock-bar">
+  <b>BigRocks · mockup v3</b>
+  <span>Compass defines · Clock does · Almanac remembers. Static sample data.</span>
+  <span class="spacer"></span>
+  <button class="mock-toggle" id="deskBtn" onclick="setView('desk')">🖥 Desktop</button>
+  <button class="mock-toggle" id="phoneBtn" onclick="setView('phone')">📱 Phone</button>
+</div>
+
+<div class="stage">
+<div class="app m-clock" id="app">
+
+  <header class="topbar">
+    <div class="brand">
+      <div class="rock-mark">▲</div>
+      <div class="name">BigRocks</div>
+    </div>
+    <div class="modeswitch">
+      <button class="compass" data-mode="compass"><span class="glyph">✧</span> Compass</button>
+      <button class="clock on" data-mode="clock"><span class="glyph">◷</span> Clock</button>
+      <button class="almanac" data-mode="almanac"><span class="glyph">☷</span> Almanac</button>
+    </div>
+    <div class="grow"></div>
+    <button class="iconbtn" aria-label="Capture" onclick="openCapture()" title="Capture (⌘K)">＋</button>
+    <button class="iconbtn" aria-label="Notifications">🔔<span class="dot"></span></button>
+    <button class="iconbtn" aria-label="Settings" data-mode="settings">⚙</button>
+  </header>
+
+  <main class="content">
+
+    <!-- ════════════════ COMPASS ════════════════ -->
+    <!-- · mission & goals -->
+    <section class="screen" id="s-compass-mission">
+      <div class="inner">
+        <div class="kicker">Compass · define what matters</div>
+        <h1 class="page">Begin with the <em>end in mind</em>.</h1>
+        <p class="page-sub">Your mission, the roles you live by, and the few results that matter most in each.</p>
+
+        <nav class="subtabs" data-group="compass">
+          <button class="on" data-sub="mission">Mission &amp; Goals</button>
+          <button data-sub="projects">Projects</button>
+          <button data-sub="matrix">Matrix</button>
+          <button data-sub="people">People</button>
+          <button data-sub="renew">Renew</button>
+        </nav>
+
+        <div class="mission-card">
+          <div class="lbl">Personal mission</div>
+          <p class="txt">“Live with integrity, lead with empathy, and leave every person and place better than I found them.”</p>
+          <button class="btn sm ghost edit">Edit</button>
+        </div>
+
+        <div class="role-head"><h3>Self</h3><span class="rm">“Keep the instrument sharp.”</span></div>
+
+        <details class="card goal-card" open>
+          <summary>
+            <div class="goal-top">
+              <span class="chev">▶</span>
+              <h3>Run a half marathon</h3>
+              <span class="pill ok">on track</span>
+            </div>
+            <div class="goal-meta">
+              <div class="gbar"><i style="width:60%"></i></div>
+              <span class="pct">60%</span>
+              <span class="tgt">target · Oct 12</span>
+            </div>
+          </summary>
+          <div class="goal-body">
+            <div class="goal-proj"><span class="nm">▤ Base building</span><span class="cnt">3 / 5 tasks</span><span class="pill ok">active</span></div>
+            <div class="goal-proj"><span class="nm">▤ Race prep</span><span class="cnt">0 / 4 tasks</span><span class="pill mut">someday</span></div>
+            <div class="goal-proj"><span class="nm">↻ Morning run</span><span class="cnt">habit · 4×/wk</span><span class="pill ok">6-wk streak</span></div>
+            <button class="jump">Open in Projects →</button>
+          </div>
+        </details>
+
+        <details class="card goal-card">
+          <summary>
+            <div class="goal-top">
+              <span class="chev">▶</span>
+              <h3>Learn Spanish — conversational</h3>
+              <span class="pill ok">on track</span>
+            </div>
+            <div class="goal-meta">
+              <div class="gbar"><i style="width:25%"></i></div>
+              <span class="pct">25%</span>
+              <span class="tgt">target · Dec 20 · 1 habit linked</span>
+            </div>
+          </summary>
+        </details>
+
+        <div class="role-head"><h3>Parent &amp; Partner</h3><span class="rm">“Present, not just around.”</span></div>
+
+        <details class="card goal-card">
+          <summary>
+            <div class="goal-top">
+              <span class="chev">▶</span>
+              <h3>Be a present parent</h3>
+              <span class="pill ok">ongoing</span>
+            </div>
+            <div class="goal-meta">
+              <div class="gbar"><i style="width:75%"></i></div>
+              <span class="pct">75%</span>
+              <span class="tgt">no target date · linked to Noor &amp; Finn commitments</span>
+            </div>
+          </summary>
+        </details>
+
+        <div class="role-head"><h3>Builder</h3><span class="rm">“Ship small, ship true.”</span></div>
+
+        <details class="card goal-card">
+          <summary>
+            <div class="goal-top">
+              <span class="chev">▶</span>
+              <h3>Ship BigRocks v1</h3>
+              <span class="pill warn">due soon</span>
+            </div>
+            <div class="goal-meta">
+              <div class="gbar"><i style="width:40%"></i></div>
+              <span class="pct">40%</span>
+              <span class="tgt">target · Jul 31 · projects: MCP adapter, PWA polish</span>
+            </div>
+          </summary>
+        </details>
+
+        <button class="btn dashed">＋ Add a role or goal</button>
+      </div>
+    </section>
+
+    <!-- · projects -->
+    <section class="screen" id="s-compass-projects">
+      <div class="inner">
+        <div class="kicker">Compass · goals become action</div>
+        <h1 class="page">Projects.</h1>
+        <p class="page-sub">Multi-step outcomes, each traceable to a goal. Unlinked work is flagged, never blocked.</p>
+
+        <nav class="subtabs" data-group="compass">
+          <button data-sub="mission">Mission &amp; Goals</button>
+          <button class="on" data-sub="projects">Projects</button>
+          <button data-sub="matrix">Matrix</button>
+          <button data-sub="people">People</button>
+          <button data-sub="renew">Renew</button>
+        </nav>
+
+        <details class="card proj-card" open>
+          <summary>
+            <div class="proj-top">
+              <span class="chev">▶</span>
+              <h3>Base building</h3>
+              <span class="cnt">3 / 5</span>
+              <span class="pill ok">active</span>
+            </div>
+            <div class="lineage">Goal: Run a half marathon › Self</div>
+          </summary>
+          <div class="proj-body">
+            <div class="trow done">
+              <div class="cb">✓</div>
+              <div class="tmain"><div class="ttl">Long run 14 km</div></div>
+              <span class="qb q2">Q2</span>
+              <button class="rockstar on">★</button>
+            </div>
+            <div class="trow">
+              <div class="cb"></div>
+              <div class="tmain"><div class="ttl">Book gait analysis</div><div class="meta"><span class="due">Jun 18</span></div></div>
+              <span class="qb q2">Q2</span>
+              <button class="rockstar">☆</button>
+            </div>
+            <div class="add-row"><input placeholder="Add a task…"><button class="btn sm ghost">Add</button></div>
+          </div>
+        </details>
+
+        <details class="card proj-card">
+          <summary>
+            <div class="proj-top">
+              <span class="chev">▶</span>
+              <h3>MCP adapter</h3>
+              <span class="cnt">2 / 6</span>
+              <span class="pill ok">active</span>
+            </div>
+            <div class="lineage">Goal: Ship BigRocks v1 › Builder</div>
+          </summary>
+        </details>
+
+        <details class="card proj-card">
+          <summary>
+            <div class="proj-top">
+              <span class="chev">▶</span>
+              <h3>Garage clear-out</h3>
+              <span class="cnt">0 / 3</span>
+              <span class="pill mut">someday</span>
+            </div>
+            <div class="lineage warn">Not linked to a goal — worth doing, or worth dropping?</div>
+          </summary>
+        </details>
+
+        <button class="btn dashed">＋ New project</button>
+
+        <div class="inbox-sec">
+          <div class="sec-head"><h3>Inbox</h3><span class="n">2 unsorted</span><span class="rule"></span></div>
+          <div class="card" style="padding: 6px 18px;">
+            <div class="trow">
+              <div class="cb"></div>
+              <div class="tmain"><div class="ttl">Renew passport before trip</div><div class="meta"><span class="due today">Today</span></div></div>
+              <span class="qb q1">Q1</span>
+            </div>
+            <div class="trow">
+              <div class="cb"></div>
+              <div class="tmain"><div class="ttl">Reply to HOA email</div></div>
+              <span class="qb q3">Q3</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- · matrix -->
+    <section class="screen" id="s-compass-matrix">
+      <div class="inner wide">
+        <div class="kicker">Compass · habit 3</div>
+        <h1 class="page">The <em>weekly compass</em>.</h1>
+        <p class="page-sub">Every open task, seen by importance × urgency. The effective life is lived in Quadrant II.</p>
+
+        <nav class="subtabs" data-group="compass">
+          <button data-sub="mission">Mission &amp; Goals</button>
+          <button data-sub="projects">Projects</button>
+          <button class="on" data-sub="matrix">Matrix</button>
+          <button data-sub="people">People</button>
+          <button data-sub="renew">Renew</button>
+        </nav>
+
+        <div class="matrix-tools">
+          <span class="seg">
+            <button class="on">★ Big rocks</button>
+            <button>All tasks</button>
+          </span>
+        </div>
+
+        <div class="matrix">
+          <div class="quad qd2">
+            <div class="qhead"><span class="qn">Q II</span><span class="qt">Important · not urgent</span><span class="hint">focus here</span></div>
+            <div class="qbody">
+              <div class="trow">
+                <div class="cb"></div>
+                <div class="tmain"><div class="ttl">One-on-one with Noor — climbing gym</div><div class="meta"><span class="crumb">♥ Noor · monthly</span><span class="crumb">◎ Be a present parent</span><span class="due">Sat</span></div></div>
+                <button class="rockstar on">★</button>
+              </div>
+              <div class="trow">
+                <div class="cb"></div>
+                <div class="tmain"><div class="ttl">Ship MCP adapter — wire task tools</div><div class="meta"><span class="crumb">▤ MCP adapter</span><span class="crumb">◎ Ship BigRocks v1</span><span class="due">Fri</span></div></div>
+                <button class="rockstar on">★</button>
+              </div>
+              <div class="trow done">
+                <div class="cb">✓</div>
+                <div class="tmain"><div class="ttl">Long run 14 km</div><div class="meta"><span class="crumb">▤ Base building</span><span class="crumb">◎ Run a half marathon</span></div></div>
+                <button class="rockstar on">★</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="quad qd1">
+            <div class="qhead"><span class="qn">Q I</span><span class="qt">Important · urgent</span><span class="hint">manage</span></div>
+            <div class="qbody">
+              <div class="trow">
+                <div class="cb"></div>
+                <div class="tmain"><div class="ttl">Renew passport before trip</div><div class="meta"><span class="crumb">⌂ Inbox</span><span class="due today">Today</span></div></div>
+                <button class="rockstar">☆</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="quad qd3">
+            <div class="qhead"><span class="qn">Q III</span><span class="qt">Not important · urgent</span><span class="hint">minimize</span></div>
+            <div class="qbody">
+              <div class="trow">
+                <div class="cb"></div>
+                <div class="tmain"><div class="ttl">Reply to HOA email</div><div class="meta"><span class="crumb">⌂ Inbox</span><span class="due">Thu</span></div></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="quad qd4">
+            <div class="qhead"><span class="qn">Q IV</span><span class="qt">Not important · not urgent</span><span class="hint">eliminate</span></div>
+            <div class="qbody">
+              <div class="empty">Empty — keep it that way.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- · people (v1-style cards) -->
+    <section class="screen" id="s-compass-people">
+      <div class="inner wide">
+        <div class="kicker">Compass · habits 4–6</div>
+        <h1 class="page">The people who <em>matter</em>.</h1>
+        <p class="page-sub">Recurring commitments kept on cadence, and an emotional bank account per relationship.</p>
+
+        <nav class="subtabs" data-group="compass">
+          <button data-sub="mission">Mission &amp; Goals</button>
+          <button data-sub="projects">Projects</button>
+          <button data-sub="matrix">Matrix</button>
+          <button class="on" data-sub="people">People</button>
+          <button data-sub="renew">Renew</button>
+        </nav>
+
+        <div class="people-grid">
+
+          <div class="card person-card" style="border-color:#dcb4a6;">
+            <div class="p-head">
+              <div class="avatar" style="background:var(--terra)">N</div>
+              <div><div class="nm">Noor</div><div class="rel">kid · 11</div></div>
+              <div class="grow"></div>
+              <span class="pill over">overdue</span>
+              <span class="balance pos">+3</span>
+            </div>
+            <div class="commit">
+              <div class="c-row"><span class="c-name">One-on-one activity</span><span class="c-cad">monthly</span></div>
+              <div class="hist">
+                <span class="hdot hit"></span><span class="hdot hit"></span><span class="hdot hit"></span><span class="hdot miss"></span><span class="hdot hit"></span><span class="hdot hit"></span><span class="hdot miss"></span><span class="hdot miss"></span>
+                <span class="nxt">last · 5 weeks ago</span>
+              </div>
+              <div class="p-acts">
+                <button class="btn sm mode">Log occurrence</button>
+                <button class="btn sm ghost">Plan as big rock ★</button>
+              </div>
+              <details class="ledger">
+                <summary>Bank account · +3 ▾</summary>
+                <div class="ledger-row"><span class="amt dep">+1</span><span>Helped with the science project</span><span class="when">May 28</span></div>
+                <div class="ledger-row"><span class="amt wd">−1</span><span>Cancelled the cinema plan</span><span class="when">May 19</span></div>
+                <div class="ledger-row"><span class="amt dep">+1</span><span>Listened, no fixing — school stuff</span><span class="when">May 12</span></div>
+              </details>
+            </div>
+          </div>
+
+          <div class="card person-card">
+            <div class="p-head">
+              <div class="avatar" style="background:var(--pine)">E</div>
+              <div><div class="nm">Elin</div><div class="rel">spouse</div></div>
+              <div class="grow"></div>
+              <span class="pill warn">due soon</span>
+              <span class="balance pos">+5</span>
+            </div>
+            <div class="commit">
+              <div class="c-row"><span class="c-name">Date night</span><span class="c-cad">every 2 weeks</span></div>
+              <div class="hist">
+                <span class="hdot hit"></span><span class="hdot hit"></span><span class="hdot miss"></span><span class="hdot hit"></span><span class="hdot hit"></span><span class="hdot hit"></span><span class="hdot hit"></span><span class="hdot hit"></span>
+                <span class="nxt">next · Sat Jun 13</span>
+              </div>
+              <div class="p-acts">
+                <button class="btn sm">Log occurrence</button>
+                <button class="btn sm ghost">Plan as big rock ★</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card person-card">
+            <div class="p-head">
+              <div class="avatar" style="background:var(--gold)">F</div>
+              <div><div class="nm">Finn</div><div class="rel">kid · 8</div></div>
+              <div class="grow"></div>
+              <span class="pill ok">on track</span>
+              <span class="balance pos">+2</span>
+            </div>
+            <div class="commit">
+              <div class="c-row"><span class="c-name">One-on-one activity</span><span class="c-cad">monthly</span></div>
+              <div class="hist">
+                <span class="hdot hit"></span><span class="hdot hit"></span><span class="hdot hit"></span><span class="hdot hit"></span><span class="hdot miss"></span><span class="hdot hit"></span><span class="hdot hit"></span><span class="hdot hit"></span>
+                <span class="nxt">last · 6 days ago</span>
+              </div>
+              <div class="p-acts"><button class="btn sm">Log occurrence</button></div>
+            </div>
+          </div>
+
+          <div class="card person-card">
+            <div class="p-head">
+              <div class="avatar" style="background:var(--plum)">D</div>
+              <div><div class="nm">Dad</div><div class="rel">parent</div></div>
+              <div class="grow"></div>
+              <span class="pill ok">8-wk streak</span>
+              <span class="balance pos">+4</span>
+            </div>
+            <div class="commit">
+              <div class="c-row"><span class="c-name">Phone call</span><span class="c-cad">weekly</span></div>
+              <div class="hist">
+                <span class="hdot hit"></span><span class="hdot hit"></span><span class="hdot hit"></span><span class="hdot hit"></span><span class="hdot hit"></span><span class="hdot hit"></span><span class="hdot hit"></span><span class="hdot hit"></span>
+                <span class="nxt">8-week streak ✦</span>
+              </div>
+              <div class="p-acts"><button class="btn sm">Log occurrence</button></div>
+            </div>
+          </div>
+
+        </div>
+        <button class="btn dashed" style="margin-top:14px;">＋ Add a person</button>
+      </div>
+    </section>
+
+    <!-- · renew (define habits here) -->
+    <section class="screen" id="s-compass-renew">
+      <div class="inner wide">
+        <div class="kicker">Compass · habit 7</div>
+        <h1 class="page">Sharpen the <em>saw</em>.</h1>
+        <p class="page-sub">Define the habits that renew you — a dimension, a cadence, and the goal each one serves.</p>
+
+        <nav class="subtabs" data-group="compass">
+          <button data-sub="mission">Mission &amp; Goals</button>
+          <button data-sub="projects">Projects</button>
+          <button data-sub="matrix">Matrix</button>
+          <button data-sub="people">People</button>
+          <button class="on" data-sub="renew">Renew</button>
+        </nav>
+
+        <div class="renew-grid">
+
+          <div class="card dim-card">
+            <div class="dh">
+              <div class="dim-ic" style="background:var(--q1)">♥</div>
+              <div><div class="nm">Physical</div><div class="ds">exercise · nutrition · rest</div></div>
+            </div>
+            <span class="dim-link" style="background:var(--pine-soft);color:var(--pine)">◎ feeds: Run a half marathon</span>
+            <div class="hdef">
+              <span class="hn">Morning run</span>
+              <span class="cad">4×/wk</span>
+              <span class="gl">↳ half marathon</span>
+              <span class="wk">2/4 this wk</span>
+            </div>
+            <div class="hdef">
+              <span class="hn">In bed by 23:00</span>
+              <span class="cad">daily</span>
+              <span class="wk">5/7 this wk</span>
+            </div>
+            <button class="addh">＋ habit</button>
+            <div class="intent">This week: keep the long run, even if it rains.</div>
+          </div>
+
+          <div class="card dim-card">
+            <div class="dh">
+              <div class="dim-ic" style="background:var(--pine)">📖</div>
+              <div><div class="nm">Mental</div><div class="ds">reading · learning · planning</div></div>
+            </div>
+            <span class="dim-link" style="background:var(--pine-soft);color:var(--pine)">◎ feeds: Learn Spanish</span>
+            <div class="hdef">
+              <span class="hn">Spanish — one lesson</span>
+              <span class="cad">3×/wk</span>
+              <span class="gl">↳ Spanish</span>
+              <span class="wk">2/3 this wk</span>
+            </div>
+            <div class="hdef">
+              <span class="hn">Weekly planning session</span>
+              <span class="cad">1×/wk</span>
+              <span class="wk">0/1 this wk</span>
+            </div>
+            <button class="addh">＋ habit</button>
+            <div class="intent">This week: plan Sunday evening, not Monday morning.</div>
+          </div>
+
+          <div class="card dim-card">
+            <div class="dh">
+              <div class="dim-ic" style="background:var(--gold)">☼</div>
+              <div><div class="nm">Social / Emotional</div><div class="ds">connection · service · empathy</div></div>
+            </div>
+            <span class="dim-link" style="background:var(--terra-soft);color:var(--terra)">♥ fed by your People commitments</span>
+            <div class="hdef">
+              <span class="hn">Call a friend</span>
+              <span class="cad">1×/wk</span>
+              <span class="wk">1/1 this wk</span>
+            </div>
+            <button class="addh">＋ habit</button>
+            <div class="intent">This week: reach out to Jonas about the hike.</div>
+          </div>
+
+          <div class="card dim-card">
+            <div class="dh">
+              <div class="dim-ic" style="background:var(--plum)">✦</div>
+              <div><div class="nm">Spiritual</div><div class="ds">values · reflection · meaning</div></div>
+            </div>
+            <span class="dim-link" style="background:var(--plum-soft);color:var(--plum)">✎ feeds: mission statement</span>
+            <div class="hdef">
+              <span class="hn">Morning pages</span>
+              <span class="cad">3×/wk</span>
+              <span class="wk">1/3 this wk</span>
+            </div>
+            <button class="addh">＋ habit</button>
+            <div class="intent">This week: re-read the mission before journaling.</div>
+          </div>
+
+        </div>
+        <p class="renew-note">Habits are defined here; you check them off in Clock · Today, and the Almanac keeps the record.</p>
+      </div>
+    </section>
+
+    <!-- ════════════════ CLOCK ════════════════ -->
+    <!-- · today -->
+    <section class="screen active" id="s-clock-today">
+      <div class="inner wide">
+        <div class="kicker">Clock · Wednesday, June 10</div>
+        <h1 class="page">First things <em>first</em>.</h1>
+        <p class="page-sub">Today's rocks, today's agenda, today's check-ins. Everything else can wait.</p>
+
+        <nav class="subtabs" data-group="clock">
+          <button class="on" data-sub="today">Today</button>
+          <button data-sub="week">Week</button>
+        </nav>
+
+        <div class="card rocks-card">
+          <div class="head-row">
+            <h3>⛰ This week's big rocks</h3>
+            <button class="more" style="color:#d8b96a" data-jump="clock:week">Week view →</button>
+          </div>
+          <div class="sub">Schedule these before anything else fills the jar.</div>
+          <div class="rocks-row">
+            <div class="rock-chip done"><span class="st">✓</span><span class="lbl">Draft mission rewrite</span></div>
+            <div class="rock-chip done"><span class="st">✓</span><span class="lbl">Long run 14 km</span></div>
+            <div class="rock-chip"><span class="st">★</span><span class="lbl">Ship MCP adapter</span></div>
+            <div class="rock-chip"><span class="st">★</span><span class="lbl">One-on-one with Noor</span></div>
+            <div class="rock-chip"><span class="st">★</span><span class="lbl">Plan Q3 family trip</span></div>
+          </div>
+          <div class="rocks-meter">
+            <div class="bar"><i></i></div>
+            <div class="num">2 / 5</div>
+          </div>
+        </div>
+
+        <div class="nudge">
+          <span>No one-on-one with <b>Noor</b> logged in 5 weeks — it's also an unplaced rock.</span>
+          <button class="btn sm mode act">Place it</button>
+        </div>
+
+        <div class="today-grid">
+          <div class="card">
+            <h3>Today's agenda</h3>
+            <div class="sub">Scheduled and due on June 10</div>
+            <div class="slot">
+              <span class="scb"></span>
+              <span class="stime">9:00</span>
+              <span class="stext">★ Ship MCP adapter — wire task tools<span class="crumb">▤ MCP adapter · ◎ Ship BigRocks v1</span></span>
+            </div>
+            <div class="slot">
+              <span class="scb"></span>
+              <span class="stime none">—</span>
+              <span class="stext">Renew passport before trip<span class="crumb">⌂ Inbox · due today</span></span>
+            </div>
+            <div class="slot done">
+              <span class="scb">✓</span>
+              <span class="stime">7:00</span>
+              <span class="stext">Morning run — intervals<span class="crumb">↻ habit · Physical</span></span>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>Check-ins</h3>
+            <div class="sub">Today's habits — defined in Compass · Renew</div>
+            <div class="checkin">
+              <button class="check-today on">✓</button>
+              <span class="hname">Morning run</span>
+              <span class="dim-tag" style="color:var(--q1);background:var(--q1-bg)">Physical</span>
+              <span class="hwk">2/4 wk</span>
+            </div>
+            <div class="checkin">
+              <button class="check-today"></button>
+              <span class="hname">Spanish — one lesson</span>
+              <span class="dim-tag" style="color:var(--pine);background:var(--pine-soft)">Mental</span>
+              <span class="hwk">2/3 wk</span>
+            </div>
+            <div class="checkin">
+              <button class="check-today"></button>
+              <span class="hname">Morning pages</span>
+              <span class="dim-tag" style="color:var(--plum);background:var(--plum-soft)">Spiritual</span>
+              <span class="hwk">1/3 wk</span>
+            </div>
+            <div class="checkin">
+              <button class="check-today"></button>
+              <span class="hname">In bed by 23:00</span>
+              <span class="dim-tag" style="color:var(--q1);background:var(--q1-bg)">Physical</span>
+              <span class="hwk">5/7 wk</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- · week -->
+    <section class="screen" id="s-clock-week">
+      <div class="inner wide">
+        <div class="kicker">Clock · when it actually happens</div>
+        <h1 class="page">Schedule the <em>rocks first</em>.</h1>
+        <p class="page-sub">The compass decides what matters; the clock decides when. The small things fill the gaps.</p>
+
+        <nav class="subtabs" data-group="clock">
+          <button data-sub="today">Today</button>
+          <button class="on" data-sub="week">Week</button>
+        </nav>
+
+        <div class="clock-tools">
+          <span class="wknav"><button>‹</button><span class="lbl">Jun 8 – 14</span><button>›</button></span>
+          <button class="btn sm ghost">Today</button>
+          <span style="flex:1"></span>
+          <span class="seg">
+            <button class="on">★ Big rocks</button>
+            <button>All scheduled</button>
+          </span>
+        </div>
+
+        <div class="clock-wrap">
+          <div class="card rocks-tray">
+            <h3>⛰ Rocks to place</h3>
+            <div class="sub">2 of 5 still unscheduled</div>
+            <div class="tray-item">
+              <div class="tt"><span class="st">★</span> One-on-one with Noor — climbing gym</div>
+              <div class="trw"><span class="qb q2">Q2</span><select><option>place on…</option><option>Sat, Jun 13</option><option>Sun, Jun 14</option></select></div>
+            </div>
+            <div class="tray-item">
+              <div class="tt"><span class="st">★</span> Plan Q3 family trip — shortlist 3 places</div>
+              <div class="trw"><span class="qb q2">Q2</span><select><option>place on…</option><option>Sat, Jun 13</option><option>Sun, Jun 14</option></select></div>
+            </div>
+          </div>
+
+          <div class="daylist">
+            <div class="day">
+              <div class="dhead"><span class="dname">Monday</span><span class="ddate">Jun 8</span></div>
+              <div class="dbody">
+                <div class="slot done">
+                  <span class="scb">✓</span>
+                  <span class="stime">7:00</span>
+                  <span class="stext">★ Draft mission rewrite<span class="crumb">◎ Ship BigRocks v1</span></span>
+                </div>
+              </div>
+            </div>
+            <div class="day">
+              <div class="dhead"><span class="dname">Tuesday</span><span class="ddate">Jun 9</span></div>
+              <div class="dbody"><div class="dempty">—</div></div>
+            </div>
+            <div class="day today">
+              <div class="dhead"><span class="dname">Wednesday</span><span class="ddate">Jun 10</span><span class="dtag">TODAY</span></div>
+              <div class="dbody">
+                <div class="slot">
+                  <span class="scb"></span>
+                  <span class="stime">9:00</span>
+                  <span class="stext">★ Ship MCP adapter — wire task tools<span class="crumb">▤ MCP adapter</span></span>
+                </div>
+                <div class="slot">
+                  <span class="scb"></span>
+                  <span class="stime none">—</span>
+                  <span class="stext">Renew passport before trip<span class="crumb">⌂ Inbox · due today</span></span>
+                </div>
+              </div>
+            </div>
+            <div class="day">
+              <div class="dhead"><span class="dname">Thursday</span><span class="ddate">Jun 11</span></div>
+              <div class="dbody"><div class="dempty">—</div></div>
+            </div>
+            <div class="day">
+              <div class="dhead"><span class="dname">Friday</span><span class="ddate">Jun 12</span></div>
+              <div class="dbody"><div class="dempty">—</div></div>
+            </div>
+            <div class="day">
+              <div class="dhead"><span class="dname">Saturday</span><span class="ddate">Jun 13</span></div>
+              <div class="dbody">
+                <div class="slot">
+                  <span class="scb"></span>
+                  <span class="stime">19:30</span>
+                  <span class="stext">★ Date night with Elin<span class="crumb">♥ Elin · every 2 weeks</span></span>
+                </div>
+              </div>
+            </div>
+            <div class="day">
+              <div class="dhead"><span class="dname">Sunday</span><span class="ddate">Jun 14</span></div>
+              <div class="dbody">
+                <div class="slot">
+                  <span class="scb"></span>
+                  <span class="stime">8:00</span>
+                  <span class="stext">★ Long run 16 km<span class="crumb">▤ Base building</span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════ ALMANAC (read-only) ════════════════ -->
+    <!-- · review -->
+    <section class="screen" id="s-almanac-review">
+      <div class="inner">
+        <div class="kicker">Almanac · the record over time</div>
+        <h1 class="page">What you <em>actually did</em>.</h1>
+        <p class="page-sub">Read-only by design — nothing to manage here, only evidence. Gathered over weeks, not judged by days.</p>
+
+        <nav class="subtabs" data-group="almanac">
+          <button class="on" data-sub="review">Review</button>
+          <button data-sub="season">The Season</button>
+        </nav>
+
+        <div class="ren-grid">
+          <div class="ren-card" style="border-top-color:var(--q1)">
+            <div class="rt"><h4>Physical</h4></div>
+            <div class="rbig">7<small> / 11</small></div>
+            <div class="progbar"><i style="width:64%"></i></div>
+          </div>
+          <div class="ren-card" style="border-top-color:var(--pine)">
+            <div class="rt"><h4>Mental</h4></div>
+            <div class="rbig">2<small> / 4</small></div>
+            <div class="progbar"><i style="width:50%"></i></div>
+          </div>
+          <div class="ren-card" style="border-top-color:var(--gold)">
+            <div class="rt"><h4>Social</h4></div>
+            <div class="rbig">1<small> / 1</small></div>
+            <div class="progbar met"><i style="width:100%"></i></div>
+          </div>
+          <div class="ren-card" style="border-top-color:var(--plum)">
+            <div class="rt"><h4>Spiritual</h4></div>
+            <div class="rbig">1<small> / 3</small></div>
+            <div class="progbar"><i style="width:33%"></i></div>
+          </div>
+        </div>
+
+        <div class="review-grid">
+          <div class="card">
+            <h3>This week vs last</h3>
+            <div class="sub">All habits combined</div>
+            <div class="cmp-row"><span class="cn">Completions this week</span><span class="cv">11</span><span class="delta up">+3</span></div>
+            <div class="cmp-row"><span class="cn">Completions last week</span><span class="cv">8</span></div>
+            <div class="cmp-row"><span class="cn">Longest active streak</span><span class="cv">6 wks</span><span style="font-size:11.5px;color:var(--muted)">Morning run</span></div>
+          </div>
+
+          <div class="card">
+            <h3>Goal momentum</h3>
+            <div class="sub">Last 30 days, via linked habits</div>
+            <div class="cmp-row"><span class="cn">Run a half marathon</span><span class="cv">82%</span></div>
+            <div class="cmp-row"><span class="cn">Learn Spanish</span><span class="cv">64%</span></div>
+            <div class="cmp-row"><span class="cn">Be a present parent</span><span class="cv">48%</span></div>
+          </div>
+        </div>
+
+        <div class="card ai-note" style="margin-top:14px;">
+          <h3>✦ Weekly review <span class="pill mut" style="vertical-align:2px;">AI</span></h3>
+          <p class="quote">“Renewal is trending up three weeks straight, carried by the morning run. Spanish slipped when the week got busy — it's your only mental habit, so guard it. One relationship cadence (Noor) is overdue; it's also this week's unplaced rock.”</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- · season -->
+    <section class="screen" id="s-almanac-season">
+      <div class="inner">
+        <div class="kicker">Almanac · how the season is trending</div>
+        <h1 class="page">The <em>season</em>.</h1>
+        <p class="page-sub">Streaks count weeks the target was met — an unfinished week never breaks the chain.</p>
+
+        <nav class="subtabs" data-group="almanac">
+          <button data-sub="review">Review</button>
+          <button class="on" data-sub="season">The Season</button>
+        </nav>
+
+        <div class="card" style="margin-bottom:14px;">
+          <h3>Habit streaks</h3>
+          <div class="sub">This week's marks · week-streaks</div>
+          <div class="streak-row">
+            <span class="hname">Morning run</span>
+            <span class="wkdots"><span class="wd on">Mo</span><span class="wd">Tu</span><span class="wd on">We</span><span class="wd future">Th</span><span class="wd future">Fr</span><span class="wd future">Sa</span><span class="wd future">Su</span></span>
+            <span class="stk"><b>6 wks</b> 🔥</span>
+          </div>
+          <div class="streak-row">
+            <span class="hname">In bed by 23:00</span>
+            <span class="wkdots"><span class="wd on">Mo</span><span class="wd on">Tu</span><span class="wd on">We</span><span class="wd future">Th</span><span class="wd future">Fr</span><span class="wd future">Sa</span><span class="wd future">Su</span></span>
+            <span class="stk"><b>2 wks</b></span>
+          </div>
+          <div class="streak-row">
+            <span class="hname">Spanish — one lesson</span>
+            <span class="wkdots"><span class="wd on">Mo</span><span class="wd on">Tu</span><span class="wd">We</span><span class="wd future">Th</span><span class="wd future">Fr</span><span class="wd future">Sa</span><span class="wd future">Su</span></span>
+            <span class="stk"><b>3 wks</b></span>
+          </div>
+          <div class="streak-row">
+            <span class="hname">Morning pages</span>
+            <span class="wkdots"><span class="wd">Mo</span><span class="wd on">Tu</span><span class="wd">We</span><span class="wd future">Th</span><span class="wd future">Fr</span><span class="wd future">Sa</span><span class="wd future">Su</span></span>
+            <span class="stk"><b>0 wks</b></span>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Last 12 weeks</h3>
+          <div class="sub">All habits, intensity by daily completions</div>
+          <div class="heatmap">
+            <div class="heat-row"><span class="heat-label">Mar 23</span><span class="heat-cell l1"></span><span class="heat-cell l2"></span><span class="heat-cell"></span><span class="heat-cell l1"></span><span class="heat-cell l2"></span><span class="heat-cell l3"></span><span class="heat-cell l1"></span></div>
+            <div class="heat-row"><span class="heat-label">Mar 30</span><span class="heat-cell l2"></span><span class="heat-cell l1"></span><span class="heat-cell l2"></span><span class="heat-cell"></span><span class="heat-cell l1"></span><span class="heat-cell l2"></span><span class="heat-cell l2"></span></div>
+            <div class="heat-row"><span class="heat-label">Apr 6</span><span class="heat-cell l1"></span><span class="heat-cell l3"></span><span class="heat-cell l2"></span><span class="heat-cell l2"></span><span class="heat-cell"></span><span class="heat-cell l3"></span><span class="heat-cell l2"></span></div>
+            <div class="heat-row"><span class="heat-label">Apr 13</span><span class="heat-cell l2"></span><span class="heat-cell l2"></span><span class="heat-cell l3"></span><span class="heat-cell l1"></span><span class="heat-cell l2"></span><span class="heat-cell l4"></span><span class="heat-cell l3"></span></div>
+            <div class="heat-row"><span class="heat-label">Apr 20</span><span class="heat-cell l3"></span><span class="heat-cell l2"></span><span class="heat-cell l2"></span><span class="heat-cell l3"></span><span class="heat-cell l2"></span><span class="heat-cell l3"></span><span class="heat-cell l4"></span></div>
+            <div class="heat-row"><span class="heat-label">Apr 27</span><span class="heat-cell l2"></span><span class="heat-cell l3"></span><span class="heat-cell l4"></span><span class="heat-cell l2"></span><span class="heat-cell l3"></span><span class="heat-cell l3"></span><span class="heat-cell l2"></span></div>
+            <div class="heat-row"><span class="heat-label">May 4</span><span class="heat-cell l3"></span><span class="heat-cell l3"></span><span class="heat-cell l2"></span><span class="heat-cell l4"></span><span class="heat-cell l3"></span><span class="heat-cell l2"></span><span class="heat-cell l3"></span></div>
+            <div class="heat-row"><span class="heat-label">May 11</span><span class="heat-cell l2"></span><span class="heat-cell l4"></span><span class="heat-cell l3"></span><span class="heat-cell l3"></span><span class="heat-cell l2"></span><span class="heat-cell l4"></span><span class="heat-cell l3"></span></div>
+            <div class="heat-row"><span class="heat-label">May 18</span><span class="heat-cell l3"></span><span class="heat-cell l3"></span><span class="heat-cell l4"></span><span class="heat-cell l2"></span><span class="heat-cell l3"></span><span class="heat-cell l3"></span><span class="heat-cell l4"></span></div>
+            <div class="heat-row"><span class="heat-label">May 25</span><span class="heat-cell l4"></span><span class="heat-cell l3"></span><span class="heat-cell l3"></span><span class="heat-cell l4"></span><span class="heat-cell l2"></span><span class="heat-cell l3"></span><span class="heat-cell l3"></span></div>
+            <div class="heat-row"><span class="heat-label">Jun 1</span><span class="heat-cell l3"></span><span class="heat-cell l4"></span><span class="heat-cell l3"></span><span class="heat-cell l3"></span><span class="heat-cell l4"></span><span class="heat-cell l4"></span><span class="heat-cell l3"></span></div>
+            <div class="heat-row"><span class="heat-label">Jun 8</span><span class="heat-cell l3"></span><span class="heat-cell l4"></span><span class="heat-cell l3"></span><span class="heat-cell" style="opacity:.25"></span><span class="heat-cell" style="opacity:.25"></span><span class="heat-cell" style="opacity:.25"></span><span class="heat-cell" style="opacity:.25"></span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════ SETTINGS ════════════════ -->
+    <section class="screen" id="s-settings">
+      <div class="inner">
+        <div class="kicker">System</div>
+        <h1 class="page">Settings &amp; <em>agents</em>.</h1>
+        <p class="page-sub">Notifications, AI, and the surfaces other services use to talk to BigRocks.</p>
+
+        <div class="card set-section">
+          <h3>Notifications</h3>
+          <div class="sub">Web push — works installed as a PWA on your phone</div>
+          <div class="set-row"><div class="t"><div class="nm">Push notifications</div><div class="ds">this device · enabled Jun 2</div></div><button class="switch on"></button></div>
+          <div class="set-row"><div class="t"><div class="nm">Overdue relationship commitments</div><div class="ds">when a cadence slips, max 1/day</div></div><button class="switch on"></button></div>
+          <div class="set-row"><div class="t"><div class="nm">Morning rock reminder</div><div class="ds">today's scheduled big rocks, 7:30</div></div><button class="switch on"></button></div>
+          <div class="set-row"><div class="t"><div class="nm">AI weekly review</div><div class="ds">Sunday 18:00 — review &amp; plan the week</div></div><button class="switch on"></button></div>
+          <div class="set-row"><div class="t"><div class="nm">Quiet hours</div><div class="ds">22:00 – 07:30</div></div><button class="btn sm ghost">Edit</button></div>
+        </div>
+
+        <div class="card set-section">
+          <h3>AI assistant</h3>
+          <div class="sub">Server-side Anthropic API · provider is swappable</div>
+          <div class="set-row"><div class="t"><div class="nm">Natural-language capture</div><div class="ds">sentence → quadrant + goal + day</div></div><button class="switch on"></button></div>
+          <div class="set-row"><div class="t"><div class="nm">Influence vs concern tagging</div><div class="ds">Habit 1 — flag what you can't control</div></div><button class="switch on"></button></div>
+          <div class="set-row"><div class="t"><div class="nm">Goal-alignment flags</div><div class="ds">surface projects that serve no goal</div></div><button class="switch on"></button></div>
+        </div>
+
+        <div class="card set-section">
+          <h3>Agent &amp; service access</h3>
+          <div class="sub">REST API is the source of truth · OpenAPI at <b>/docs</b> · MCP wraps the same services</div>
+          <div class="keyrow"><span class="k">bigrocks_sk_9f2…c41a</span><span class="scope pill ok">read/write</span><span class="scope" style="font-size:11px;color:var(--muted)">“Claude · planning agent”</span><button class="btn sm ghost">Revoke</button></div>
+          <div class="keyrow"><span class="k">bigrocks_sk_77b…08e3</span><span class="scope pill mut">read-only</span><span class="scope" style="font-size:11px;color:var(--muted)">“Home dashboard”</span><button class="btn sm ghost">Revoke</button></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px;">
+            <button class="btn sm">＋ New API key</button>
+            <button class="btn sm ghost">Copy MCP endpoint</button>
+            <button class="btn sm ghost">Open API docs ↗</button>
+          </div>
+        </div>
+
+        <div class="card set-section">
+          <h3>Import</h3>
+          <div class="sub">Todoist CSV export — no tokens, nothing stored server-side</div>
+          <div class="dropzone">Drop a Todoist <b>.csv export</b> here, or <b>browse</b>.<br>p1–p4 priorities seed importance/urgency; AI refines into quadrants.</div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ======= mobile bottom nav + FAB ======= -->
+  <button class="fab" onclick="openCapture()">＋</button>
+  <nav class="bottomnav">
+    <button class="compass" data-mode="compass"><span class="ic">✧</span>Compass</button>
+    <button class="clock on" data-mode="clock"><span class="ic">◷</span>Clock</button>
+    <button class="almanac" data-mode="almanac"><span class="ic">☷</span>Almanac</button>
+  </nav>
+
+  <!-- ======= capture modal ======= -->
+  <div class="overlay" id="captureOverlay" onclick="if(event.target===this)closeCapture()">
+    <div class="capture-sheet">
+      <div class="grab"></div>
+      <h3>Capture</h3>
+      <textarea>Take Noor to the climbing gym Saturday morning</textarea>
+      <div class="ai-preview">
+        <div class="lbl">✦ AI understood</div>
+        <div class="chips">
+          <span class="chip" style="color:var(--q2);border-color:#bcd8cc;background:var(--q2-bg)">Quadrant II</span>
+          <span class="chip">Goal · Be a present parent</span>
+          <span class="chip">Noor · logs the monthly one-on-one</span>
+          <span class="chip">Sat, Jun 13 · morning</span>
+        </div>
+      </div>
+      <div class="acts">
+        <button class="btn ghost" onclick="closeCapture()">Edit details</button>
+        <button class="btn mode" onclick="closeCapture()">Save as big rock ★</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /app -->
+</div><!-- /stage -->
+
+<script>
+// mode → default sub-screen. Clock · Today is the everyday home.
+const HOME = { compass: 's-compass-mission', clock: 's-clock-today', almanac: 's-almanac-review', settings: 's-settings' };
+let mode = 'clock';
+
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active', s.id===id));
+  document.querySelector('.content').scrollTop = 0;
+}
+function setMode(m, sub){
+  mode = m;
+  const app = document.getElementById('app');
+  app.className = 'app m-' + m;
+  document.querySelectorAll('.modeswitch button, .bottomnav button').forEach(b=>{
+    b.classList.toggle('on', b.dataset.mode === m);
+  });
+  show(sub ? 's-' + m + '-' + sub : HOME[m]);
+}
+document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click', ()=>setMode(b.dataset.mode)));
+
+// sub-tabs within a mode
+document.querySelectorAll('.subtabs button').forEach(b=>{
+  b.addEventListener('click', ()=>{
+    const group = b.closest('.subtabs').dataset.group;
+    show('s-' + group + '-' + b.dataset.sub);
+  });
+});
+
+// cross-screen jumps (e.g. Today → Week view)
+document.querySelectorAll('[data-jump]').forEach(b=>{
+  b.addEventListener('click', ()=>{
+    const [m, sub] = b.dataset.jump.split(':');
+    setMode(m, sub);
+  });
+});
+
+function openCapture(){ document.getElementById('captureOverlay').classList.add('open'); }
+function closeCapture(){ document.getElementById('captureOverlay').classList.remove('open'); }
+
+function setView(v){
+  document.body.classList.toggle('phone', v==='phone');
+  document.getElementById('phoneBtn').classList.toggle('on', v==='phone');
+  document.getElementById('deskBtn').classList.toggle('on', v!=='phone');
+}
+setView('desk');
+</script>
+</body>
+</html>
