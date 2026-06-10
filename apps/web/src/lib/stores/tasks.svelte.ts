@@ -86,6 +86,8 @@ class TasksStore {
       plannedWeek: null,
       dueDate: body.dueDate ?? null,
       completedAt: null,
+      scheduledDay: body.scheduledDay ?? null,
+      scheduledTime: body.scheduledTime ?? null,
       goalId: body.goalId ?? null,
       projectId: body.projectId ?? null,
       createdAt: now,
@@ -152,6 +154,21 @@ class TasksStore {
   /** Move a task into a project, or back to the Inbox with null. */
   setProject(task: Task, projectId: string | null): Promise<void> {
     return this.edit(task.id, { projectId }, () => updateTask(task.id, { projectId }));
+  }
+
+  /** The Clock lens: place a task on a day (null unschedules and clears the time). */
+  setScheduledDay(task: Task, scheduledDay: string | null): Promise<void> {
+    const body = scheduledDay
+      ? { scheduledDay }
+      : { scheduledDay: null, scheduledTime: null };
+    return this.edit(task.id, body, () => updateTask(task.id, body));
+  }
+
+  /** Set or clear the optional time within the scheduled day. */
+  setScheduledTime(task: Task, scheduledTime: string | null): Promise<void> {
+    return this.edit(task.id, { scheduledTime }, () =>
+      updateTask(task.id, { scheduledTime }),
+    );
   }
 
   /** Full edit from the task form sheet. */

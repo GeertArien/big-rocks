@@ -2,7 +2,7 @@
   import { onMount } from "svelte";
   import { Settings } from "lucide-svelte";
   import QuadrantBoard from "@/lib/components/QuadrantBoard.svelte";
-  import BigRocksPanel from "@/lib/components/BigRocksPanel.svelte";
+  import WeekPanel from "@/lib/components/WeekPanel.svelte";
   import ProjectsPanel from "@/lib/components/ProjectsPanel.svelte";
   import TodayPanel from "@/lib/components/TodayPanel.svelte";
   import AlmanacPanel from "@/lib/components/AlmanacPanel.svelte";
@@ -103,7 +103,7 @@
       {/if}
     {:else if navStore.mode === "clock"}
       {#if navStore.sub === "week"}
-        <BigRocksPanel />
+        <WeekPanel />
       {:else}
         <TodayPanel />
       {/if}

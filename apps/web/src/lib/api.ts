@@ -21,6 +21,8 @@ export interface Task {
   plannedWeek: string | null;
   dueDate: string | null;
   completedAt: string | null;
+  scheduledDay: string | null;
+  scheduledTime: string | null;
   goalId: string | null;
   projectId: string | null;
   createdAt: string;
@@ -120,6 +122,8 @@ export interface CreateTaskBody {
   important?: boolean;
   urgent?: boolean;
   dueDate?: string;
+  scheduledDay?: string;
+  scheduledTime?: string;
   goalId?: string;
   projectId?: string;
   proactivity?: Proactivity;
@@ -135,6 +139,8 @@ export interface UpdateTaskBody {
   important?: boolean;
   urgent?: boolean;
   dueDate?: string | null;
+  scheduledDay?: string | null;
+  scheduledTime?: string | null;
   isBigRock?: boolean;
   plannedWeek?: string | null;
   goalId?: string | null;

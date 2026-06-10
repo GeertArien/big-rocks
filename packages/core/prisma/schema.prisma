@@ -88,6 +88,11 @@ model Task {
   dueDate     DateTime?
   completedAt DateTime?
 
+  // The Clock lens: when this actually happens. Independent of quadrant —
+  // urgency is a human judgment, deliberately not derived from dates.
+  scheduledDay  DateTime? // midnight of the scheduled day
+  scheduledTime String?   // optional "HH:MM"
+
   // Habit 2: a task belongs to at most one Goal (optional, nullable).
   goal   Goal?   @relation(fields: [goalId], references: [id], onDelete: SetNull)
   goalId String?
@@ -108,6 +113,7 @@ model Task {
   @@index([goalId])
   @@index([projectId])
   @@index([status])
+  @@index([scheduledDay])
 }
 
 // A role the user plays in life (Parent, Professional, Self…). Goals group

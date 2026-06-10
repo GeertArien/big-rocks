@@ -26,6 +26,8 @@ class FakeTaskRepository implements TaskRepository {
       completedAt: null,
       goalId: null,
       projectId: null,
+      scheduledDay: (data.scheduledDay as Date | null) ?? null,
+      scheduledTime: (data.scheduledTime as string | null) ?? null,
       source: "MANUAL",
       externalId: null,
       externalPriority: null,
@@ -71,6 +73,8 @@ class FakeTaskRepository implements TaskRepository {
       "plannedWeek",
       "status",
       "completedAt",
+      "scheduledDay",
+      "scheduledTime",
     ] as const) {
       if (data[key] !== undefined) {
         // @ts-expect-error narrow assignment from Prisma update fields
@@ -137,6 +141,26 @@ describe("TaskService", () => {
     expect(cleared.isBigRock).toBe(false);
     expect(cleared.plannedWeek).toBeNull();
     expect(await service.bigRocksForWeek()).toHaveLength(0);
+  });
+
+  it("schedules a task into a day with an optional time, and unschedules it", async () => {
+    const day = new Date("2026-06-13T00:00:00.000Z");
+    const created = await service.create({ title: "Date night", scheduledDay: day });
+    expect(created.scheduledDay?.getTime()).toBe(day.getTime());
+    expect(created.scheduledTime).toBeNull();
+
+    const timed = await service.update(created.id, { scheduledTime: "19:30" });
+    expect(timed.scheduledTime).toBe("19:30");
+
+    // Scheduling never touches the quadrant — urgency stays a human judgment.
+    expect(timed.quadrant).toBe(created.quadrant);
+
+    const unscheduled = await service.update(created.id, {
+      scheduledDay: null,
+      scheduledTime: null,
+    });
+    expect(unscheduled.scheduledDay).toBeNull();
+    expect(unscheduled.scheduledTime).toBeNull();
   });
 
   it("lists created tasks and filters by status", async () => {

@@ -12,6 +12,8 @@ export interface CreateTaskInput {
   goalId?: string | null;
   projectId?: string | null;
   proactivity?: ProactivityTag | null;
+  scheduledDay?: Date | null;
+  scheduledTime?: string | null;
 }
 
 export interface UpdateTaskInput {
@@ -25,6 +27,10 @@ export interface UpdateTaskInput {
   isBigRock?: boolean;
   plannedWeek?: Date | null;
   proactivity?: ProactivityTag | null;
+  /** The Clock lens: which day this happens (independent of quadrant). */
+  scheduledDay?: Date | null;
+  /** Optional "HH:MM" within the scheduled day. */
+  scheduledTime?: string | null;
 }
 
 /** Filters for listing tasks. */
@@ -73,6 +79,8 @@ export class TaskService {
       urgent: input.urgent ?? false,
       dueDate: input.dueDate ?? null,
       proactivity: input.proactivity ?? null,
+      scheduledDay: input.scheduledDay ?? null,
+      scheduledTime: input.scheduledTime ?? null,
       ...(input.goalId ? { goal: { connect: { id: input.goalId } } } : {}),
       ...(input.projectId ? { project: { connect: { id: input.projectId } } } : {}),
     };
@@ -108,6 +116,8 @@ export class TaskService {
     if (input.isBigRock !== undefined) data.isBigRock = input.isBigRock;
     if (input.plannedWeek !== undefined) data.plannedWeek = input.plannedWeek;
     if (input.proactivity !== undefined) data.proactivity = input.proactivity;
+    if (input.scheduledDay !== undefined) data.scheduledDay = input.scheduledDay;
+    if (input.scheduledTime !== undefined) data.scheduledTime = input.scheduledTime;
     if (input.goalId !== undefined) {
       data.goal = input.goalId
         ? { connect: { id: input.goalId } }
