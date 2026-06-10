@@ -543,6 +543,56 @@ export function importTodoist(
   });
 }
 
+// --- Web push + notification settings -------------------------------------------
+
+export interface NotificationSettings {
+  overdueCommitments: boolean;
+  morningRocks: boolean;
+  weeklyReview: boolean;
+  morningHour: number;
+  quietStart: number;
+  quietEnd: number;
+}
+
+export function getPushStatus(): Promise<{
+  configured: boolean;
+  publicKey: string | null;
+  subscriptions: number;
+}> {
+  return request("/push/status");
+}
+
+export function pushSubscribe(subscription: PushSubscriptionJSON): Promise<{ ok: boolean }> {
+  return request("/push/subscribe", {
+    method: "POST",
+    body: JSON.stringify(subscription),
+  });
+}
+
+export function pushUnsubscribe(endpoint: string): Promise<void> {
+  return request("/push/unsubscribe", {
+    method: "POST",
+    body: JSON.stringify({ endpoint }),
+  });
+}
+
+export function pushTest(): Promise<{ ok: boolean }> {
+  return request("/push/test", { method: "POST" });
+}
+
+export function getNotificationSettings(): Promise<NotificationSettings> {
+  return request("/notifications/settings");
+}
+
+export function updateNotificationSettings(
+  body: Partial<NotificationSettings>,
+): Promise<NotificationSettings> {
+  return request("/notifications/settings", {
+    method: "PUT",
+    body: JSON.stringify(body),
+  });
+}
+
 // --- Mission statement (Habit 2) -------------------------------------------
 
 export function getMission(): Promise<Mission | null> {

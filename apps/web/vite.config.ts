@@ -2,9 +2,37 @@ import { fileURLToPath, URL } from "node:url";
 import { defineConfig } from "vite";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
 import tailwindcss from "@tailwindcss/vite";
+import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig({
-  plugins: [svelte(), tailwindcss()],
+  plugins: [
+    svelte(),
+    tailwindcss(),
+    VitePWA({
+      // Custom service worker (precache + fonts + push) lives in src/sw.ts.
+      strategies: "injectManifest",
+      srcDir: "src",
+      filename: "sw.ts",
+      registerType: "autoUpdate",
+      injectManifest: {
+        globPatterns: ["**/*.{js,css,html,png,svg,webmanifest}"],
+      },
+      manifest: {
+        name: "BigRocks",
+        short_name: "BigRocks",
+        description: "Put your big rocks in first — a 7 Habits productivity app.",
+        start_url: "/",
+        display: "standalone",
+        background_color: "#f5f1e8",
+        theme_color: "#f5f1e8",
+        icons: [
+          { src: "/icon-192.png", sizes: "192x192", type: "image/png" },
+          { src: "/icon-512.png", sizes: "512x512", type: "image/png" },
+          { src: "/icon-512.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
+        ],
+      },
+    }),
+  ],
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),

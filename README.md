@@ -92,8 +92,14 @@ Configuration is entirely via environment variables:
 | ------------------- | -------------------------------------------------------- |
 | `DATABASE_URL`      | Prisma connection string (SQLite by default)             |
 | `API_AUTH_TOKEN`    | Bearer token for the REST API (unset = open, the default)|
-| `ANTHROPIC_API_KEY` | Server-side AI features (optional)                       |
+| `ANTHROPIC_API_KEY` | Server-side AI features (optional; see `.env.example` for the OpenAI-compatible alternative) |
+| `VAPID_PUBLIC_KEY` / `VAPID_PRIVATE_KEY` | Web push notifications (optional; generate with `pnpm --filter @big-rocks/server exec web-push generate-vapid-keys`) |
 | `PORT` / `HOST`     | Where the server listens                                 |
+
+The app is an installable PWA (add-to-homescreen; the shell and fonts work
+offline). With VAPID keys set, enable push per device in Settings →
+Notifications — overdue commitments, the morning rock reminder, and the Sunday
+review arrive even with the app closed. Push requires HTTPS (or localhost).
 
 The database lives on the `bigrocks-data` volume (mounted at `/data`), so it
 survives container restarts. Migrations are applied automatically on boot.

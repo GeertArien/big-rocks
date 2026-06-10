@@ -5,6 +5,7 @@
   import { Input } from "@/lib/components/ui/input";
   import { toast } from "@/lib/components/ui/toast";
   import { getToken, setToken } from "@/lib/token";
+  import NotificationSettings from "./NotificationSettings.svelte";
   import { aiStore } from "@/lib/stores/ai.svelte";
   import {
     createApiKey,
@@ -29,12 +30,15 @@
   /** Plaintext of a freshly created key — visible exactly once. */
   let freshKey = $state<string | null>(null);
 
+  let notifications = $state<NotificationSettings | null>(null);
+
   let lastOpen = $state(false);
   $effect(() => {
     if (open && !lastOpen) {
       tokenInput = getToken();
       freshKey = null;
       loadKeys();
+      notifications?.load();
     }
     lastOpen = open;
   });
@@ -250,6 +254,8 @@
         </Button>
       </div>
     </div>
+
+    <NotificationSettings bind:this={notifications} />
 
     <!-- Todoist import: a one-shot file upload, no credentials stored. -->
     <div class="flex flex-col gap-2 border-t border-[var(--color-border)] pt-4">

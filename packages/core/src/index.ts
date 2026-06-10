@@ -21,6 +21,11 @@ export {
   type TodoistRow,
 } from "./domain/todoist.js";
 export {
+  dueNotifications,
+  type PendingNotification,
+  type NotificationFacts,
+} from "./domain/notifications.js";
+export {
   deriveStatus,
   nextDueDate,
   periodHistory,
@@ -71,6 +76,10 @@ export {
   PrismaApiKeyRepository,
   type ApiKeyRepository,
 } from "./repositories/api-key-repository.js";
+export {
+  PrismaPushRepository,
+  type PushRepository,
+} from "./repositories/push-repository.js";
 
 // Services
 export {
@@ -163,6 +172,8 @@ export type {
   RenewalDimension,
   RenewalActivity,
   WeeklyIntention,
+  PushSubscription,
+  NotificationSettings,
   ProactivityTag,
   ApiKey,
   Prisma,
