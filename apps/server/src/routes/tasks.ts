@@ -23,6 +23,8 @@ export async function taskRoutes(fastify: FastifyInstance): Promise<void> {
       plannedWeek: { type: ["string", "null"], format: "date-time" },
       dueDate: { type: ["string", "null"], format: "date-time" },
       completedAt: { type: ["string", "null"], format: "date-time" },
+      scheduledDay: { type: ["string", "null"], format: "date-time" },
+      scheduledTime: { type: ["string", "null"] },
       goalId: { type: ["string", "null"] },
       projectId: { type: ["string", "null"] },
       createdAt: { type: "string", format: "date-time" },
@@ -135,6 +137,8 @@ export async function taskRoutes(fastify: FastifyInstance): Promise<void> {
             important: { type: "boolean" },
             urgent: { type: "boolean" },
             dueDate: { type: "string", format: "date-time" },
+            scheduledDay: { type: "string", format: "date-time" },
+            scheduledTime: { type: "string", pattern: "^\\d{2}:\\d{2}$" },
             goalId: { type: "string" },
             projectId: { type: "string" },
             proactivity: { type: "string", enum: ["INFLUENCE", "CONCERN"] },
@@ -150,6 +154,8 @@ export async function taskRoutes(fastify: FastifyInstance): Promise<void> {
         important?: boolean;
         urgent?: boolean;
         dueDate?: string;
+        scheduledDay?: string;
+        scheduledTime?: string;
         goalId?: string;
         projectId?: string;
         proactivity?: "INFLUENCE" | "CONCERN";
@@ -157,6 +163,7 @@ export async function taskRoutes(fastify: FastifyInstance): Promise<void> {
       const task = await service.create({
         ...body,
         dueDate: body.dueDate ? new Date(body.dueDate) : undefined,
+        scheduledDay: body.scheduledDay ? new Date(body.scheduledDay) : undefined,
       });
       reply.code(201);
       return task;
@@ -182,6 +189,8 @@ export async function taskRoutes(fastify: FastifyInstance): Promise<void> {
             important: { type: "boolean" },
             urgent: { type: "boolean" },
             dueDate: { type: ["string", "null"], format: "date-time" },
+            scheduledDay: { type: ["string", "null"], format: "date-time" },
+            scheduledTime: { type: ["string", "null"], pattern: "^\\d{2}:\\d{2}$" },
             goalId: { type: ["string", "null"] },
             projectId: { type: ["string", "null"] },
             isBigRock: { type: "boolean" },
@@ -212,6 +221,12 @@ export async function taskRoutes(fastify: FastifyInstance): Promise<void> {
             : body.plannedWeek === null
               ? null
               : new Date(body.plannedWeek as string),
+        scheduledDay:
+          body.scheduledDay === undefined
+            ? undefined
+            : body.scheduledDay === null
+              ? null
+              : new Date(body.scheduledDay as string),
       });
     },
   );

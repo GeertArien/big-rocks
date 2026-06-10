@@ -3,7 +3,9 @@
   import TaskCard from "./TaskCard.svelte";
   import { Button } from "@/lib/components/ui/button";
   import { tasksStore } from "@/lib/stores/tasks.svelte";
+  import { projectsStore } from "@/lib/stores/projects.svelte";
   import { navStore } from "@/lib/stores/nav.svelte";
+  import { formatTime, isSameLocalDay } from "@/lib/week";
 
   const loadingFirst = $derived(tasksStore.loading && tasksStore.tasks.length === 0);
 
@@ -22,10 +24,26 @@
     return due.slice(0, 10) <= today;
   }
 
-  // Today's work: open tasks due today or earlier (big rocks live in the jar).
-  const dueToday = $derived(
-    tasksStore.tasks.filter((t) => t.status !== "DONE" && isDueByToday(t.dueDate)),
+  // Scheduled for today (the Clock lens), in time order.
+  const scheduledToday = $derived(
+    tasksStore.tasks
+      .filter((t) => isSameLocalDay(t.scheduledDay, new Date()))
+      .sort((a, b) => (a.scheduledTime ?? "99:99").localeCompare(b.scheduledTime ?? "99:99")),
   );
+  // Plus open tasks due today or earlier that aren't already on today's schedule.
+  const dueToday = $derived(
+    tasksStore.tasks.filter(
+      (t) =>
+        t.status !== "DONE" &&
+        isDueByToday(t.dueDate) &&
+        !isSameLocalDay(t.scheduledDay, new Date()),
+    ),
+  );
+
+  function crumb(taskProjectId: string | null): string {
+    const project = projectsStore.byId(taskProjectId);
+    return project ? `▤ ${project.name}` : "⌂ Inbox";
+  }
 </script>
 
 <section class="flex flex-col gap-4">
@@ -96,21 +114,53 @@
       {/if}
     </div>
 
-    <!-- Today's agenda: open tasks due today or overdue. -->
+    <!-- Today's agenda: scheduled slots, then due-today items. -->
     <div
       class="flex flex-col gap-2 rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] p-4 shadow-sm"
     >
-      <h2 class="font-display text-base font-semibold">Due today</h2>
+      <h2 class="font-display text-base font-semibold">Today's agenda</h2>
       <p class="-mt-1 text-xs text-[var(--color-muted-foreground)]">
-        Open tasks due today or earlier.
+        Scheduled for today, then anything due.
       </p>
+
+      {#if scheduledToday.length > 0}
+        <div class="flex flex-col">
+          {#each scheduledToday as task (task.id)}
+            {@const done = task.status === "DONE"}
+            <div class="flex items-center gap-2.5 border-b border-dotted border-[var(--color-border)] py-2 last:border-b-0">
+              <button
+                onclick={() => tasksStore.toggleComplete(task)}
+                aria-label={done ? "Reopen task" : "Complete task"}
+                class="flex size-5 shrink-0 items-center justify-center rounded-full border {done
+                  ? 'border-[var(--pine)] bg-[var(--pine)] text-white'
+                  : 'border-[var(--color-input)] text-transparent'}"
+              >
+                <Check class="size-3" />
+              </button>
+              <span class="w-14 shrink-0 text-xs font-semibold {task.scheduledTime ? 'text-[var(--terra)]' : 'text-[var(--color-input)]'}">
+                {formatTime(task.scheduledTime) ?? "—"}
+              </span>
+              <div class="min-w-0 flex-1">
+                <p class="truncate text-sm" class:line-through={done} class:text-[var(--color-muted-foreground)]={done}>
+                  {#if task.isBigRock}<span class="text-[var(--star)]">★</span>{/if}
+                  {task.title}
+                </p>
+                <p class="text-[11px] text-[var(--color-muted-foreground)]">{crumb(task.projectId)}</p>
+              </div>
+            </div>
+          {/each}
+        </div>
+      {/if}
+
       <div class="flex flex-col gap-2">
         {#each dueToday as task (task.id)}
           <TaskCard {task} />
         {:else}
-          <p class="py-2 text-center font-display text-sm italic text-[var(--color-muted-foreground)]">
-            Nothing due — a good day to work on a rock.
-          </p>
+          {#if scheduledToday.length === 0}
+            <p class="py-2 text-center font-display text-sm italic text-[var(--color-muted-foreground)]">
+              Nothing scheduled or due — a good day to place a rock.
+            </p>
+          {/if}
         {/each}
       </div>
     </div>
