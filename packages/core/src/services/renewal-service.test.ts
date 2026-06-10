@@ -1,5 +1,11 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import type { HabitMark, Prisma, RenewalActivity } from "@prisma/client";
+import type {
+  HabitMark,
+  Prisma,
+  RenewalActivity,
+  RenewalDimension,
+  WeeklyIntention,
+} from "@prisma/client";
 import type {
   HabitRepository,
   HabitWithMarks,
@@ -94,6 +100,42 @@ class FakeHabitRepository implements HabitRepository {
   async deleteActivity(id: string): Promise<void> {
     this.activities = this.activities.filter((a) => a.id !== id);
   }
+
+  intentions: WeeklyIntention[] = [];
+
+  async upsertIntention(
+    dimension: RenewalDimension,
+    weekStart: Date,
+    text: string,
+  ): Promise<WeeklyIntention> {
+    const existing = this.intentions.find(
+      (i) => i.dimension === dimension && i.weekStart.getTime() === weekStart.getTime(),
+    );
+    if (existing) {
+      existing.text = text;
+      return existing;
+    }
+    const row: WeeklyIntention = {
+      id: `intention_${++this.seq}`,
+      dimension,
+      weekStart,
+      text,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    this.intentions.push(row);
+    return row;
+  }
+
+  async deleteIntention(dimension: RenewalDimension, weekStart: Date): Promise<void> {
+    this.intentions = this.intentions.filter(
+      (i) => !(i.dimension === dimension && i.weekStart.getTime() === weekStart.getTime()),
+    );
+  }
+
+  async findIntentions(weekStart: Date): Promise<WeeklyIntention[]> {
+    return this.intentions.filter((i) => i.weekStart.getTime() === weekStart.getTime());
+  }
 }
 
 // 2026-06-10 is a Wednesday (ISO week Mon Jun 8 – Sun Jun 14).
@@ -159,6 +201,22 @@ describe("RenewalService", () => {
     expect(trends.goalMomentum).toHaveLength(1);
     expect(trends.goalMomentum[0]!.pct).toBe(50);
     expect(trends.longestStreak.habitName).toBe("Spanish lesson");
+  });
+
+  it("scopes weekly intentions to the ISO week and keeps history", async () => {
+    await service.setIntention("PHYSICAL", "Keep the long run, even if it rains.", now);
+    expect(await service.intentions(now)).toEqual([
+      { dimension: "PHYSICAL", text: "Keep the long run, even if it rains." },
+    ]);
+
+    // Next week starts blank, but last week's row is retained (history kept).
+    const nextWeek = new Date("2026-06-17T12:00:00");
+    expect(await service.intentions(nextWeek)).toEqual([]);
+    expect(repo.intentions).toHaveLength(1);
+
+    // Empty text clears this week's intention.
+    await service.setIntention("PHYSICAL", "  ", now);
+    expect(await service.intentions(now)).toEqual([]);
   });
 
   it("compares this week to last across habits and one-offs", async () => {

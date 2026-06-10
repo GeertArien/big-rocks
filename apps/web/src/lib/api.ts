@@ -424,6 +424,17 @@ export function toggleHabit(id: string, day?: string): Promise<HabitView> {
   });
 }
 
+export function getIntentions(): Promise<{ dimension: RenewalDimension; text: string }[]> {
+  return request<{ dimension: RenewalDimension; text: string }[]>("/renewal/intentions");
+}
+
+export function setIntention(dimension: RenewalDimension, text: string): Promise<void> {
+  return request<void>(`/renewal/intentions/${dimension}`, {
+    method: "PUT",
+    body: JSON.stringify({ text }),
+  });
+}
+
 export function getRenewalSummary(): Promise<DimensionSummary[]> {
   return request<DimensionSummary[]>("/renewal/summary");
 }

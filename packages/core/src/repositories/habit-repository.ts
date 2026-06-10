@@ -4,6 +4,8 @@ import type {
   Prisma,
   PrismaClient,
   RenewalActivity,
+  RenewalDimension,
+  WeeklyIntention,
 } from "@prisma/client";
 
 /** A habit with its marks and (optional) goal title — enough to derive views. */
@@ -27,6 +29,13 @@ export interface HabitRepository {
   ): Promise<RenewalActivity>;
   findActivities(since: Date): Promise<RenewalActivity[]>;
   deleteActivity(id: string): Promise<void>;
+  upsertIntention(
+    dimension: RenewalDimension,
+    weekStart: Date,
+    text: string,
+  ): Promise<WeeklyIntention>;
+  deleteIntention(dimension: RenewalDimension, weekStart: Date): Promise<void>;
+  findIntentions(weekStart: Date): Promise<WeeklyIntention[]>;
 }
 
 const withMarks = {
@@ -88,5 +97,25 @@ export class PrismaHabitRepository implements HabitRepository {
 
   async deleteActivity(id: string): Promise<void> {
     await this.db.renewalActivity.delete({ where: { id } });
+  }
+
+  upsertIntention(
+    dimension: RenewalDimension,
+    weekStart: Date,
+    text: string,
+  ): Promise<WeeklyIntention> {
+    return this.db.weeklyIntention.upsert({
+      where: { dimension_weekStart: { dimension, weekStart } },
+      create: { dimension, weekStart, text },
+      update: { text },
+    });
+  }
+
+  async deleteIntention(dimension: RenewalDimension, weekStart: Date): Promise<void> {
+    await this.db.weeklyIntention.deleteMany({ where: { dimension, weekStart } });
+  }
+
+  findIntentions(weekStart: Date): Promise<WeeklyIntention[]> {
+    return this.db.weeklyIntention.findMany({ where: { weekStart } });
   }
 }

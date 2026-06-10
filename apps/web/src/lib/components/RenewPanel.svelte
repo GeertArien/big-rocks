@@ -27,6 +27,15 @@
   let loggingFor = $state<RenewalDimension | null>(null);
   let aTitle = $state("");
 
+  // Weekly intention inline editor.
+  let editingIntention = $state<RenewalDimension | null>(null);
+  let iText = $state("");
+
+  function saveIntention(dimension: RenewalDimension) {
+    renewalStore.setIntention(dimension, iText);
+    editingIntention = null;
+  }
+
   async function addHabit(dimension: RenewalDimension | null) {
     const name = hName.trim();
     if (!name) return;
@@ -153,6 +162,33 @@
               </p>
             {/each}
           </div>
+
+          <!-- This week's intention: intent, never scored. -->
+          {#if editingIntention === dimension}
+            <div class="flex gap-2 border-t border-dotted border-[var(--color-border)] pt-2">
+              <input
+                bind:value={iText}
+                placeholder="How will you renew here this week?"
+                onkeydown={(e) => e.key === "Enter" && saveIntention(dimension)}
+                class="flex-1 rounded-md border border-[var(--color-input)] bg-transparent px-2.5 py-1.5 font-display text-sm italic focus-visible:ring-2 focus-visible:ring-[var(--color-ring)] focus-visible:outline-none"
+              />
+              <Button size="sm" onclick={() => saveIntention(dimension)}>Save</Button>
+            </div>
+          {:else}
+            <button
+              onclick={() => {
+                editingIntention = dimension;
+                iText = renewalStore.intentions[dimension] ?? "";
+              }}
+              class="border-t border-dotted border-[var(--color-border)] pt-2 text-left font-display text-[12.5px] italic {renewalStore.intentions[dimension]
+                ? 'text-[var(--color-muted-foreground)]'
+                : 'text-[var(--color-input)]'} hover:text-[var(--color-foreground)]"
+            >
+              {renewalStore.intentions[dimension]
+                ? `This week: ${renewalStore.intentions[dimension]}`
+                : "Set this week's intention…"}
+            </button>
+          {/if}
 
           {#if addingFor === dimension}
             {@render addForm(dimension)}
