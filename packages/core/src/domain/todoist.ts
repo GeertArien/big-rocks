@@ -60,9 +60,10 @@ export function parseCsv(text: string): string[][] {
   return rows;
 }
 
-/** Extract the task rows from a Todoist export (sections/notes are skipped). */
+/** Extract the task rows from a Todoist export (sections/notes/meta are skipped). */
 export function parseTodoistCsv(csv: string): TodoistRow[] {
-  const rows = parseCsv(csv);
+  // Real backup files start with a UTF-8 BOM, which would corrupt the first header.
+  const rows = parseCsv(csv.replace(/^﻿/, ""));
   if (rows.length === 0) return [];
 
   const header = rows[0]!.map((h) => h.trim().toUpperCase());
@@ -113,9 +114,16 @@ export function priorityToFlags(priority: number): {
   }
 }
 
-/** Best-effort due date: real dates pass, recurring phrases ("every day") don't. */
+/**
+ * Best-effort due date: real dates pass; recurring phrases don't (English and
+ * Dutch, the DATE_LANGs seen in real exports — anything else unparseable
+ * falls through to null anyway).
+ */
 export function parseTodoistDate(raw: string | null): Date | null {
-  if (!raw || /every|after/i.test(raw)) return null;
+  if (!raw) return null;
+  if (/every|after|elke|jaarlijks|maandelijks|wekelijks|dagelijks/i.test(raw)) {
+    return null;
+  }
   const parsed = new Date(raw);
   return Number.isNaN(parsed.getTime()) ? null : parsed;
 }

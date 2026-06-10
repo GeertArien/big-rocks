@@ -50,6 +50,22 @@ describe("parseTodoistCsv", () => {
   it("rejects files that are not Todoist exports", () => {
     expect(() => parseTodoistCsv("name,email\nGeert,x@y.z")).toThrow(/Todoist/);
   });
+
+  it("handles real backup files: BOM, meta rows, blank rows, multiline notes", () => {
+    const backup =
+      "﻿TYPE,CONTENT,DESCRIPTION,IS_COLLAPSED,PRIORITY,INDENT,AUTHOR,RESPONSIBLE,DATE,DATE_LANG,TIMEZONE,DURATION,DURATION_UNIT,DEADLINE,DEADLINE_LANG\n" +
+      "meta,view_style=list,,,,,,,,,,,,,\n" +
+      ",,,,,,,,,,,,,,\n" +
+      'task,Selfbill regelen,"Via het Peppol netwerk.\nTweede regel.",,4,1,Geert (1),,elke 1e,nl,Europe/Brussels,,,,\n';
+    const tasks = parseTodoistCsv(backup);
+    expect(tasks).toHaveLength(1);
+    expect(tasks[0]).toMatchObject({
+      content: "Selfbill regelen",
+      description: "Via het Peppol netwerk.\nTweede regel.",
+      priority: 4,
+      date: "elke 1e",
+    });
+  });
 });
 
 describe("priorityToFlags", () => {
@@ -67,5 +83,11 @@ describe("parseTodoistDate", () => {
     expect(parseTodoistDate("every day")).toBeNull();
     expect(parseTodoistDate("not a date at all")).toBeNull();
     expect(parseTodoistDate(null)).toBeNull();
+  });
+
+  it("drops Dutch recurring phrases from real exports", () => {
+    for (const phrase of ["elke 4e donderdag", "elke maand", "jaarlijks", "elke 14e okt"]) {
+      expect(parseTodoistDate(phrase)).toBeNull();
+    }
   });
 });
