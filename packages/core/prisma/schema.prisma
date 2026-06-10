@@ -197,9 +197,31 @@ model Person {
 
   commitments CommitmentParticipant[]
   logs        CommitmentLog[]
+  ebaEntries  EbaEntry[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+// Emotional Bank Account (Habits 4-5): deposits and withdrawals per person.
+// The balance is DERIVED (deposits - withdrawals), never stored. Coexists with
+// the commitment occurrence log — occurrences track cadence, EBA entries track
+// relationship quality.
+enum EbaKind {
+  DEPOSIT
+  WITHDRAWAL
+}
+
+model EbaEntry {
+  id         String   @id @default(cuid())
+  person     Person   @relation(fields: [personId], references: [id], onDelete: Cascade)
+  personId   String
+  kind       EbaKind
+  note       String?
+  occurredAt DateTime @default(now())
+  createdAt  DateTime @default(now())
+
+  @@index([personId, occurredAt])
 }
 
 model Commitment {

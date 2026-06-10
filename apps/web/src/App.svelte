@@ -4,6 +4,7 @@
   import QuadrantBoard from "@/lib/components/QuadrantBoard.svelte";
   import WeekPanel from "@/lib/components/WeekPanel.svelte";
   import ProjectsPanel from "@/lib/components/ProjectsPanel.svelte";
+  import PeoplePanel from "@/lib/components/PeoplePanel.svelte";
   import TodayPanel from "@/lib/components/TodayPanel.svelte";
   import AlmanacPanel from "@/lib/components/AlmanacPanel.svelte";
   import GoalsPanel from "@/lib/components/GoalsPanel.svelte";
@@ -19,6 +20,7 @@
   import { goalsStore } from "@/lib/stores/goals.svelte";
   import { rolesStore } from "@/lib/stores/roles.svelte";
   import { projectsStore } from "@/lib/stores/projects.svelte";
+  import { peopleStore } from "@/lib/stores/people.svelte";
   import { missionStore } from "@/lib/stores/mission.svelte";
   import { taskActions } from "@/lib/stores/task-actions.svelte";
   import { navStore } from "@/lib/stores/nav.svelte";
@@ -35,6 +37,7 @@
     goalsStore.load();
     rolesStore.load();
     projectsStore.load();
+    peopleStore.load();
     missionStore.load();
   }
 
@@ -95,6 +98,8 @@
         <QuadrantBoard />
       {:else if navStore.sub === "projects"}
         <ProjectsPanel />
+      {:else if navStore.sub === "people"}
+        <PeoplePanel />
       {:else}
         <div class="flex flex-col gap-6">
           <MissionPanel />
