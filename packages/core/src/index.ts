@@ -14,6 +14,13 @@ export {
 export { startOfIsoWeek, isSameIsoWeek } from "./domain/week.js";
 export { weekStreak, countThisWeek } from "./domain/habit.js";
 export {
+  parseCsv,
+  parseTodoistCsv,
+  parseTodoistDate,
+  priorityToFlags,
+  type TodoistRow,
+} from "./domain/todoist.js";
+export {
   deriveStatus,
   nextDueDate,
   periodHistory,
@@ -131,6 +138,10 @@ export {
   type AiIntakeResult,
   type UnalignedReport,
 } from "./services/ai-service.js";
+export {
+  ImportService,
+  type TodoistImportResult,
+} from "./services/import-service.js";
 
 // Re-export Prisma's generated types so consumers get them without a direct dep.
 export type {

@@ -103,9 +103,32 @@ describe("server app", () => {
       "/api/ai/intake",
       "/api/ai/review",
       "/api/ai/unaligned",
+      "/api/import/todoist",
     ]) {
       expect(paths).toContain(path);
     }
+  });
+
+  it("gates the import route and rejects non-Todoist files with 400", async () => {
+    const unauthorized = await app.inject({
+      method: "POST",
+      url: "/api/import/todoist",
+      headers: { "content-type": "application/json" },
+      payload: { csv: "x" },
+    });
+    expect(unauthorized.statusCode).toBe(401);
+
+    const badFile = await app.inject({
+      method: "POST",
+      url: "/api/import/todoist",
+      headers: {
+        authorization: "Bearer test-token",
+        "content-type": "application/json",
+      },
+      payload: { csv: "name,email\\nGeert,x@y.z" },
+    });
+    expect(badFile.statusCode).toBe(400);
+    expect(badFile.json().error).toMatch(/Todoist/);
   });
 
   it("rejects protected routes with a wrong token", async () => {
