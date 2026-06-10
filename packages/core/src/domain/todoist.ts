@@ -63,7 +63,7 @@ export function parseCsv(text: string): string[][] {
 /** Extract the task rows from a Todoist export (sections/notes/meta are skipped). */
 export function parseTodoistCsv(csv: string): TodoistRow[] {
   // Real backup files start with a UTF-8 BOM, which would corrupt the first header.
-  const rows = parseCsv(csv.replace(/^﻿/, ""));
+  const rows = parseCsv(csv.replace(/^\uFEFF/, ""));
   if (rows.length === 0) return [];
 
   const header = rows[0]!.map((h) => h.trim().toUpperCase());
