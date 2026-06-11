@@ -13,6 +13,8 @@
   } from "@/lib/api";
 
   let configured = $state(false);
+  /** The status check itself failed (offline, bad token) — not the same as unconfigured. */
+  let statusError = $state(false);
   let publicKey = $state<string | null>(null);
   let subscribed = $state(false);
   let settings = $state<NotificationSettings | null>(null);
@@ -20,6 +22,7 @@
 
   export async function load(): Promise<void> {
     try {
+      statusError = false;
       const status = await getPushStatus();
       configured = status.configured;
       publicKey = status.publicKey;
@@ -28,6 +31,7 @@
       subscribed = !!(await registration?.pushManager.getSubscription());
     } catch {
       configured = false;
+      statusError = true;
     }
   }
 
@@ -103,7 +107,12 @@
     <span class="text-sm font-medium">Notifications</span>
   </div>
 
-  {#if !configured}
+  {#if statusError}
+    <p class="text-xs text-[var(--terra)]">
+      Couldn't check the push status — verify the API token above, then reopen
+      Settings.
+    </p>
+  {:else if !configured}
     <p class="text-xs text-[var(--color-muted-foreground)]">
       Web push is off — set <code>VAPID_PUBLIC_KEY</code>/<code>VAPID_PRIVATE_KEY</code>
       on the server to enable it.
