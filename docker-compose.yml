@@ -15,6 +15,13 @@ services:
       # API; then enter the same token in the web UI's settings (gear icon).
       API_AUTH_TOKEN: "${API_AUTH_TOKEN:-}"
       ANTHROPIC_API_KEY: "${ANTHROPIC_API_KEY:-}"
+      # Web push (optional): generate once with
+      #   npx web-push generate-vapid-keys
+      # and keep the pair stable — regenerating invalidates every device's
+      # push subscription.
+      VAPID_PUBLIC_KEY: "${VAPID_PUBLIC_KEY:-}"
+      VAPID_PRIVATE_KEY: "${VAPID_PRIVATE_KEY:-}"
+      VAPID_SUBJECT: "${VAPID_SUBJECT:-}"
     volumes:
       - clock-compass-data:/data
     restart: unless-stopped
