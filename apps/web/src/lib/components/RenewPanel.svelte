@@ -62,16 +62,16 @@
 
 {#snippet habitRow(habit: HabitView)}
   <div class="flex items-center gap-2.5 border-t border-dotted border-[var(--color-border)] py-2">
-    <span class="min-w-0 flex-1 truncate text-[13.5px] font-medium">{habit.name}</span>
-    <span class="rounded-full bg-[var(--color-muted)] px-2 py-0.5 text-[11px] font-semibold text-[var(--color-foreground)]/70">
+    <span class="min-w-0 flex-1 truncate text-[0.84375rem] font-medium">{habit.name}</span>
+    <span class="rounded-full bg-[var(--color-muted)] px-2 py-0.5 text-[0.6875rem] font-semibold text-[var(--color-foreground)]/70">
       {cadenceText(habit.targetPerWeek)}
     </span>
     {#if habit.goalTitle}
-      <span class="hidden truncate text-[11px] text-[var(--color-muted-foreground)] sm:inline">
+      <span class="hidden truncate text-[0.6875rem] text-[var(--color-muted-foreground)] sm:inline">
         ↳ {habit.goalTitle}
       </span>
     {/if}
-    <span class="text-[11px] text-[var(--color-muted-foreground)]">
+    <span class="text-[0.6875rem] text-[var(--color-muted-foreground)]">
       {habit.doneThisWeek}/{habit.targetPerWeek} wk
     </span>
     <button
@@ -148,8 +148,8 @@
           <div class="flex items-center gap-2.5">
             <span class="size-3 rounded-full" style={`background: ${meta.color}`}></span>
             <div class="min-w-0 flex-1">
-              <p class="font-display text-[15px] font-semibold">{meta.label}</p>
-              <p class="text-[11px] text-[var(--color-muted-foreground)]">{meta.sub}</p>
+              <p class="font-display text-[0.9375rem] font-semibold">{meta.label}</p>
+              <p class="text-[0.6875rem] text-[var(--color-muted-foreground)]">{meta.sub}</p>
             </div>
           </div>
 
@@ -180,7 +180,7 @@
                 editingIntention = dimension;
                 iText = renewalStore.intentions[dimension] ?? "";
               }}
-              class="border-t border-dotted border-[var(--color-border)] pt-2 text-left font-display text-[12.5px] italic {renewalStore.intentions[dimension]
+              class="border-t border-dotted border-[var(--color-border)] pt-2 text-left font-display text-[0.78125rem] italic {renewalStore.intentions[dimension]
                 ? 'text-[var(--color-muted-foreground)]'
                 : 'text-[var(--color-input)]'} hover:text-[var(--color-foreground)]"
             >
@@ -231,8 +231,8 @@
 
     {#if untagged.length > 0 || addingFor === "NONE"}
       <div class="rounded-xl border border-dashed border-[var(--color-input)] bg-[var(--color-secondary)]/40 p-3.5">
-        <p class="font-display text-[14px] font-semibold">Untagged habits</p>
-        <p class="text-[11px] text-[var(--color-muted-foreground)]">
+        <p class="font-display text-[0.875rem] font-semibold">Untagged habits</p>
+        <p class="text-[0.6875rem] text-[var(--color-muted-foreground)]">
           Fine as they are — they simply don't count toward a dimension.
         </p>
         <div class="mt-1">

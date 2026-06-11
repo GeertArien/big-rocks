@@ -75,14 +75,14 @@
       <div class="mt-2">
         {#each renewalStore.habits as habit (habit.id)}
           <div class="flex items-center gap-3 border-b border-dotted border-[var(--color-border)] py-2.5 last:border-b-0">
-            <span class="min-w-0 flex-1 truncate text-[13.5px] font-medium">{habit.name}</span>
-            <span class="hidden text-[11px] text-[var(--color-muted-foreground)] sm:inline">
+            <span class="min-w-0 flex-1 truncate text-[0.84375rem] font-medium">{habit.name}</span>
+            <span class="hidden text-[0.6875rem] text-[var(--color-muted-foreground)] sm:inline">
               {cadenceText(habit.targetPerWeek)}
             </span>
             <span class="flex gap-1">
               {#each habit.weekDays as on, i (i)}
                 <span
-                  class="flex size-5 items-center justify-center rounded-md border text-[8px] {on
+                  class="flex size-5 items-center justify-center rounded-md border text-[0.5rem] {on
                     ? 'border-[var(--pine)] bg-[var(--pine)] text-white'
                     : 'border-[var(--color-border)] bg-[var(--color-background)] text-[var(--color-muted-foreground)]'}"
                 >
@@ -90,7 +90,7 @@
                 </span>
               {/each}
             </span>
-            <span class="w-16 text-right text-[12px] text-[var(--color-muted-foreground)]">
+            <span class="w-16 text-right text-[0.75rem] text-[var(--color-muted-foreground)]">
               <b class="text-[var(--color-foreground)]">{habit.streak} wk{habit.streak === 1 ? "" : "s"}</b>
               {habit.streak >= 3 ? "🔥" : ""}
             </span>
@@ -108,7 +108,7 @@
         <div class="mt-3 flex flex-col gap-1">
           {#each trends.heatmap as row, w (w)}
             <div class="flex items-center gap-1">
-              <span class="w-12 text-[10px] text-[var(--color-muted-foreground)]">
+              <span class="w-12 text-[0.625rem] text-[var(--color-muted-foreground)]">
                 {weekLabel(11 - w)}
               </span>
               {#each row as count, d (d)}
@@ -133,12 +133,12 @@
           class="rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] p-3 shadow-sm"
           style={`border-top: 3px solid ${meta.color}`}
         >
-          <p class="font-display text-[13px] font-semibold">{meta.label}</p>
+          <p class="font-display text-[0.8125rem] font-semibold">{meta.label}</p>
           <p class="mt-1 font-display text-xl font-semibold">
             {dim.total}
             <span class="text-xs font-normal text-[var(--color-muted-foreground)]">this week</span>
           </p>
-          <p class="text-[10.5px] text-[var(--color-muted-foreground)]">
+          <p class="text-[0.65625rem] text-[var(--color-muted-foreground)]">
             {dim.habitsDone}/{dim.habitsTarget} habit · {dim.oneOffs} one-off
           </p>
           <div class="mt-2 h-1 overflow-hidden rounded-full bg-[var(--color-muted)]">
@@ -158,11 +158,11 @@
           <p class="text-xs text-[var(--color-muted-foreground)]">Habits and one-offs combined</p>
           <div class="mt-2 flex flex-col">
             <div class="flex items-baseline gap-2 border-b border-dotted border-[var(--color-border)] py-2">
-              <span class="flex-1 text-[13.5px]">Completions this week</span>
-              <span class="font-display text-[15px] font-semibold">{trends.thisWeek}</span>
+              <span class="flex-1 text-[0.84375rem]">Completions this week</span>
+              <span class="font-display text-[0.9375rem] font-semibold">{trends.thisWeek}</span>
               {#if delta !== 0}
                 <span
-                  class="rounded-full px-2 py-0.5 text-[11px] font-semibold {delta > 0
+                  class="rounded-full px-2 py-0.5 text-[0.6875rem] font-semibold {delta > 0
                     ? 'bg-[var(--pine-soft)] text-[var(--pine)]'
                     : 'bg-[var(--terra-soft)] text-[var(--terra)]'}"
                 >
@@ -171,16 +171,16 @@
               {/if}
             </div>
             <div class="flex items-baseline gap-2 border-b border-dotted border-[var(--color-border)] py-2">
-              <span class="flex-1 text-[13.5px]">Completions last week</span>
-              <span class="font-display text-[15px] font-semibold">{trends.lastWeek}</span>
+              <span class="flex-1 text-[0.84375rem]">Completions last week</span>
+              <span class="font-display text-[0.9375rem] font-semibold">{trends.lastWeek}</span>
             </div>
             <div class="flex items-baseline gap-2 py-2">
-              <span class="flex-1 text-[13.5px]">Longest active streak</span>
-              <span class="font-display text-[15px] font-semibold">
+              <span class="flex-1 text-[0.84375rem]">Longest active streak</span>
+              <span class="font-display text-[0.9375rem] font-semibold">
                 {trends.longestStreak.weeks} wks
               </span>
               {#if trends.longestStreak.habitName}
-                <span class="text-[11px] text-[var(--color-muted-foreground)]">
+                <span class="text-[0.6875rem] text-[var(--color-muted-foreground)]">
                   {trends.longestStreak.habitName}
                 </span>
               {/if}
@@ -194,8 +194,8 @@
           <div class="mt-2 flex flex-col">
             {#each trends.goalMomentum as goal (goal.goalId)}
               <div class="flex items-baseline gap-2 border-b border-dotted border-[var(--color-border)] py-2 last:border-b-0">
-                <span class="min-w-0 flex-1 truncate text-[13.5px]">{goal.title}</span>
-                <span class="font-display text-[15px] font-semibold">{goal.pct}%</span>
+                <span class="min-w-0 flex-1 truncate text-[0.84375rem]">{goal.title}</span>
+                <span class="font-display text-[0.9375rem] font-semibold">{goal.pct}%</span>
               </div>
             {:else}
               <p class="py-2 font-display text-sm italic text-[var(--color-muted-foreground)]">
@@ -211,7 +211,7 @@
           <div class="flex items-center gap-2">
             <Sparkles class="size-4 text-[var(--plum)]" />
             <h3 class="font-display text-base font-semibold">Weekly review</h3>
-            <span class="rounded-full bg-[var(--color-muted)] px-2 py-0.5 text-[10px] font-semibold text-[var(--color-muted-foreground)]">AI</span>
+            <span class="rounded-full bg-[var(--color-muted)] px-2 py-0.5 text-[0.625rem] font-semibold text-[var(--color-muted-foreground)]">AI</span>
           </div>
           {#if review}
             <p class="mt-2 font-display text-sm italic leading-relaxed text-[var(--color-foreground)]/80">
@@ -240,8 +240,8 @@
                   class="size-2.5 rounded-full"
                   style={`background: ${DIMENSION_META[activity.dimension].color}`}
                 ></span>
-                <span class="min-w-0 flex-1 truncate text-[13.5px]">{activity.title}</span>
-                <span class="text-[11px] text-[var(--color-muted-foreground)]">
+                <span class="min-w-0 flex-1 truncate text-[0.84375rem]">{activity.title}</span>
+                <span class="text-[0.6875rem] text-[var(--color-muted-foreground)]">
                   {new Date(activity.occurredAt).toLocaleDateString(undefined, {
                     month: "short",
                     day: "numeric",

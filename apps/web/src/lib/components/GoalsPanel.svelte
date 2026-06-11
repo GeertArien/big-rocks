@@ -68,7 +68,7 @@
     <div class="flex items-start justify-between gap-2">
       <div class="flex items-center gap-2">
         <Target class="size-4 text-[var(--color-muted-foreground)]" />
-        <h3 class="font-display text-[15px] font-semibold">{goal.title}</h3>
+        <h3 class="font-display text-[0.9375rem] font-semibold">{goal.title}</h3>
       </div>
       <div class="flex shrink-0 items-center gap-1">
         <button

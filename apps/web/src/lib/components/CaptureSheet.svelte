@@ -96,24 +96,24 @@
     {#if aiStore.available}
       {#if preview}
         <div class="flex flex-col gap-2 rounded-xl border border-[#ddd6ea] bg-[var(--plum-soft)] p-3">
-          <p class="flex items-center gap-1.5 text-[10.5px] font-bold tracking-[0.14em] text-[var(--plum)] uppercase">
+          <p class="flex items-center gap-1.5 text-[0.65625rem] font-bold tracking-[0.14em] text-[var(--plum)] uppercase">
             <Sparkles class="size-3" />
             AI understood
           </p>
           <div class="flex flex-wrap gap-1.5">
-            <span class="rounded-full border border-[#bcd8cc] bg-[var(--pine-soft)] px-2.5 py-1 text-[11.5px] font-semibold text-[var(--pine)]">
+            <span class="rounded-full border border-[#bcd8cc] bg-[var(--pine-soft)] px-2.5 py-1 text-[0.71875rem] font-semibold text-[var(--pine)]">
               {quadrant}
             </span>
-            <span class="rounded-full border border-[#ddd6ea] bg-[var(--color-card)] px-2.5 py-1 text-[11.5px] font-semibold text-[var(--color-foreground)]/80">
+            <span class="rounded-full border border-[#ddd6ea] bg-[var(--color-card)] px-2.5 py-1 text-[0.71875rem] font-semibold text-[var(--color-foreground)]/80">
               {preview.title}
             </span>
             {#if preview.dueDate}
-              <span class="rounded-full border border-[#ddd6ea] bg-[var(--color-card)] px-2.5 py-1 text-[11.5px] font-semibold text-[var(--color-foreground)]/80">
+              <span class="rounded-full border border-[#ddd6ea] bg-[var(--color-card)] px-2.5 py-1 text-[0.71875rem] font-semibold text-[var(--color-foreground)]/80">
                 📅 {new Date(preview.dueDate).toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" })}
               </span>
             {/if}
             {#if preview.proactivity}
-              <span class="rounded-full border border-[#ddd6ea] bg-[var(--color-card)] px-2.5 py-1 text-[11.5px] font-semibold text-[var(--color-foreground)]/80">
+              <span class="rounded-full border border-[#ddd6ea] bg-[var(--color-card)] px-2.5 py-1 text-[0.71875rem] font-semibold text-[var(--color-foreground)]/80">
                 {preview.proactivity === "INFLUENCE" ? "⊙ influence" : "◌ concern"}
               </span>
             {/if}

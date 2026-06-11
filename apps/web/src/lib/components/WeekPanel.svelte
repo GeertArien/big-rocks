@@ -96,7 +96,7 @@
     <div class="flex flex-col gap-2 rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] p-3 shadow-sm">
       <div class="flex items-center gap-2">
         <Star class="size-4 text-[var(--star)]" fill="currentColor" />
-        <h2 class="font-display text-[15px] font-semibold">Rocks to place</h2>
+        <h2 class="font-display text-[0.9375rem] font-semibold">Rocks to place</h2>
         <span class="text-xs text-[var(--color-muted-foreground)]">{unplacedRocks.length}</span>
       </div>
       <p class="-mt-1 text-xs text-[var(--color-muted-foreground)]">
@@ -105,7 +105,7 @@
       {#each unplacedRocks as rock (rock.id)}
         <div class="rounded-lg border border-[var(--color-border)] bg-[var(--color-background)] p-2.5">
           <p class="text-sm leading-snug font-medium">{rock.title}</p>
-          <p class="mt-0.5 text-[11px] text-[var(--color-muted-foreground)]">{crumb(rock)}</p>
+          <p class="mt-0.5 text-[0.6875rem] text-[var(--color-muted-foreground)]">{crumb(rock)}</p>
           <select
             value=""
             onchange={(e) => place(rock, (e.currentTarget as HTMLSelectElement).value)}
@@ -158,7 +158,7 @@
               {day.toLocaleDateString(undefined, { month: "short", day: "numeric" })}
             </span>
             {#if isToday}
-              <span class="ml-auto text-[10px] font-bold tracking-widest text-[var(--terra)]">TODAY</span>
+              <span class="ml-auto text-[0.625rem] font-bold tracking-widest text-[var(--terra)]">TODAY</span>
             {/if}
           </div>
           <div class="px-3.5 py-1">
@@ -182,7 +182,7 @@
                     {#if task.isBigRock}<span class="text-[var(--star)]">★</span>{/if}
                     {task.title}
                   </p>
-                  <p class="text-[11px] text-[var(--color-muted-foreground)]">{crumb(task)}</p>
+                  <p class="text-[0.6875rem] text-[var(--color-muted-foreground)]">{crumb(task)}</p>
                 </div>
                 <input
                   type="time"
@@ -190,7 +190,7 @@
                   onchange={(e) =>
                     tasksStore.setScheduledTime(task, (e.currentTarget as HTMLInputElement).value || null)}
                   aria-label="Set a time"
-                  class="w-[4.7rem] shrink-0 rounded-md border border-[var(--color-input)] bg-transparent px-1 py-0.5 text-[11px] text-[var(--color-muted-foreground)]"
+                  class="w-[4.7rem] shrink-0 rounded-md border border-[var(--color-input)] bg-transparent px-1 py-0.5 text-[0.6875rem] text-[var(--color-muted-foreground)]"
                 />
                 <button
                   onclick={() => tasksStore.setScheduledDay(task, null)}

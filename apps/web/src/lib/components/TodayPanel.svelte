@@ -90,7 +90,7 @@
             <button
               onclick={() => tasksStore.toggleComplete(rock)}
               title={done ? "Reopen" : "Complete"}
-              class="flex items-center gap-2 rounded-lg border px-3 py-1.5 text-[13px] font-medium transition-colors {done
+              class="flex items-center gap-2 rounded-lg border px-3 py-1.5 text-[0.8125rem] font-medium transition-colors {done
                 ? 'border-[#5e9e8673] bg-[#5e9e8638] text-[#ece5d2]'
                 : 'border-[#fffdf724] bg-[#fffdf714] text-[#ece5d2] hover:border-[#fffdf748]'}"
             >
@@ -119,7 +119,7 @@
     <!-- The single nudge: the worst overdue relationship commitment. -->
     {#if peopleStore.worstOverdue}
       <div
-        class="flex items-center gap-3 rounded-xl border border-[#e5c4b8] bg-[var(--terra-soft)] px-3.5 py-2.5 text-[13px] text-[#6e2a18]"
+        class="flex items-center gap-3 rounded-xl border border-[#e5c4b8] bg-[var(--terra-soft)] px-3.5 py-2.5 text-[0.8125rem] text-[#6e2a18]"
       >
         <span class="min-w-0 flex-1">
           No <b>{peopleStore.worstOverdue.title.toLowerCase()}</b> with
@@ -160,7 +160,7 @@
                   {#if task.isBigRock}<span class="text-[var(--star)]">★</span>{/if}
                   {task.title}
                 </p>
-                <p class="text-[11px] text-[var(--color-muted-foreground)]">{crumb(task.projectId)}</p>
+                <p class="text-[0.6875rem] text-[var(--color-muted-foreground)]">{crumb(task.projectId)}</p>
               </div>
             </div>
           {/each}
@@ -201,17 +201,17 @@
               >
                 <Check class="size-3.5" />
               </button>
-              <span class="min-w-0 flex-1 truncate text-[13.5px] font-medium">{habit.name}</span>
+              <span class="min-w-0 flex-1 truncate text-[0.84375rem] font-medium">{habit.name}</span>
               {#if habit.dimension}
                 {@const meta = DIMENSION_META[habit.dimension]}
                 <span
-                  class="rounded-full px-2 py-0.5 text-[10px] font-semibold"
+                  class="rounded-full px-2 py-0.5 text-[0.625rem] font-semibold"
                   style={`color: ${meta.color}; background: ${meta.soft}`}
                 >
                   {meta.label}
                 </span>
               {/if}
-              <span class="text-[11px] text-[var(--color-muted-foreground)]">
+              <span class="text-[0.6875rem] text-[var(--color-muted-foreground)]">
                 {habit.doneThisWeek}/{habit.targetPerWeek} wk
               </span>
             </div>

@@ -43,7 +43,7 @@
   <div class="min-w-0 flex-1">
     <p class="text-sm leading-snug" class:line-through={done}>{task.title}</p>
     {#if project}
-      <p class="mt-0.5 truncate text-[11px] text-[var(--color-muted-foreground)]">
+      <p class="mt-0.5 truncate text-[0.6875rem] text-[var(--color-muted-foreground)]">
         ▤ {project.name}
       </p>
     {/if}
@@ -51,7 +51,7 @@
       <button
         onclick={() => tasksStore.setFlags(task, { important: !task.important })}
         aria-pressed={task.important}
-        class="rounded-full border px-2 py-0.5 text-[10px] font-medium transition-colors {toggleChip(
+        class="rounded-full border px-2 py-0.5 text-[0.625rem] font-medium transition-colors {toggleChip(
           task.important,
         )}"
       >
@@ -60,19 +60,19 @@
       <button
         onclick={() => tasksStore.setFlags(task, { urgent: !task.urgent })}
         aria-pressed={task.urgent}
-        class="rounded-full border px-2 py-0.5 text-[10px] font-medium transition-colors {toggleChip(
+        class="rounded-full border px-2 py-0.5 text-[0.625rem] font-medium transition-colors {toggleChip(
           task.urgent,
         )}"
       >
         Urgent
       </button>
-      <span class="mx-0.5 text-[10px] text-[var(--color-border)]">|</span>
+      <span class="mx-0.5 text-[0.625rem] text-[var(--color-border)]">|</span>
       <!-- Habit 1: influence vs concern -->
       <button
         onclick={() => setProactivity("INFLUENCE")}
         aria-pressed={task.proactivity === "INFLUENCE"}
         title="In your influence (actionable)"
-        class="rounded-full border px-2 py-0.5 text-[10px] font-medium transition-colors {toggleChip(
+        class="rounded-full border px-2 py-0.5 text-[0.625rem] font-medium transition-colors {toggleChip(
           task.proactivity === 'INFLUENCE',
         )}"
       >
@@ -82,7 +82,7 @@
         onclick={() => setProactivity("CONCERN")}
         aria-pressed={task.proactivity === "CONCERN"}
         title="A concern (not in your control)"
-        class="rounded-full border px-2 py-0.5 text-[10px] font-medium transition-colors {toggleChip(
+        class="rounded-full border px-2 py-0.5 text-[0.625rem] font-medium transition-colors {toggleChip(
           task.proactivity === 'CONCERN',
         )}"
       >
@@ -97,7 +97,7 @@
         onchange={(e) =>
           tasksStore.setGoal(task, (e.currentTarget as HTMLSelectElement).value || null)}
         aria-label="Link to goal"
-        class="mt-1.5 max-w-[12rem] truncate rounded-md border border-[var(--color-border)] bg-transparent px-1.5 py-0.5 text-[11px] text-[var(--color-muted-foreground)]"
+        class="mt-1.5 max-w-[12rem] truncate rounded-md border border-[var(--color-border)] bg-transparent px-1.5 py-0.5 text-[0.6875rem] text-[var(--color-muted-foreground)]"
       >
         <option value="">No goal</option>
         {#each goalsStore.goals as goal (goal.id)}
