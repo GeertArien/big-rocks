@@ -6,7 +6,7 @@ import {
   PrismaProjectRepository,
   PrismaTaskRepository,
   prisma,
-} from "@big-rocks/core";
+} from "@clock-compass/core";
 
 /**
  * Todoist CSV import (build-order step 8). The file content is posted as text

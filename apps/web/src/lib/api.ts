@@ -1,4 +1,4 @@
-/** Typed API client for the BigRocks REST API. */
+/** Typed API client for the Clock & Compass REST API. */
 
 import { getToken } from "./token";
 

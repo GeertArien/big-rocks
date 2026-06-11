@@ -10,7 +10,7 @@ import {
   dueNotifications,
   prisma,
   type PendingNotification,
-} from "@big-rocks/core";
+} from "@clock-compass/core";
 
 export interface PushRouteOptions {
   vapidPublicKey: string | undefined;
@@ -271,7 +271,7 @@ export async function pushRoutes(
       if (!configured) return reply.code(503).send(PUSH_DISABLED);
       await sendToAll({
         kind: "overdue",
-        title: "BigRocks",
+        title: "Clock & Compass",
         body: "Push is working — first things first.",
         url: "/",
       });

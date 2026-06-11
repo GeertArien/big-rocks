@@ -247,7 +247,7 @@
           variant="outline"
           size="sm"
           onclick={() =>
-            copy("pnpm --filter @big-rocks/mcp start", "MCP command")}
+            copy("pnpm --filter @clock-compass/mcp start", "MCP command")}
         >
           <Copy class="size-3" />
           MCP command

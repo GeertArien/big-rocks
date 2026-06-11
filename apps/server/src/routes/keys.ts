@@ -1,5 +1,5 @@
 import type { FastifyInstance } from "fastify";
-import type { ApiKeyService } from "@big-rocks/core";
+import type { ApiKeyService } from "@clock-compass/core";
 
 /**
  * Agent/service access: named API keys. The plaintext is returned exactly

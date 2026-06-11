@@ -1,5 +1,5 @@
 import type { FastifyInstance } from "fastify";
-import { MissionService, PrismaMissionRepository, prisma } from "@big-rocks/core";
+import { MissionService, PrismaMissionRepository, prisma } from "@clock-compass/core";
 
 /** Mission statement routes (Habit 2). Single active document, versioned. */
 export async function missionRoutes(fastify: FastifyInstance): Promise<void> {

@@ -4,7 +4,7 @@ import {
   PrismaCommitmentRepository,
   PrismaPersonRepository,
   prisma,
-} from "@big-rocks/core";
+} from "@clock-compass/core";
 
 const CADENCE_UNITS = ["DAY", "WEEK", "MONTH"] as const;
 const EBA_KINDS = ["DEPOSIT", "WITHDRAWAL"] as const;

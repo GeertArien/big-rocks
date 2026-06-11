@@ -65,12 +65,17 @@
   >
     <div class="mx-auto flex h-14 max-w-4xl items-center gap-3 px-4">
       <div class="flex items-center gap-2.5">
+        <!-- The compass mark from the prototypes: ink ring; the needle wears the two
+             everyday modes — terracotta north (Clock), pine south (Compass). -->
         <div
-          class="flex size-8 items-center justify-center rounded-lg bg-[var(--color-primary)] text-sm text-[var(--color-primary-foreground)]"
+          aria-hidden="true"
+          class="relative size-8 rounded-full border-[1.5px] border-[var(--color-foreground)]"
         >
-          ▲
+          <div
+            class="absolute inset-0 m-auto h-[22px] w-[2px] rotate-[34deg] bg-[linear-gradient(var(--terra)_0_50%,var(--pine)_50%_100%)]"
+          ></div>
         </div>
-        <h1 class="font-display text-lg font-semibold tracking-tight">BigRocks</h1>
+        <h1 class="font-display text-lg font-semibold tracking-tight">Clock &amp; Compass</h1>
       </div>
 
       <div class="flex flex-1 justify-center">

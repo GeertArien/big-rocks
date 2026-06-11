@@ -15,7 +15,7 @@ import {
   PrismaTaskRepository,
   prisma,
   type AiProvider,
-} from "@big-rocks/core";
+} from "@clock-compass/core";
 
 export interface AiRouteOptions {
   aiProvider: string | undefined;

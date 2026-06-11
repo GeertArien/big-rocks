@@ -1,5 +1,5 @@
 import type { FastifyInstance } from "fastify";
-import { PrismaRoleRepository, RoleService, prisma } from "@big-rocks/core";
+import { PrismaRoleRepository, RoleService, prisma } from "@clock-compass/core";
 
 /** Role routes (Habit 2). Goals group under roles; deleting a role keeps them. */
 export async function roleRoutes(fastify: FastifyInstance): Promise<void> {

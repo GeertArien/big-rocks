@@ -1,4 +1,4 @@
-# BigRocks
+# Clock & Compass
 
 A personal todo and productivity app organized around the principles popularized
 in Stephen Covey's *The 7 Habits of Highly Effective People*. Put your big rocks
@@ -29,7 +29,7 @@ packages/
 - The **REST API is the source of truth**, with an auto-generated OpenAPI spec at
   `/docs` and bearer-token auth: the `API_AUTH_TOKEN` admin token, or named
   **API keys** generated in Settings (hash-only storage, revocable).
-- The **MCP server** (`pnpm --filter @big-rocks/mcp start`, with `DATABASE_URL`
+- The **MCP server** (`pnpm --filter @clock-compass/mcp start`, with `DATABASE_URL`
   set) exposes the same services as tools for agents — tasks, quadrants, big
   rocks, goals, people, commitments, habits, and renewal.
 
@@ -52,8 +52,8 @@ pnpm db:migrate             # apply migrations + generate the Prisma client
 pnpm db:seed                # optional: a little starter data
 
 # 4. Run
-pnpm --filter @big-rocks/server dev   # API on http://localhost:3000
-pnpm --filter @big-rocks/web dev      # UI on http://localhost:5173 (proxies /api)
+pnpm --filter @clock-compass/server dev   # API on http://localhost:3000
+pnpm --filter @clock-compass/web dev      # UI on http://localhost:5173 (proxies /api)
 ```
 
 API docs: <http://localhost:3000/docs>
@@ -93,7 +93,7 @@ Configuration is entirely via environment variables:
 | `DATABASE_URL`      | Prisma connection string (SQLite by default)             |
 | `API_AUTH_TOKEN`    | Bearer token for the REST API (unset = open, the default)|
 | `ANTHROPIC_API_KEY` | Server-side AI features (optional; see `.env.example` for the OpenAI-compatible alternative) |
-| `VAPID_PUBLIC_KEY` / `VAPID_PRIVATE_KEY` | Web push notifications (optional; generate with `pnpm --filter @big-rocks/server exec web-push generate-vapid-keys`) |
+| `VAPID_PUBLIC_KEY` / `VAPID_PRIVATE_KEY` | Web push notifications (optional; generate with `pnpm --filter @clock-compass/server exec web-push generate-vapid-keys`) |
 | `PORT` / `HOST`     | Where the server listens                                 |
 
 The app is an installable PWA (add-to-homescreen; the shell and fonts work
@@ -101,7 +101,7 @@ offline). With VAPID keys set, enable push per device in Settings →
 Notifications — overdue commitments, the morning rock reminder, and the Sunday
 review arrive even with the app closed. Push requires HTTPS (or localhost).
 
-The database lives on the `bigrocks-data` volume (mounted at `/data`), so it
+The database lives on the `clock-compass-data` volume (mounted at `/data`), so it
 survives container restarts. Migrations are applied automatically on boot.
 
 Swapping to Postgres later is a provider + `DATABASE_URL` change (an optional
@@ -113,7 +113,7 @@ CI publishes the image to GitHub Container Registry on every push to `main` and
 on version tags. To run it without building:
 
 ```bash
-docker run -p 3000:3000 -v bigrocks-data:/data ghcr.io/geertarien/big-rocks:latest
+docker run -p 3000:3000 -v clock-compass-data:/data ghcr.io/geertarien/clock-compass:latest
 # → http://localhost:3000  (open by default; add -e API_AUTH_TOKEN=… to require a token)
 ```
 

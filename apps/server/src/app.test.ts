@@ -4,7 +4,7 @@ import {
   AnthropicAiProvider,
   NoopAiProvider,
   OpenAiCompatibleProvider,
-} from "@big-rocks/core";
+} from "@clock-compass/core";
 import { buildApp } from "./app.js";
 import { loadConfig } from "./config.js";
 import { selectProvider } from "./routes/ai.js";

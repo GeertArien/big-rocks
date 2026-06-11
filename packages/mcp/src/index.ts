@@ -1,10 +1,10 @@
 #!/usr/bin/env node
-// BigRocks MCP server — stdio entry point.
+// Clock & Compass MCP server — stdio entry point.
 //
 // Usage (e.g. in an MCP client config):
-//   DATABASE_URL=file:/path/to/bigrocks.db big-rocks-mcp
+//   DATABASE_URL=file:/path/to/clock-compass.db clock-compass-mcp
 //
-// A thin adapter over @big-rocks/core; see server.ts.
+// A thin adapter over @clock-compass/core; see server.ts.
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { buildMcpServer } from "./server.js";
 

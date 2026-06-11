@@ -2,7 +2,7 @@ import { createHash, randomBytes } from "node:crypto";
 import type { ApiKey } from "@prisma/client";
 import type { ApiKeyRepository } from "../repositories/api-key-repository.js";
 
-const KEY_PREFIX = "bigrocks_sk_";
+const KEY_PREFIX = "clockcompass_sk_";
 
 /** What the UI/API may see — never the hash, never the plaintext. */
 export interface ApiKeyView {

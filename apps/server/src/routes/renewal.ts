@@ -1,5 +1,5 @@
 import type { FastifyInstance } from "fastify";
-import { PrismaHabitRepository, RenewalService, prisma } from "@big-rocks/core";
+import { PrismaHabitRepository, RenewalService, prisma } from "@clock-compass/core";
 
 const DIMENSIONS = ["PHYSICAL", "MENTAL", "SOCIAL_EMOTIONAL", "SPIRITUAL"] as const;
 

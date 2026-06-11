@@ -20,7 +20,7 @@ import {
   PrismaTaskRepository,
   groupByQuadrant,
   prisma,
-} from "@big-rocks/core";
+} from "@clock-compass/core";
 
 /** The shared services this adapter wraps 1:1 — no business logic here. */
 export interface Services {
@@ -64,7 +64,7 @@ function json(value: unknown) {
  * against the REST API — the tool surface stays identical.
  */
 export function buildMcpServer(services: Services = defaultServices()): McpServer {
-  const server = new McpServer({ name: "big-rocks", version: "0.1.0" });
+  const server = new McpServer({ name: "clock-compass", version: "0.1.0" });
   const { tasks, goals, roles, projects, people, renewal, mission } = services;
 
   // --- Tasks (Habit 3) --------------------------------------------------------

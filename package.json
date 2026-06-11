@@ -1,5 +1,5 @@
 {
-  "name": "big-rocks",
+  "name": "clock-compass",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -9,14 +9,14 @@
   },
   "packageManager": "pnpm@10.33.0",
   "scripts": {
-    "build": "pnpm --filter @big-rocks/core build && pnpm --filter @big-rocks/server build && pnpm --filter @big-rocks/web build",
+    "build": "pnpm --filter @clock-compass/core build && pnpm --filter @clock-compass/server build && pnpm --filter @clock-compass/web build",
     "typecheck": "pnpm -r typecheck",
     "lint": "eslint .",
     "test": "pnpm -r test",
-    "dev": "pnpm --filter @big-rocks/server dev",
-    "db:generate": "pnpm --filter @big-rocks/core db:generate",
-    "db:migrate": "pnpm --filter @big-rocks/core db:migrate",
-    "db:seed": "pnpm --filter @big-rocks/core db:seed"
+    "dev": "pnpm --filter @clock-compass/server dev",
+    "db:generate": "pnpm --filter @clock-compass/core db:generate",
+    "db:migrate": "pnpm --filter @clock-compass/core db:migrate",
+    "db:seed": "pnpm --filter @clock-compass/core db:seed"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.4",

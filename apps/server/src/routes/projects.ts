@@ -1,5 +1,5 @@
 import type { FastifyInstance } from "fastify";
-import { PrismaProjectRepository, ProjectService, prisma } from "@big-rocks/core";
+import { PrismaProjectRepository, ProjectService, prisma } from "@clock-compass/core";
 
 const PROJECT_STATUSES = ["ACTIVE", "SOMEDAY", "DONE"] as const;
 
