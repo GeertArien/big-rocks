@@ -63,7 +63,7 @@
   <header
     class="sticky top-0 z-30 border-b border-[var(--color-border)] bg-[var(--color-card)]/85 backdrop-blur"
   >
-    <div class="mx-auto flex h-14 max-w-4xl items-center gap-3 px-4">
+    <div class="mx-auto flex h-14 max-w-5xl items-center gap-3 px-4">
       <div class="flex items-center gap-2.5">
         <!-- The compass mark from the prototypes: ink ring; the needle wears the two
              everyday modes — terracotta north (Clock), pine south (Compass). -->
@@ -75,7 +75,7 @@
             class="absolute inset-0 m-auto h-[22px] w-[2px] rotate-[34deg] bg-[linear-gradient(var(--terra)_0_50%,var(--pine)_50%_100%)]"
           ></div>
         </div>
-        <h1 class="font-display text-lg font-semibold tracking-tight">Clock &amp; Compass</h1>
+        <h1 class="font-display text-lg font-semibold tracking-tight">Clock <span class="italic text-[var(--terra)]">&amp;</span> Compass</h1>
       </div>
 
       <div class="flex flex-1 justify-center">
@@ -101,7 +101,7 @@
     </div>
   </header>
 
-  <main class="mx-auto w-full max-w-4xl flex-1 px-4 pt-6 pb-24 sm:pb-10">
+  <main class="mx-auto w-full max-w-5xl flex-1 px-4 pt-6 pb-24 sm:pb-10">
     <!-- Page header: mode kicker + serif title for the active screen. -->
     <p
       class="text-[10.5px] font-semibold uppercase tracking-[0.24em]"

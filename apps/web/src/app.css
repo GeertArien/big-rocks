@@ -111,6 +111,13 @@
     border-color: var(--color-border);
     outline-color: var(--color-ring);
   }
+  /* Desktop reads at a 17px root, so every rem-based size (and the page
+     column) scales up ~6%; phones keep the compact 16px scale. */
+  @media (min-width: 64rem) {
+    html {
+      font-size: 17px;
+    }
+  }
   body {
     background-color: var(--color-background);
     background-image:
