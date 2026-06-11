@@ -43,15 +43,15 @@
   onclick={close}
 ></div>
 
-<!-- Panel: bottom sheet on mobile, right drawer on desktop. -->
+<!-- Panel: bottom sheet on mobile, centered dialog on desktop. -->
 <div
   class={cn(
-    "fixed z-50 flex flex-col bg-[var(--color-card)] shadow-xl transition-transform duration-300 ease-out",
+    "fixed z-50 flex flex-col bg-[var(--color-card)] shadow-xl transition-[translate,scale,opacity] duration-300 ease-out",
     "inset-x-0 bottom-0 max-h-[90dvh] rounded-t-2xl",
-    "sm:inset-y-0 sm:right-0 sm:bottom-auto sm:left-auto sm:h-full sm:w-[26rem] sm:max-h-none sm:rounded-none",
+    "sm:inset-auto sm:top-1/2 sm:left-1/2 sm:w-[30rem] sm:max-w-[calc(100vw-3rem)] sm:max-h-[85dvh] sm:rounded-2xl sm:-translate-x-1/2 sm:-translate-y-1/2",
     open
-      ? "translate-y-0 sm:translate-x-0"
-      : "translate-y-full sm:translate-y-0 sm:translate-x-full",
+      ? "translate-y-0 sm:opacity-100 sm:scale-100"
+      : "translate-y-full sm:opacity-0 sm:scale-95",
   )}
   role="dialog"
   aria-modal="true"

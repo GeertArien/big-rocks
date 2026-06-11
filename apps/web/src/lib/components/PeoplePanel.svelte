@@ -125,18 +125,18 @@
               {person.name.slice(0, 1).toUpperCase()}
             </div>
             <div class="min-w-0 flex-1">
-              <p class="font-display text-[15px] font-semibold">{person.name}</p>
+              <p class="font-display text-[0.9375rem] font-semibold">{person.name}</p>
               {#if person.relationship}
                 <p class="text-xs text-[var(--color-muted-foreground)]">{person.relationship}</p>
               {/if}
             </div>
             {#if status}
-              <span class="rounded-full px-2.5 py-0.5 text-[11px] font-semibold {STATUS_META[status].cls}">
+              <span class="rounded-full px-2.5 py-0.5 text-[0.6875rem] font-semibold {STATUS_META[status].cls}">
                 {STATUS_META[status].label}
               </span>
             {/if}
             <span
-              class="rounded-full px-2.5 py-0.5 font-display text-[13px] font-semibold {person.balance >= 0
+              class="rounded-full px-2.5 py-0.5 font-display text-[0.8125rem] font-semibold {person.balance >= 0
                 ? 'bg-[var(--pine-soft)] text-[var(--pine)]'
                 : 'bg-[var(--terra-soft)] text-[var(--terra)]'}"
               title="Emotional bank account balance"
@@ -158,8 +158,8 @@
           {#each person.commitments as commitment (commitment.id)}
             <div class="mt-3 border-t border-dotted border-[var(--color-border)] pt-2.5">
               <div class="flex items-baseline gap-2">
-                <span class="text-[13px] font-semibold">{commitment.title}</span>
-                <span class="text-[11px] text-[var(--color-muted-foreground)]">
+                <span class="text-[0.8125rem] font-semibold">{commitment.title}</span>
+                <span class="text-[0.6875rem] text-[var(--color-muted-foreground)]">
                   {cadenceLabel(commitment.cadenceUnit, commitment.cadenceValue)}
                 </span>
                 <button
@@ -178,7 +178,7 @@
                       : 'border-[var(--color-border)] bg-[var(--terra-soft)]'}"
                   ></span>
                 {/each}
-                <span class="ml-auto text-[11px] text-[var(--color-muted-foreground)]">
+                <span class="ml-auto text-[0.6875rem] text-[var(--color-muted-foreground)]">
                   last · {relativeDays(commitment.lastOccurredAt)}
                 </span>
               </div>

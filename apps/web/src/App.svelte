@@ -104,7 +104,7 @@
   <main class="mx-auto w-full max-w-5xl flex-1 px-4 pt-6 pb-24 sm:pb-10">
     <!-- Page header: mode kicker + serif title for the active screen. -->
     <p
-      class="text-[10.5px] font-semibold uppercase tracking-[0.24em]"
+      class="text-[0.65625rem] font-semibold uppercase tracking-[0.24em]"
       style="color: var(--mode)"
     >
       {navStore.modeItem.label}
@@ -112,7 +112,7 @@
     <h2 class="mt-1 font-display text-2xl font-semibold tracking-tight">
       {navStore.subItem.title}
     </h2>
-    <p class="mt-1 mb-4 text-[13px] text-[var(--color-muted-foreground)]">
+    <p class="mt-1 mb-4 text-[0.8125rem] text-[var(--color-muted-foreground)]">
       {navStore.subItem.subtitle}
     </p>
 

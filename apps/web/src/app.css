@@ -115,7 +115,7 @@
      column) scales up ~6%; phones keep the compact 16px scale. */
   @media (min-width: 64rem) {
     html {
-      font-size: 17px;
+      font-size: 18px;
     }
   }
   body {

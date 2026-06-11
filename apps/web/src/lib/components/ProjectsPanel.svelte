@@ -138,7 +138,7 @@
             />
             <div class="min-w-0 flex-1">
               <div class="flex flex-wrap items-center gap-2">
-                <h3 class="font-display text-[15px] font-semibold">{project.name}</h3>
+                <h3 class="font-display text-[0.9375rem] font-semibold">{project.name}</h3>
                 <span class="text-xs text-[var(--color-muted-foreground)]">
                   {project.progress.done} / {project.progress.total}
                 </span>
@@ -153,7 +153,7 @@
               {/if}
             </div>
             <span
-              class="shrink-0 rounded-full px-2.5 py-0.5 text-[11px] font-semibold {project.status ===
+              class="shrink-0 rounded-full px-2.5 py-0.5 text-[0.6875rem] font-semibold {project.status ===
               'ACTIVE'
                 ? 'bg-[var(--pine-soft)] text-[var(--pine)]'
                 : project.status === 'DONE'
@@ -233,7 +233,7 @@
   <div class="flex flex-col gap-2 rounded-xl border border-dashed border-[var(--color-input)] bg-[var(--color-secondary)]/40 p-3">
     <div class="flex items-center gap-2">
       <Inbox class="size-4 text-[var(--color-muted-foreground)]" />
-      <h3 class="font-display text-[15px] font-semibold">Inbox</h3>
+      <h3 class="font-display text-[0.9375rem] font-semibold">Inbox</h3>
       <span class="text-xs text-[var(--color-muted-foreground)]">
         {inboxTasks.length} unsorted
       </span>
@@ -250,7 +250,7 @@
                 if (id) tasksStore.setProject(task, id).then(() => projectsStore.refresh());
               }}
               aria-label="Move to project"
-              class="max-w-28 shrink-0 rounded-md border border-[var(--color-input)] bg-transparent px-1.5 py-1 text-[11px] text-[var(--color-muted-foreground)]"
+              class="max-w-28 shrink-0 rounded-md border border-[var(--color-input)] bg-transparent px-1.5 py-1 text-[0.6875rem] text-[var(--color-muted-foreground)]"
             >
               <option value="">move to…</option>
               {#each projects.filter((p) => p.status !== "DONE") as p (p.id)}

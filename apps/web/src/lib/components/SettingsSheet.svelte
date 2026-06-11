@@ -187,7 +187,7 @@
             Copy this key now — it won't be shown again.
           </p>
           <div class="flex items-center gap-1.5">
-            <code class="min-w-0 flex-1 truncate rounded bg-[var(--color-card)] px-2 py-1 font-mono text-[11px]">
+            <code class="min-w-0 flex-1 truncate rounded bg-[var(--color-card)] px-2 py-1 font-mono text-[0.6875rem]">
               {freshKey}
             </code>
             <Button variant="outline" size="sm" onclick={() => copy(freshKey!, "Key")}>
@@ -208,10 +208,10 @@
             class:opacity-50={key.revokedAt}
           >
             <div class="min-w-0 flex-1">
-              <p class="truncate text-[13px] font-medium" class:line-through={key.revokedAt}>
+              <p class="truncate text-[0.8125rem] font-medium" class:line-through={key.revokedAt}>
                 {key.name}
               </p>
-              <p class="text-[11px] text-[var(--color-muted-foreground)]">
+              <p class="text-[0.6875rem] text-[var(--color-muted-foreground)]">
                 {key.revokedAt
                   ? `revoked ${new Date(key.revokedAt).toLocaleDateString()}`
                   : key.lastUsedAt

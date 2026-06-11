@@ -111,8 +111,8 @@
   {:else}
     <div class="flex items-center justify-between rounded-lg border border-[var(--color-border)] px-3 py-2.5">
       <div>
-        <p class="text-[13px] font-medium">Push on this device</p>
-        <p class="text-[11px] text-[var(--color-muted-foreground)]">
+        <p class="text-[0.8125rem] font-medium">Push on this device</p>
+        <p class="text-[0.6875rem] text-[var(--color-muted-foreground)]">
           Works installed as a PWA, even with the app closed.
         </p>
       </div>
@@ -134,8 +134,8 @@
       {#each TOGGLES as toggle (toggle.key)}
         <div class="flex items-center justify-between gap-3 py-1">
           <div>
-            <p class="text-[13px] font-medium">{toggle.label}</p>
-            <p class="text-[11px] text-[var(--color-muted-foreground)]">{toggle.hint}</p>
+            <p class="text-[0.8125rem] font-medium">{toggle.label}</p>
+            <p class="text-[0.6875rem] text-[var(--color-muted-foreground)]">{toggle.hint}</p>
           </div>
           <button
             role="switch"
@@ -155,7 +155,7 @@
         </div>
       {/each}
 
-      <div class="flex flex-wrap items-center gap-2 pt-1 text-[12px] text-[var(--color-muted-foreground)]">
+      <div class="flex flex-wrap items-center gap-2 pt-1 text-[0.75rem] text-[var(--color-muted-foreground)]">
         <span>Morning hour</span>
         <select
           value={settings.morningHour}

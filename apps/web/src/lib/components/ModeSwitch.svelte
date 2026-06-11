@@ -15,7 +15,7 @@
       onclick={() => navStore.go(item.id)}
       role="tab"
       aria-selected={active}
-      class="flex items-center gap-1.5 rounded-full px-4 py-1.5 text-[13px] font-semibold transition-colors {active
+      class="flex items-center gap-1.5 rounded-full px-4 py-1.5 text-[0.8125rem] font-semibold transition-colors {active
         ? 'text-white'
         : 'text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]'}"
       style={active ? `background: ${item.accent}` : ""}

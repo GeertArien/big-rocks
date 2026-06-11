@@ -15,7 +15,7 @@
       <button
         onclick={() => navStore.goSub(sub.id)}
         aria-current={active ? "page" : undefined}
-        class="whitespace-nowrap border-b-2 px-3.5 py-2.5 text-[13px] transition-colors {active
+        class="whitespace-nowrap border-b-2 px-3.5 py-2.5 text-[0.8125rem] transition-colors {active
           ? 'font-semibold'
           : 'border-transparent font-medium text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]'}"
         style={active ? "color: var(--mode); border-color: var(--mode)" : ""}
