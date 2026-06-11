@@ -1,5 +1,8 @@
 # Clock & Compass
 
+[![CI](https://github.com/GeertArien/clock-compass/actions/workflows/ci.yml/badge.svg)](https://github.com/GeertArien/clock-compass/actions/workflows/ci.yml)
+[![Release](https://github.com/GeertArien/clock-compass/actions/workflows/release.yml/badge.svg)](https://github.com/GeertArien/clock-compass/actions/workflows/release.yml)
+
 A personal todo and productivity app organized around the principles popularized
 in Stephen Covey's *The 7 Habits of Highly Effective People*. Put your big rocks
 in first — let the smaller tasks fill in around them.
@@ -8,6 +11,25 @@ in first — let the smaller tasks fill in around them.
 > Stephen Covey. This project is not affiliated with or endorsed by the
 > Covey/FranklinCovey organizations.
 
+## What it does
+
+One data layer seen through three modes — **Compass defines, Clock does,
+Almanac remembers**:
+
+- **Compass** — personal mission statement, roles, goals, projects (with an
+  Inbox), the importance × urgency quadrant matrix, the people who matter
+  (recurring commitments with cadence tracking + an emotional bank account
+  ledger), and renewal habits across the four Sharpen-the-Saw dimensions.
+- **Clock** — the everyday home: Today (big rocks, agenda, habit check-ins)
+  and a Week view for "big rocks first" planning.
+- **Almanac** — read-only review: weekly summary, trends, habit streaks, and
+  an optional AI-written review.
+
+Extras: AI assistance (classify a captured sentence into a quadrant, tag
+influence vs concern, refine the mission, weekly review) via Anthropic or any
+OpenAI-compatible endpoint; Todoist CSV import; an installable PWA with web
+push notifications; and an MCP server so agents can work with your data.
+
 ## Architecture
 
 A pnpm monorepo. All business logic lives in **`packages/core`** (the single
@@ -15,7 +37,7 @@ source of truth); the HTTP layer and the MCP adapter are thin consumers.
 
 ```
 apps/
-  web/      Svelte 5 + Vite + TypeScript + Tailwind + shadcn-svelte (mobile-first, PWA-ready SPA)
+  web/      Svelte 5 + Vite + TypeScript + Tailwind + shadcn-svelte (mobile-first PWA)
   server/   Fastify HTTP layer — thin routes that call core; serves the built web app
 packages/
   core/     Prisma schema + client, repositories, services, AI provider interface
@@ -29,16 +51,13 @@ packages/
 - The **REST API is the source of truth**, with an auto-generated OpenAPI spec at
   `/docs` and bearer-token auth: the `API_AUTH_TOKEN` admin token, or named
   **API keys** generated in Settings (hash-only storage, revocable).
-- The **MCP server** (`pnpm --filter @clock-compass/mcp start`, with `DATABASE_URL`
-  set) exposes the same services as tools for agents — tasks, quadrants, big
-  rocks, goals, people, commitments, habits, and renewal.
-
-## Prerequisites
-
-- Node.js ≥ 20 (22 recommended)
-- pnpm 10 (`corepack enable`)
+- The **MCP server** (`pnpm --filter @clock-compass/mcp start`, with
+  `DATABASE_URL` set) exposes the same services as tools for agents — tasks,
+  quadrants, big rocks, goals, people, commitments, habits, and renewal.
 
 ## Local development
+
+Prerequisites: Node.js ≥ 20 (22 recommended) and pnpm 10 (`corepack enable`).
 
 ```bash
 # 1. Install dependencies
@@ -69,6 +88,23 @@ API docs: <http://localhost:3000/docs>
 | `pnpm db:migrate`| Create/apply Prisma migrations (dev)          |
 | `pnpm db:seed`   | Seed the database                             |
 
+## Configuration
+
+Everything is configured via environment variables (see `.env.example` for the
+full, commented list):
+
+| Variable            | Purpose                                                  |
+| ------------------- | -------------------------------------------------------- |
+| `DATABASE_URL`      | Prisma connection string (SQLite by default; Postgres-ready) |
+| `API_AUTH_TOKEN`    | Bearer token for the REST API (unset = open, the default)|
+| `PORT` / `HOST`     | Where the server listens                                 |
+| `ANTHROPIC_API_KEY` | AI features via the Anthropic API (optional)             |
+| `OPENAI_BASE_URL` / `OPENAI_MODEL` / `OPENAI_API_KEY` | AI via any OpenAI-compatible endpoint — OpenAI, Ollama, LM Studio, vLLM, OpenRouter… (optional) |
+| `AI_PROVIDER`       | Force `anthropic` or `openai-compatible`; otherwise inferred from the keys above |
+| `VAPID_PUBLIC_KEY` / `VAPID_PRIVATE_KEY` / `VAPID_SUBJECT` | Web push (optional; generate the pair with `pnpm --filter @clock-compass/server exec web-push generate-vapid-keys`) |
+
+AI and push are both optional — the app works fine with neither configured.
+
 ## Docker
 
 A multi-stage build compiles the frontend and serves it as static files from the
@@ -86,67 +122,30 @@ your own network. To require a bearer token on the API, set `API_AUTH_TOKEN`
 (e.g. `API_AUTH_TOKEN=$(openssl rand -hex 32) docker compose up`) and enter the
 same token in the web UI's settings (gear icon).
 
-Configuration is entirely via environment variables:
-
-| Variable            | Purpose                                                  |
-| ------------------- | -------------------------------------------------------- |
-| `DATABASE_URL`      | Prisma connection string (SQLite by default)             |
-| `API_AUTH_TOKEN`    | Bearer token for the REST API (unset = open, the default)|
-| `ANTHROPIC_API_KEY` | Server-side AI features (optional; see `.env.example` for the OpenAI-compatible alternative) |
-| `VAPID_PUBLIC_KEY` / `VAPID_PRIVATE_KEY` | Web push notifications (optional; generate with `pnpm --filter @clock-compass/server exec web-push generate-vapid-keys`) |
-| `PORT` / `HOST`     | Where the server listens                                 |
-
-The app is an installable PWA (add-to-homescreen; the shell and fonts work
-offline). With VAPID keys set, enable push per device in Settings →
-Notifications — overdue commitments, the morning rock reminder, and the Sunday
-review arrive even with the app closed. Push requires HTTPS (or localhost).
-
-The database lives on the `clock-compass-data` volume (mounted at `/data`), so it
-survives container restarts. Migrations are applied automatically on boot.
+The database lives on the `clock-compass-data` volume (mounted at `/data`), so
+it survives container restarts. Migrations are applied automatically on boot.
 
 Swapping to Postgres later is a provider + `DATABASE_URL` change (an optional
 `db` service is stubbed in `docker-compose.yml`) — no application code changes.
 
 ### Run the prebuilt image (no local build)
 
-CI publishes the image to GitHub Container Registry on every push to `main` and
-on version tags. To run it without building:
+CI publishes a public image to GitHub Container Registry on every push to
+`main` and on version tags — no authentication needed to pull:
 
 ```bash
 docker run -p 3000:3000 -v clock-compass-data:/data ghcr.io/geertarien/clock-compass:latest
 # → http://localhost:3000  (open by default; add -e API_AUTH_TOKEN=… to require a token)
 ```
 
-If the package is private, first authenticate:
-`echo <github-pat> | docker login ghcr.io -u <username> --password-stdin`
-(or make the package public in the repo's *Packages* settings for anonymous pulls).
+## PWA & notifications
+
+The app is an installable PWA (add-to-homescreen; the shell and fonts work
+offline). With VAPID keys set, enable push per device in Settings →
+Notifications — overdue commitments, the morning rock reminder, and the Sunday
+review arrive even with the app closed. Push requires HTTPS (or localhost).
 
 ## Secrets
 
 Never commit secrets. Only `.env.example` is tracked; the real `.env` is
-gitignored. The Anthropic key and the API auth token must come from the
-environment.
-
-## Status
-
-Built incrementally following the build order in `CLAUDE.md`.
-
-- **Step 1** — scaffold: monorepo, data model, Docker, CI.
-- **Step 2** — the interactive quadrant matrix (create tasks, move between
-  quadrants by toggling importance/urgency, complete/reopen, delete) and the
-  weekly "big rocks first" view.
-- **Step 3** — Goals (first-class, with derived progress) + a versioned mission
-  statement (Habit 2), and influence/concern tagging on tasks (Habit 1); tasks
-  can be linked to a goal.
-- **UX foundation** — app shell with mobile bottom-nav / desktop top-bar,
-  responsive drawer (Sheet) for create/edit, confirm dialogs on delete,
-  optimistic updates with toast feedback, and consistent loading/empty/error
-  states.
-- **Design + shell** — approved "Field Notes" design (`docs/design/ui-ux.md`):
-  three modes as tenses (Compass defines, Clock does, Almanac remembers),
-  warm paper/ink theme, serif display type, and the Clock · Today home screen.
-- **Full rollout complete** — roles + projects with an Inbox, task scheduling
-  (Week agenda + rocks tray), people with commitment cadences + emotional bank
-  accounts, habits + renewal across the three modes with weekly intentions,
-  API keys + the MCP adapter, AI jobs (Anthropic or any OpenAI-compatible
-  endpoint), Todoist CSV import, and an installable PWA with web push.
+gitignored. The AI keys and the API auth token must come from the environment.
