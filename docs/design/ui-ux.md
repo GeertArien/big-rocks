@@ -73,7 +73,7 @@ of quadrant, goal, person link, and day before saving.
 ## Calm principles (carried from v2)
 
 One question per screen; sub-tabs instead of stacked dashboards; collapsed
-detail rows; ~760px reading column (≈980px for matrix/week/people grids);
+detail rows; ~1090px column with a 17px root font on desktop (phones keep the compact 16px scale);
 one accent at a time (`--mode` variable); AI limited to the capture
 preview and one weekly-review note.
 
