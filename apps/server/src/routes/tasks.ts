@@ -4,7 +4,7 @@ import {
   TaskService,
   groupByQuadrant,
   prisma,
-} from "@big-rocks/core";
+} from "@clock-compass/core";
 
 /**
  * Task routes. Handlers stay thin: JSON-schema validation + delegation to the

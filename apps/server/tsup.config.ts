@@ -8,6 +8,6 @@ export default defineConfig({
   target: "node20",
   // Bundle the workspace core (it exports TypeScript source) into the output so
   // the server image is self-contained. Keep node_modules deps external.
-  noExternal: ["@big-rocks/core"],
+  noExternal: ["@clock-compass/core"],
   skipNodeModulesBundle: true,
 });

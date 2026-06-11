@@ -1,4 +1,4 @@
-# BigRocks — single-container image: build the frontend, then serve it as static
+# The Clock & Compass — single-container image: build the frontend, then serve it as static
 # files from the Fastify backend. SQLite DB lives on a mounted volume.
 #
 # Three stages:
@@ -22,7 +22,7 @@ FROM base AS proddeps
 COPY . .
 RUN pnpm install --prod --frozen-lockfile
 # Generate the Prisma client into the production node_modules.
-RUN pnpm --filter @big-rocks/core exec prisma generate
+RUN pnpm --filter @clock-compass/core exec prisma generate
 
 # ---- Runtime stage -----------------------------------------------------------
 FROM base AS runtime

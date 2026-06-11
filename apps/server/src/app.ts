@@ -5,7 +5,7 @@ import Fastify, { type FastifyInstance } from "fastify";
 import fastifyStatic from "@fastify/static";
 import fastifySwagger from "@fastify/swagger";
 import fastifySwaggerUi from "@fastify/swagger-ui";
-import { ApiKeyService, PrismaApiKeyRepository, prisma } from "@big-rocks/core";
+import { ApiKeyService, PrismaApiKeyRepository, prisma } from "@clock-compass/core";
 import { loadConfig, type ServerConfig } from "./config.js";
 import { authPlugin } from "./plugins/auth.js";
 import { keyRoutes } from "./routes/keys.js";
@@ -59,7 +59,7 @@ export async function buildApp(
   // OpenAPI/Swagger so other agents/services can discover the API.
   await app.register(fastifySwagger, {
     openapi: {
-      info: { title: "BigRocks API", version: "0.0.0" },
+      info: { title: "The Clock & Compass API", version: "0.0.0" },
       components: {
         securitySchemes: {
           bearerAuth: { type: "http", scheme: "bearer" },

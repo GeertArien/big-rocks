@@ -1,6 +1,6 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 import fp from "fastify-plugin";
-import type { ApiKeyService } from "@big-rocks/core";
+import type { ApiKeyService } from "@clock-compass/core";
 
 declare module "fastify" {
   interface FastifyInstance {

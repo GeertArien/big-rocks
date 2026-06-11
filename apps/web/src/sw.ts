@@ -1,5 +1,5 @@
 /// <reference lib="webworker" />
-// BigRocks service worker: app-shell precache, font caching, and web push.
+// The Clock & Compass service worker: app-shell precache, font caching, and web push.
 import { precacheAndRoute, cleanupOutdatedCaches } from "workbox-precaching";
 import { registerRoute } from "workbox-routing";
 import { CacheFirst, NetworkFirst } from "workbox-strategies";
@@ -40,7 +40,7 @@ self.addEventListener("push", (event) => {
     payload = { body: event.data?.text() };
   }
   event.waitUntil(
-    self.registration.showNotification(payload.title ?? "BigRocks", {
+    self.registration.showNotification(payload.title ?? "The Clock & Compass", {
       body: payload.body ?? "",
       icon: "/icon-192.png",
       badge: "/icon-192.png",

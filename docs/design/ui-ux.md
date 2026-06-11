@@ -1,4 +1,4 @@
-# BigRocks UI/UX design v3 — "Field Notes": Compass defines, Clock does, Almanac remembers
+# The Clock & Compass UI/UX design v3 — "Field Notes": Compass defines, Clock does, Almanac remembers
 
 Third iteration. v1 ([`v1/`](./v1/)) set the visual language; v2
 ([`v2/`](./v2/)) adopted the owner's three-pillar Clock & Compass spec

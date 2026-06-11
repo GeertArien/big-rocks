@@ -52,7 +52,7 @@ describe("ApiKeyService", () => {
 
   it("generates a prefixed key and stores only a hash", async () => {
     const { key, record } = await service.generate("Claude · planning agent");
-    expect(key).toMatch(/^bigrocks_sk_[0-9a-f]{48}$/);
+    expect(key).toMatch(/^clockcompass_sk_[0-9a-f]{48}$/);
     expect(record.name).toBe("Claude · planning agent");
     const stored = repo.store.get(record.id)!;
     expect(stored.hashedKey).not.toContain(key);
@@ -69,7 +69,7 @@ describe("ApiKeyService", () => {
 
   it("rejects unknown, malformed, and revoked keys", async () => {
     const { key, record } = await service.generate("agent");
-    expect(await service.verify("bigrocks_sk_" + "0".repeat(48))).toBe(false);
+    expect(await service.verify("clockcompass_sk_" + "0".repeat(48))).toBe(false);
     expect(await service.verify("not-a-key")).toBe(false);
     await service.revoke(record.id);
     expect(await service.verify(key)).toBe(false);

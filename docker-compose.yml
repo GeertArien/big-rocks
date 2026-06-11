@@ -1,7 +1,7 @@
 services:
   app:
     build: .
-    image: bigrocks:latest
+    image: clock-compass:latest
     ports:
       - "3000:3000"
     environment:
@@ -16,7 +16,7 @@ services:
       API_AUTH_TOKEN: "${API_AUTH_TOKEN:-}"
       ANTHROPIC_API_KEY: "${ANTHROPIC_API_KEY:-}"
     volumes:
-      - bigrocks-data:/data
+      - clock-compass-data:/data
     restart: unless-stopped
 
   # Optional Postgres for later. To use it: switch the Prisma provider to
@@ -24,12 +24,12 @@ services:
   # db:
   #   image: postgres:16-alpine
   #   environment:
-  #     POSTGRES_USER: bigrocks
-  #     POSTGRES_PASSWORD: bigrocks
-  #     POSTGRES_DB: bigrocks
+  #     POSTGRES_USER: clockcompass
+  #     POSTGRES_PASSWORD: clockcompass
+  #     POSTGRES_DB: clockcompass
   #   volumes:
-  #     - bigrocks-pg:/var/lib/postgresql/data
+  #     - clock-compass-pg:/var/lib/postgresql/data
 
 volumes:
-  bigrocks-data:
-  # bigrocks-pg:
+  clock-compass-data:
+  # clock-compass-pg:

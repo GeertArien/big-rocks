@@ -1,5 +1,5 @@
 import type { FastifyInstance } from "fastify";
-import { GoalService, PrismaGoalRepository, prisma } from "@big-rocks/core";
+import { GoalService, PrismaGoalRepository, prisma } from "@clock-compass/core";
 
 const GOAL_STATUSES = ["ACTIVE", "ON_HOLD", "ACHIEVED", "DROPPED"] as const;
 

@@ -8,7 +8,7 @@ import { buildMcpServer } from "./server.js";
  * tools — verifies the adapter registers the full agent-facing surface
  * without touching the database.
  */
-describe("big-rocks MCP server", () => {
+describe("clock-compass MCP server", () => {
   it("exposes the core service surface as tools", async () => {
     const server = buildMcpServer();
     const client = new Client({ name: "test", version: "0.0.0" });

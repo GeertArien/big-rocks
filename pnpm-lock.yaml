@@ -35,7 +35,7 @@ importers:
       '@anthropic-ai/sdk':
         specifier: ^0.104.1
         version: 0.104.1(zod@3.25.76)
-      '@big-rocks/core':
+      '@clock-compass/core':
         specifier: workspace:*
         version: link:../../packages/core
       '@fastify/static':
@@ -167,7 +167,7 @@ importers:
 
   packages/mcp:
     dependencies:
-      '@big-rocks/core':
+      '@clock-compass/core':
         specifier: workspace:*
         version: link:../core
       '@modelcontextprotocol/sdk':

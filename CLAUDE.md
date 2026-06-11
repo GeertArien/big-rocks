@@ -1,4 +1,4 @@
-# BigRocks
+# The Clock & Compass
 
 A personal todo and productivity app organized around the principles popularized in
 Stephen Covey's *The 7 Habits of Highly Effective People*. Mainly for personal use,
@@ -181,7 +181,7 @@ attach to it). Keep it as a plain attribute when it's just a value or a derived 
 - **Primary path: CSV import.** The user exports their tasks from Todoist (per-project CSV export, or a
   full-account backup export) and uploads the file in the frontend. No Todoist token, no OAuth, no rate
   limits, and nothing Todoist-related in the server env.
-- Parse the export and map its fields (content, priority, due date, project) → BigRocks tasks/quadrants.
+- Parse the export and map its fields (content, priority, due date, project) → The Clock & Compass tasks/quadrants.
   Todoist p1–p4 priorities give a starting importance/urgency guess that the AI can refine.
 - This is a frontend-initiated flow: the user picks a file; parsing can happen client-side or via a
   dedicated import endpoint that accepts the uploaded file. Either way, no Todoist credentials are stored.

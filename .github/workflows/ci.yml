@@ -37,8 +37,8 @@ jobs:
 
       - name: Validate Prisma schema & migrations
         run: |
-          pnpm --filter @big-rocks/core exec prisma validate
-          pnpm --filter @big-rocks/core exec prisma migrate deploy
+          pnpm --filter @clock-compass/core exec prisma validate
+          pnpm --filter @clock-compass/core exec prisma migrate deploy
 
       - name: Typecheck
         run: pnpm typecheck
@@ -62,11 +62,11 @@ jobs:
 
       # Plain docker CLI (no JS actions) keeps this Node-20-free.
       - name: Build image
-        run: docker build -t bigrocks:ci .
+        run: docker build -t clock-compass:ci .
 
       - name: Smoke test the running container
         run: |
-          docker run -d --name bigrocks -p 3000:3000 -e API_AUTH_TOKEN=ci-token bigrocks:ci
+          docker run -d --name clock-compass -p 3000:3000 -e API_AUTH_TOKEN=ci-token clock-compass:ci
           for i in $(seq 1 30); do
             if wget -qO- http://localhost:3000/api/health | grep -q '"status":"ok"'; then
               echo "health OK"; ok=1; break
@@ -74,8 +74,8 @@ jobs:
             sleep 2
           done
           if [ "${ok:-0}" != "1" ]; then
-            echo "health check failed; container logs:"; docker logs bigrocks; exit 1
+            echo "health check failed; container logs:"; docker logs clock-compass; exit 1
           fi
 
       - name: Report image size
-        run: docker images bigrocks:ci --format '{{.Size}}'
+        run: docker images clock-compass:ci --format '{{.Size}}'

@@ -18,8 +18,8 @@ export default defineConfig({
         globPatterns: ["**/*.{js,css,html,png,svg,webmanifest}"],
       },
       manifest: {
-        name: "BigRocks",
-        short_name: "BigRocks",
+        name: "The Clock & Compass",
+        short_name: "Clock & Compass",
         description: "Put your big rocks in first — a 7 Habits productivity app.",
         start_url: "/",
         display: "standalone",
