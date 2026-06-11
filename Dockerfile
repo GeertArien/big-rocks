@@ -1,4 +1,4 @@
-# The Clock & Compass — single-container image: build the frontend, then serve it as static
+# Clock & Compass — single-container image: build the frontend, then serve it as static
 # files from the Fastify backend. SQLite DB lives on a mounted volume.
 #
 # Three stages:

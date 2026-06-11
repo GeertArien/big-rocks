@@ -59,7 +59,7 @@ export async function buildApp(
   // OpenAPI/Swagger so other agents/services can discover the API.
   await app.register(fastifySwagger, {
     openapi: {
-      info: { title: "The Clock & Compass API", version: "0.0.0" },
+      info: { title: "Clock & Compass API", version: "0.0.0" },
       components: {
         securitySchemes: {
           bearerAuth: { type: "http", scheme: "bearer" },

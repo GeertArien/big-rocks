@@ -70,7 +70,7 @@
         >
           ▲
         </div>
-        <h1 class="font-display text-lg font-semibold tracking-tight">The Clock &amp; Compass</h1>
+        <h1 class="font-display text-lg font-semibold tracking-tight">Clock &amp; Compass</h1>
       </div>
 
       <div class="flex flex-1 justify-center">

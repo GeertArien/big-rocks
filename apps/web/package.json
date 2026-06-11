@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "The Clock & Compass frontend: Svelte 5 + Vite + TypeScript + Tailwind + shadcn-svelte. Mobile-first, PWA-ready, static SPA.",
+  "description": "Clock & Compass frontend: Svelte 5 + Vite + TypeScript + Tailwind + shadcn-svelte. Mobile-first, PWA-ready, static SPA.",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

@@ -271,7 +271,7 @@ export async function pushRoutes(
       if (!configured) return reply.code(503).send(PUSH_DISABLED);
       await sendToAll({
         kind: "overdue",
-        title: "The Clock & Compass",
+        title: "Clock & Compass",
         body: "Push is working — first things first.",
         url: "/",
       });

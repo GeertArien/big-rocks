@@ -21,7 +21,7 @@ async function main() {
 
   const goal = await prisma.goal.create({
     data: {
-      title: "Ship The Clock & Compass v1",
+      title: "Ship Clock & Compass v1",
       description: "A working quadrant matrix and weekly planning view.",
     },
   });

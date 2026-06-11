@@ -1,4 +1,4 @@
-// The Clock & Compass data model.
+// Clock & Compass data model.
 //
 // Provider is SQLite to start; keep all access behind the repository/service
 // layer so swapping to Postgres is just a provider + DATABASE_URL change.

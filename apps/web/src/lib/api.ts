@@ -1,4 +1,4 @@
-/** Typed API client for the The Clock & Compass REST API. */
+/** Typed API client for the Clock & Compass REST API. */
 
 import { getToken } from "./token";
 

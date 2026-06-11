@@ -1,4 +1,4 @@
-# The Clock & Compass
+# Clock & Compass
 
 A personal todo and productivity app organized around the principles popularized
 in Stephen Covey's *The 7 Habits of Highly Effective People*. Put your big rocks

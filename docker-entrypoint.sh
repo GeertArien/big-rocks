@@ -10,5 +10,5 @@ echo "Applying database migrations..."
 packages/core/node_modules/.bin/prisma migrate deploy \
   --schema packages/core/prisma/schema.prisma
 
-echo "Starting The Clock & Compass server..."
+echo "Starting Clock & Compass server..."
 exec node apps/server/dist/index.js

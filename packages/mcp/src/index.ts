@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// The Clock & Compass MCP server — stdio entry point.
+// Clock & Compass MCP server — stdio entry point.
 //
 // Usage (e.g. in an MCP client config):
 //   DATABASE_URL=file:/path/to/clock-compass.db clock-compass-mcp

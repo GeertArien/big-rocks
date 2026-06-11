@@ -1,4 +1,4 @@
-# The Clock & Compass UI/UX design v3 — "Field Notes": Compass defines, Clock does, Almanac remembers
+# Clock & Compass UI/UX design v3 — "Field Notes": Compass defines, Clock does, Almanac remembers
 
 Third iteration. v1 ([`v1/`](./v1/)) set the visual language; v2
 ([`v2/`](./v2/)) adopted the owner's three-pillar Clock & Compass spec
@@ -26,7 +26,7 @@ toggle previews both layouts via container queries.
 **Folder layout:** `mockup.html` + this file are the current proposal;
 [`v1/`](./v1/) and [`v2/`](./v2/) hold earlier iterations;
 [`references/`](./references/) holds the owner's original prototypes
-("The Compass", "The Clock & Compass") and the three-pillar spec.
+("The Compass", "Clock & Compass") and the three-pillar spec.
 
 ---
 
